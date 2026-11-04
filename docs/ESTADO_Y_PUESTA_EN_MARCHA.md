@@ -1,49 +1,43 @@
-# Estado y puesta en marcha del proyecto
+# Estado y puesta en marcha — versión 0.3
 
-## Alcance solicitado
+## Alcance
 
-Android 9+, aplicaciones originales: MuPDF, QuickSupport, Chrome, Google Maps, Waze, WhatsApp, Gmail y (cuando proceda) add-on de QuickSupport. **FuelSoft se instala aparte.**
+Android 9+ · aplicaciones originales: MuPDF, TeamViewer QuickSupport (+ Universal Add-On cuando proceda), Google Chrome, Google Maps, Waze, WhatsApp y Gmail · **FuelSoft excluida** (procedimiento propio).
 
-## Qué está implementado
+## Implementado
 
-1. Dos APK de proyecto Android Studio: Installer temporal y Updater residente, con motor `core` compartido.
-2. Interfaz en español: comprobación de aplicaciones, instalación individual, instalación secuencial de las que tengan fuente, importación manual de APK locales.
-3. Fuente F-Droid mediante índice `index-v1.jar` **firmado** y comparado con el SHA-256 del certificado oficial. Sin API de simple presentación, sin cliente F-Droid instalado.
-4. Catálogo empresarial HTTPS configurable **en cada app** mediante interfaz, con `versionCode`, versión Android mínima/máxima, ABI, hash y certificado esperado.
-5. Android PackageInstaller con confirmación del sistema, descarga privada y comprobación de firmas; bloquea bajadas de versión y cambio inesperado de firmante.
-6. Worker diario aproximado, notificación de actualizaciones disponibles, sin actualizaciones desatendidas en dispositivos normales.
-7. Regla Android 9: Waze se omite en el instalador y actualizador, incluso para APK local.
-8. Add-on de TeamViewer opcional: el técnico debe confirmar el complemento apropiado y habilitar Accesibilidad cuando lo pida el dispositivo.
+* Installer: detección de Android y arquitecturas, catálogo visual con iconos y estados, versión instalada y disponible, selección individual, «Instalar todas las compatibles», descargas con progreso, instalación secuencial con confirmación de Android, detección de errores, reintento de fallidas, APK individuales y divididas, importación desde almacenamiento, instalación y activación del Updater, asistente de QuickSupport, desinstalación final condicionada al Updater.
+* Updater: comprobación manual y periódica (WorkManager, 24 h por defecto), frecuencia configurable, avisos on/off, botón «Actualizar» (individual, seleccionadas y todo), comparación por `versionCode`, identificación de incompatibles, historial, fecha de última comprobación, solo apps instaladas.
+* Seguridad: las 10 validaciones previas a instalar, descargas HTTPS robustas, catálogo empresarial firmado, `PackageInstaller` nativo.
+* Compilación sin Android Studio: Gradle Wrapper + GitHub Actions; pruebas JUnit/Robolectric; verificación automática de las APK.
 
-## Fuentes de aplicaciones originales
+## Estado real por aplicación
 
-| Aplicación | Fuente verificable | Automatizable ahora en este proyecto |
+| Aplicación | Estado | Detalle |
 |---|---|---|
-| MuPDF | F-Droid: https://f-droid.org/packages/com.artifex.mupdf.viewer.app/ | Sí, mediante índice firmado, sujeto a pruebas reales |
-| QuickSupport | TeamViewer: https://www.teamviewer.com/en/download/portal/android/ | Solo si se publica URL+SHA+firma autorizadas en catálogo; o importación manual |
-| Universal Add-on | TeamViewer: https://www.teamviewer.com/es/global/support/knowledge-base/teamviewer-classic/mobile/android/universal-add-on-for-android/ | Igual que QuickSupport, solo cuando proceda |
-| WhatsApp | https://www.whatsapp.com/download/android | Por el momento manual; enlace oficial puede cambiar |
-| Chrome | Publicación habitual en Google Play; no se verificó URL oficial APK independiente | No; requiere fuente válida y permisos de uso |
-| Google Maps | Publicación habitual en Google Play; no se verificó URL oficial APK independiente | No; requiere fuente válida y permisos de uso |
-| Waze | Publicación habitual en Google Play; no se verificó URL oficial APK independiente | No; requiere fuente válida y permisos de uso; Android 9 siempre omitido |
-| Gmail | Publicación habitual en Google Play; no se verificó URL oficial APK independiente | No; requiere fuente válida y permisos de uso |
+| MuPDF | **Automática** (instalación y actualización) | F-Droid, índice firmado |
+| TeamViewer QuickSupport | **Automática** (descarga oficial) | `dl.teamviewer.com`; se recomienda fijar su certificado en el catálogo |
+| TeamViewer Universal Add-On | **Automática, opcional** | Solo si QuickSupport lo pide; requiere activar accesibilidad y prueba manual |
+| Tablet Updater | **Automática** (embebido en el Installer) | Actualizaciones posteriores vía catálogo empresarial |
+| Google Chrome | **Requiere catálogo empresarial o importación manual** | Normalmente preinstalada en tablets certificadas |
+| Google Maps | **Requiere catálogo empresarial o importación manual** | Normalmente preinstalada |
+| Gmail | **Requiere catálogo empresarial o importación manual** | Normalmente preinstalada |
+| Waze | **Requiere catálogo empresarial o importación manual** · Android 9 bloqueado | «No compatible con Android 9» |
+| WhatsApp | **Pendiente de fuente verificada** | Añadir la URL oficial verificada al catálogo (`type: direct`) o importar |
 
-**No** se ha implementado la API privada/revertida de Google Play ni scraping de APKMirror. Las fuentes de Obtainium sirven como referencia, no como autorización para automatizar o redistribuir.
+## Pendiente antes de usar con clientes (requiere tablets físicas)
 
-## Pendiente para el despliegue real
-
-- [ ] Compilar con Android Studio: no hay Android SDK ni Gradle en el entorno donde se ha creado esta entrega.
-- [ ] Probar descarga/validación del índice F-Droid en una tablet real Android 9 y 11.
-- [ ] Contrastar paquete/firma/ABI de las APK reales de la empresa y corregir variantes si difieren.
-- [ ] Habilitar una fuente legal, estable y actualizable para las APK propietarias, o importar versiones manualmente.
-- [ ] Instalar y comprobar Updater en tablets reales y configurar su URL de catálogo también allí.
-- [ ] Probar la cola de instalación con confirmaciones de Android, caídas de red y reanudación tras cierre de la app.
-- [ ] Probar split APK en cada modelo de tablet y soporte de extensiones `.apk` únicamente.
-- [ ] Probar sesión de TeamViewer QuickSupport y add-on en dispositivo real.
-- [ ] Confirmar funcionamiento real de Chrome, Maps, Gmail, Waze y WhatsApp sin dependencias de Play Services según ROM concreta.
-- [ ] Firmar builds release y establecer procedimiento de publicación con una clave de firma estable.
-- [ ] Revisar permisos/condiciones de redistribución para cada aplicación de terceros.
+- [ ] Instalar ambas APK en tablets reales con **Android 9** y con **Android 10 o superior** (idealmente 13–15) de las marcas habituales.
+- [ ] Comprobar en tablet la descarga y validación del índice F-Droid y la instalación de MuPDF.
+- [ ] Comprobar la descarga oficial de QuickSupport y del Universal Add-On, anotar la huella SHA-256 de su certificado y fijarla en el catálogo (`signerPins`).
+- [ ] Probar la cola completa con confirmaciones de Android, cancelaciones, cortes de Wi-Fi y cierre de la app durante una instalación.
+- [ ] Probar importación de APK divididas y paquetes `.apks`/`.xapk` en cada modelo.
+- [ ] Probar el asistente de QuickSupport y una **conexión remota real** en cada modelo (incluido el aviso de ajustes restringidos en Android 13+).
+- [ ] Probar Tablet Updater: activación desde el Installer, ejecución periódica real (dejar la tablet 24–48 h), notificación y botón «Actualizar».
+- [ ] Publicar el catálogo empresarial firmado (si se usa) y verificarlo desde la tablet.
+- [ ] Crear la clave release, compilar `TabletSetupInstaller.apk`/`TabletUpdater.apk` firmadas y planificar el registro en la verificación de desarrolladores de Android (obligatoria globalmente a partir de 2027) o la distribución por MDM.
+- [ ] Revisar condiciones de redistribución de cada APK de terceros que se aloje en el catálogo.
 
 ## Nota operativa
 
-Los orígenes disponibles no instalan automáticamente todo el catálogo hasta que se complete su configuración. `Installer` se puede desinstalar cuando la preparación inicial esté terminada y **Updater esté instalado y configurado**. La comprobación con WorkManager depende de las restricciones de batería/red y no ocurre a una hora exacta.
+`Tablet Setup Installer` se puede desinstalar cuando Tablet Updater está instalado y activado (la app lo comprueba). Las comprobaciones de WorkManager dependen de la batería, la red y el modo Doze: no ocurren a una hora exacta.

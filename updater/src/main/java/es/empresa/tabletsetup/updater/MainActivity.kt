@@ -49,7 +49,7 @@ class MainActivity : SuiteActivity() {
     private fun handleStartAction(intent: Intent?) {
         if (intent?.getStringExtra(Notifications.EXTRA_START_ACTION) == Notifications.ACTION_UPDATE_ALL) {
             intent.removeExtra(Notifications.EXTRA_START_ACTION)
-            viewModel.requestUpdateAllAfterRefresh()
+            viewModel.requestBatchAfterRefresh()
         }
     }
 }

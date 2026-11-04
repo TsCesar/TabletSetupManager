@@ -1,42 +1,46 @@
-# Diseño técnico — Tablet Setup Manager 0.2
+# Diseño técnico — Tablet Setup Manager 0.3
 
 ## Módulos
 
-- `:installer`: actividad nativa, instalación inicial por lote, importación manual y opción de desinstalación.
-- `:updater`: actividad nativa, actualizaciones de apps ya instaladas, Worker 24 horas y avisos.
-- `:core`: catálogo compartido, política de compatibilidad, índice firmado F-Droid, catálogo HTTPS administrado, descarga y sesiones del sistema Android.
+| Módulo | Tipo | Contenido |
+|---|---|---|
+| `:core` | Biblioteca Android | **Núcleo puro** (Kotlin sin APIs de Android, probado en JVM): `model`, `policy`, `catalog`, `fdroid`, `apk`, `net`, `engine`, `util`. **Plataforma** (`platform`): dispositivo, ajustes, historial, PackageManager, repositorios de fuentes, `PackageInstaller`, receptor de resultados, notificaciones, sondeo de QuickSupport. **Interfaz** (`ui`): tema M3, componentes, `SuiteViewModel`, pantalla común, historial |
+| `:installer` | Aplicación | `MainActivity`, pantallas de instalación, asistente QuickSupport, activación del Updater, desinstalación. Embebe la APK del Updater (tarea Gradle `embedUpdaterApk*`) |
+| `:updater` | Aplicación | `MainActivity`, `UpdateWorker` + `UpdateScheduler` (WorkManager), `ConfigureActivity` (activación desde el Installer), ajustes e historial |
 
-## Flujo Installer
+El Updater **no depende** del módulo Installer: solo de `:core`.
 
-1. Enumerar aplicaciones del catálogo. Waze bloqueado automáticamente si SDK <= 28 (política en `CompatibilityPolicy`).
-2. Resolver versión compatible desde F-Droid firmado o catálogo de empresa.
-3. Detectar `packageName`, versión instalada y requisitos SDK/ABI.
-4. Pulsar `Instalar todas` para descargar y validar una APK cada vez; esperar confirmación/resultados de Android antes de pasar a la siguiente.
-5. Para fuentes propietarias no automatizadas, importar APK autorizadas con el selector de archivos de Android. El técnico debe validar procedencia.
-6. Instalar y configurar Tablet Updater antes de desinstalar Installer.
+## Fuentes y prioridad
 
-## Flujo Updater
+1. **Repositorio oficial F-Droid** — `index-v1.jar`: firma JAR verificada en streaming con el certificado del repositorio fijado (`43238d51…c9ccab`); descarga condicional con ETag; copia local válida hasta 7 días sin red.
+2. **Descarga oficial del desarrollador** — URL HTTPS sin versión (TeamViewer). Se consultan cabeceras (`HEAD`, o `GET` del primer byte); si cambian ETag/Last-Modified se descarga la APK para conocer su versión real. Nunca se supone una versión.
+3. **Catálogo empresarial firmado** — `catalog.json` + `catalog.json.sig` (ECDSA P-256/SHA-256). Entradas `versioned` (binarios autorizados con SHA-256 y certificado) y `direct` (URL oficial). `signerPins` fija certificados de fuentes integradas. `override: true` permite fijar una versión validada por encima de las fuentes 1 y 2.
+4. **Importación manual** — APK, base + splits o paquetes `.apks/.xapk/.zip`.
 
-1. Revisar cada 24h aproximadamente con WorkManager y red disponible.
-2. Considerar únicamente aplicaciones instaladas con versión compatible más nueva.
-3. Publicar notificación cuando hay actualizaciones; la instalación se ejecuta tras acción del usuario y posibles confirmaciones Android.
-4. Ningún plugin de Google Play Services; ni instalación silenciosa en tablets normales.
+Tablet Updater: APK embebida en el Installer (o versión superior del catálogo).
+
+## Flujo de instalación (Installer y Updater)
+
+1. `SuiteEngine.check()` obtiene el estado de cada app: regla del dispositivo → fuente → `StatusCalculator`.
+2. `BatchPlanner` elige qué instalar: Installer = no instaladas + desactualizadas (sin opcionales salvo selección); Updater = solo instaladas con versión nueva.
+3. `SequentialRunner` procesa de una en una; un fallo no bloquea las siguientes.
+4. `AppInstaller`: descarga (progreso, reanudación) → `ApkInspector` (ZIP, manifiesto binario, ABI, apksig) → `ApkSetValidator` (10 comprobaciones) → sesión `PackageInstaller` (`USER_ACTION_REQUIRED`) → espera del resultado.
+5. `InstallStatusReceiver` recibe `STATUS_PENDING_USER_ACTION` → la actividad en primer plano muestra la confirmación del sistema (notificación si la app no está visible) → resultado final → historial.
+
+## Updater periódico
+
+* `UpdateScheduler`: trabajo periódico único (`KEEP` al abrir la app, `UPDATE` al cambiar ajustes), 24 h por defecto, flexibilidad 2 h, red sin medir (Wi-Fi) opcional, batería no baja, reintentos exponenciales.
+* `UpdateWorker`: comprueba, registra última comprobación e historial y notifica solo si cambian las versiones pendientes (o cada 72 h si siguen pendientes). No instala nada por sí mismo.
+* Activación: abrir el Updater o pulsar **Activar y configurar Updater** en el Installer (`ConfigureActivity`, protegida por permiso de firma compartido y comprobación del paquete llamante).
 
 ## Seguridad
 
-- Descargar únicamente por HTTPS con redirecciones HTTPS, límites de tamaño y archivos temporales.
-- Índice firmado de F-Droid (`index-v1.jar`) validado por firma JAR y fingerprint fijo del certificado oficial; SHA-256 de cada APK.
-- Catálogo empresarial servido por HTTPS; hash de APK y certificado firmante esperado. El equipo de operaciones controla su servidor de descargas.
-- Comparar identidad de paquete, versión mayor que instalada y compatibilidad de firmas. Split APK deben tener misma identidad y versión; Android valida integridad final durante la instalación.
-- Los derechos de redistribución de terceros deben revisarse por separado.
-- Los botones de confirmación son mecanismos oficiales de Android.
+* HTTPS obligatorio (también redirecciones), límites de tamaño, escritura atómica, SHA-256.
+* Firma de APK con apksig; firma instalada con historial de rotación; certificados fijados por F-Droid/catálogo.
+* Catálogo empresarial firmado + secuencia creciente; clave pública en `BuildConfig` o configurada en la tablet.
+* Sin `QUERY_ALL_PACKAGES` (solo `<queries>` de las apps gestionadas); `usesCleartextTraffic=false`; `allowBackup=false`.
+* `PACKAGE_SOURCE_STORE` para fuentes del catálogo y `PACKAGE_SOURCE_LOCAL_FILE` para importaciones (Android 13+).
 
-## Fuentes aún pendientes
+## Compilación
 
-`Chrome`, `Maps`, `Waze`, `Gmail`, `WhatsApp` y `TeamViewer QuickSupport` no cuentan con feeds de versión automáticos listos para conectar. Se puede realizar instalación con APK local autorizada y un catálogo interno de versiones **si se dispone de derechos para alojar el paquete**. No hay acceso a Play Store mediante API extraoficial ni scraping automático de APKMirror.
-
-## Estado y comprobaciones
-
-- Las pruebas de política JVM y estructura pasan.
-- No hay compilación Android ni test de hardware; ver `ESTADO_Y_PUESTA_EN_MARCHA.md`.
-- La persistencia de la cola y la respuesta ante cierre inesperado durante una instalación deben probarse y endurecerse antes de producción.
+Gradle 8.14.3 · AGP 8.10.1 · Kotlin 2.2.21 (+ plugin Compose) · Compose BOM 2025.05.01 · WorkManager 2.10.0 · Gson 2.11.0 · apksig 8.10.1 · compileSdk/targetSdk 35 · minSdk 28 · JDK 17. Release minificada con R8 y firma por variables de entorno/secretos.

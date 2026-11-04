@@ -3,6 +3,7 @@ package es.empresa.tabletsetup.core.ui
 import android.app.Application
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonParser
@@ -86,7 +87,7 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
     private var cancelRequested = false
     private var signerAnswer: CompletableDeferred<Boolean>? = null
     @Volatile
-    private var updateAllAfterRefresh = false
+    private var batchAfterRefresh = false
 
     val settings get() = engine.settings
 
@@ -111,6 +112,8 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
                 val updates = BatchPlanner.updatesAvailable(result.statuses)
                 engine.settings.lastCheckSummary = if (updates.isEmpty()) "Sin actualizaciones" else "${updates.size} actualización(es) disponible(s)"
             }
+            Log.i(TAG, "comprobacion terminada modo=$mode online=${result.online} apps=${result.statuses.size}")
+            result.statuses.forEach { Log.i(TAG, "estado ${it.app.packageName} ${it.state} | ${it.message}") }
             _state.update { old ->
                 val previous = old.rows.associateBy { it.packageName }
                 old.copy(
@@ -130,15 +133,18 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
         } catch (e: Exception) {
             _state.update { it.copy(checking = false, message = UiMessage("No se pudo completar la comprobación: ${e.message}", isError = true)) }
         }
-        if (updateAllAfterRefresh && mode == Mode.UPDATER) {
-            updateAllAfterRefresh = false
+        if (batchAfterRefresh) {
+            batchAfterRefresh = false
             installAll()
         }
     }
 
-    /** Botón «Actualizar» de la notificación: actualizar todo tras la siguiente comprobación. */
-    fun requestUpdateAllAfterRefresh() {
-        updateAllAfterRefresh = true
+    /**
+     * Lanza «Instalar/Actualizar todo» tras la siguiente comprobación (botón «Actualizar» de la
+     * notificación del Updater). Cada instalación sigue necesitando la confirmación de Android.
+     */
+    fun requestBatchAfterRefresh() {
+        batchAfterRefresh = true
         refresh(force = false)
     }
 
@@ -196,7 +202,10 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
             val summary = SequentialRunner.run(
                 ids = ids,
                 task = { id -> runOne(id) },
-                onResult = { id, outcome -> updateRow(id) { it.copy(phase = null, outcome = outcome) } },
+                onResult = { id, outcome ->
+                    Log.i(TAG, "resultado $id ok=${outcome.success} omitida=${outcome.skipped} | ${outcome.message}")
+                    updateRow(id) { it.copy(phase = null, outcome = outcome) }
+                },
                 isCancelled = { cancelRequested },
             )
             val text = buildString {
@@ -204,6 +213,7 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
                 if (summary.failed.isNotEmpty()) append(", ${summary.failed.size} con error (puedes reintentarlas)")
                 if (summary.skipped.isNotEmpty()) append(", ${summary.skipped.size} omitida(s)")
             }
+            Log.i(TAG, "lote terminado correctas=${summary.succeeded.size} fallos=${summary.failed.size} omitidas=${summary.skipped.size}")
             _state.update { it.copy(running = false, current = null, message = UiMessage(text, isError = summary.failed.isNotEmpty())) }
             if (mode == Mode.UPDATER && summary.failed.isEmpty()) Notifications.clearUpdates(getApplication())
             refreshNow(force = false)
@@ -264,6 +274,7 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
             } finally {
                 dir.deleteRecursively()
             }
+            Log.i(TAG, "importacion ok=${outcome.success} | ${outcome.message}")
             _state.update { it.copy(importing = false, message = UiMessage(outcome.message, isError = !outcome.success)) }
             refreshNow(force = false)
         }
@@ -343,6 +354,11 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
 
     fun onResume() {
         _state.update { it.copy(canInstall = engine.packages.canRequestInstalls(), online = DeviceInfo.isOnline(getApplication())) }
+    }
+
+    companion object {
+        /** Etiqueta de logcat para diagnóstico en campo y para las pruebas en emulador. */
+        const val TAG = "TabletSuite"
     }
 
     fun androidLabel(): String {
