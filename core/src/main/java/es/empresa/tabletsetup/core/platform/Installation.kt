@@ -375,13 +375,14 @@ class AppInstaller(
         }
         // APK oficial ya verificada en segundo plano por el Updater.
         val single = release.assets.singleOrNull()
+        val singleSha: String? = single?.sha256
         val prefetched = direct.prefetched(app.packageName)
-        if (release.origin == SourceKind.OFFICIAL_DIRECT && single?.sha256 != null && prefetched.exists() &&
-            Hashing.sha256Hex(prefetched) == single.sha256
+        if (release.origin == SourceKind.OFFICIAL_DIRECT && single != null && singleSha != null && prefetched.exists() &&
+            Hashing.sha256Hex(prefetched) == singleSha
         ) {
             val file = File(dir, single.fileName)
             prefetched.copyTo(file, overwrite = true)
-            return Obtained(listOf(file), mapOf(single.fileName to single.sha256), direct.cached(app.packageName)?.fingerprint)
+            return Obtained(listOf(file), mapOf(single.fileName to singleSha), direct.cached(app.packageName)?.fingerprint)
         }
         val total = release.assets.sumOf { it.sizeBytes ?: 0L }.takeIf { it > 0 }
         var completed = 0L
