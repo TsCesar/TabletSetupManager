@@ -84,7 +84,7 @@ jobs:
         run: |
           mkdir -p dist/logs
           set -o pipefail
-          ./gradlew --stacktrace :core:testDebugUnitTest :updater:testDebugUnitTest 2>&1 | tee dist/logs/03-pruebas.log
+          ./gradlew --stacktrace --continue :core:testDebugUnitTest :updater:testDebugUnitTest 2>&1 | tee dist/logs/03-pruebas.log
 
       - name: Lint (manifiestos, recursos y API)
         id: lint
