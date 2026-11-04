@@ -2,7 +2,7 @@
 #
 # Resultado de cada ejecución:
 #   - Artefacto «TabletSetupManager-APK» (APK, informes, capturas de emulador) en la pestaña Actions.
-#   - Rama «apk-builds» con la última compilación de main (mismo contenido).
+#   - Rama «apk-dist» con la última compilación de main (mismo contenido).
 #
 # Catálogo empresarial por defecto (opcional): variables del repositorio TSM_CATALOG_URL y
 # TSM_CATALOG_PUBLIC_KEY (Settings → Secrets and variables → Actions → Variables).
@@ -20,7 +20,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: apk-${{ github.ref }}
+  group: compilar-apk-v2-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -231,18 +231,18 @@ jobs:
           name: TabletSetupManager-APK
           path: pub/
 
-      - name: Publicar en la rama apk-builds
+      - name: Publicar en la rama apk-dist
         if: github.event_name != 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd pub
-          git init -q -b apk-builds
+          git init -q -b apk-dist
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -q -m "APK y verificaciones de ${GITHUB_SHA::7} (ejecución ${GITHUB_RUN_NUMBER})"
-          git push -q --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" apk-builds
+          git push -q --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" apk-dist
 
       - name: Resultado final
         run: |

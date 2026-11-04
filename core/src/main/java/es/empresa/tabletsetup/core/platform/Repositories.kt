@@ -146,13 +146,14 @@ class FdroidRepository(context: Context, private val downloader: Downloader) {
                     conditionalLastModified = if (jar.exists()) prefs.getString("last_modified", null) else null,
                 )
                 if (!outcome.notModified) {
-                    // Se verifica antes de sustituir la copia buena anterior.
-                    FdroidIndexReader.read(tmp, packages)
+                    // Se verifica (firma + certificado fijado) antes de sustituir la copia buena anterior.
+                    val verified = FdroidIndexReader.read(tmp, packages)
                     jar.delete()
                     if (!tmp.renameTo(jar)) {
                         tmp.copyTo(jar, overwrite = true); tmp.delete()
                     }
-                    parsed = null
+                    parsed = verified
+                    parsedFor = jar.lastModified() to packages
                 }
                 prefs.edit().putLong("downloaded_at", now)
                     .putString("etag", outcome.etag).putString("last_modified", outcome.lastModified).apply()

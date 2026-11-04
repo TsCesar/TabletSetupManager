@@ -19,7 +19,7 @@ Android 9 (API 28) o superior · Kotlin · Jetpack Compose + Material 3 (modo cl
 Cada compilación de `main` en GitHub Actions publica:
 
 * **Artefacto** `TabletSetupManager-APK` en la pestaña *Actions* del repositorio.
-* **Rama `apk-builds`** con la última compilación: `TabletSetupInstaller-debug.apk`, `TabletUpdater-debug.apk`, `SHA256SUMS.txt`, `VERIFICACION_APK.md` e informes de pruebas y lint.
+* **Rama `apk-dist`** con la última compilación: `TabletSetupInstaller-debug.apk`, `TabletUpdater-debug.apk`, `SHA256SUMS.txt`, `VERIFICACION_APK.md` e informes de pruebas y lint.
 
 Las APK **debug** están firmadas con el keystore de pruebas del repositorio (`keystore/debug.keystore`, público, solo para tablets de prueba). Para producción se generan `TabletSetupInstaller.apk` y `TabletUpdater.apk` firmadas con vuestra clave release (sección 7).
 
