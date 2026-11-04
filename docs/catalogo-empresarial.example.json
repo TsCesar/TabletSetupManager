@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 2,
+  "catalogId": "empresa-tablets",
+  "sequence": 1,
+  "generatedAt": "2026-11-04T12:00:00Z",
+  "apps": [
+    {
+      "packageName": "com.waze",
+      "type": "versioned",
+      "versionCode": 1,
+      "versionName": "SUSTITUIR",
+      "minSdk": 29,
+      "abis": ["arm64-v8a", "armeabi-v7a"],
+      "signingCertSha256": ["SUSTITUIR_POR_SHA256_DEL_CERTIFICADO_64_HEX"],
+      "override": false,
+      "assets": [
+        {
+          "url": "https://SERVIDOR-AUTORIZADO.example/waze/base.apk",
+          "sha256": "SUSTITUIR_POR_SHA256_DEL_ARCHIVO_64_HEX",
+          "filename": "base.apk",
+          "size": 1
+        }
+      ]
+    },
+    {
+      "packageName": "com.whatsapp",
+      "type": "direct",
+      "url": "https://URL-OFICIAL-VERIFICADA.example/WhatsApp.apk",
+      "signingCertSha256": ["SUSTITUIR_POR_SHA256_DEL_CERTIFICADO_64_HEX"]
+    },
+    {
+      "packageName": "es.empresa.tabletsetup.updater",
+      "type": "versioned",
+      "versionCode": 4,
+      "versionName": "0.4.0",
+      "minSdk": 28,
+      "signingCertSha256": ["SUSTITUIR_POR_SHA256_DE_VUESTRA_CLAVE_RELEASE"],
+      "assets": [
+        {
+          "url": "https://SERVIDOR-AUTORIZADO.example/tablet/TabletUpdater.apk",
+          "sha256": "SUSTITUIR_POR_SHA256_DEL_ARCHIVO_64_HEX",
+          "filename": "TabletUpdater.apk"
+        }
+      ]
+    }
+  ],
+  "signerPins": {
+    "com.teamviewer.quicksupport.market": ["SUSTITUIR_POR_SHA256_DEL_CERTIFICADO_DE_TEAMVIEWER"]
+  }
+}

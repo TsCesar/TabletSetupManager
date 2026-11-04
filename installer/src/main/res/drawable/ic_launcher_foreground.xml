@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Primer plano del icono adaptable: tablet con flecha de instalación (diseño original). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M38,30h32a4,4 0,0 1,4 4v40a4,4 0,0 1,-4 4H38a4,4 0,0 1,-4 -4V34a4,4 0,0 1,4 -4zM38,35v34h32V35H38z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M51,40h6v13h7L54,64 44,53h7z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M49,72h10v2H49z" />
+</vector>

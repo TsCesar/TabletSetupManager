@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Primer plano del icono adaptable: flechas circulares de actualización (diseño original). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,32c-9.4,0 -17.4,6.4 -19.6,15.2l5.8,1.4c1.6,-6.2 7.2,-10.6 13.8,-10.6c4.2,0 7.9,1.8 10.5,4.6L58,49h16V33l-5.6,5.6C64.6,34.6 59.6,32 54,32z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,76c9.4,0 17.4,-6.4 19.6,-15.2l-5.8,-1.4c-1.6,6.2 -7.2,10.6 -13.8,10.6c-4.2,0 -7.9,-1.8 -10.5,-4.6L50,59H34v16l5.6,-5.6C43.4,73.4 48.4,76 54,76z" />
+</vector>
