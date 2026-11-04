@@ -25,6 +25,7 @@ import es.empresa.tabletsetup.core.model.ValidationException
 import es.empresa.tabletsetup.core.net.DownloadException
 import es.empresa.tabletsetup.core.net.Downloader
 import es.empresa.tabletsetup.core.net.FailureKind
+import es.empresa.tabletsetup.core.net.ResourceFingerprint
 import es.empresa.tabletsetup.core.policy.ExcludedApps
 import es.empresa.tabletsetup.core.util.Hashing
 import kotlinx.coroutines.CancellationException
@@ -397,7 +398,7 @@ class AppInstaller(
                 isCancelled = isCancelled,
             )
             completed += outcome.bytes
-            fingerprint = listOfNotNull(outcome.bytes.toString(), outcome.etag, outcome.lastModified).joinToString("|")
+            fingerprint = ResourceFingerprint(outcome.bytes, outcome.etag, outcome.lastModified).encode()
             file
         }
         return Obtained(files, release.assets.mapNotNull { a -> a.sha256?.let { a.fileName to it } }.toMap(), fingerprint)

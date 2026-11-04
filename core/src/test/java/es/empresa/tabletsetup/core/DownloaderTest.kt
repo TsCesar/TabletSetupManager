@@ -189,7 +189,24 @@ class DownloaderTest {
         assertEquals(etag, probe.etag)
         val fallback = downloader.probe("$base/nohead.apk")
         assertEquals(payload.size.toLong(), fallback.contentLength)
-        assertEquals(probe.fingerprint, fallback.fingerprint)
+        assertTrue(probe.fingerprint.matches(fallback.fingerprint))
+    }
+
+    @Test
+    fun `huella de recurso para URL oficiales sin version`() {
+        val a = es.empresa.tabletsetup.core.net.ResourceFingerprint(100, "\"x\"", null)
+        val decoded = es.empresa.tabletsetup.core.net.ResourceFingerprint.decode(a.encode())
+        assertEquals(a, decoded)
+        assertTrue(a.matches(decoded))
+        assertTrue(a.matches(a.copy(length = null)))
+        assertFalse(a.matches(a.copy(etag = "\"y\"")))
+        assertFalse(a.matches(a.copy(length = 101)))
+        // Solo el tamaño no basta para afirmar que es el mismo archivo.
+        val sizeOnly = es.empresa.tabletsetup.core.net.ResourceFingerprint(100, null, null)
+        assertFalse(sizeOnly.matches(sizeOnly))
+        val byDate = es.empresa.tabletsetup.core.net.ResourceFingerprint(null, null, "Wed, 04 Nov 2026 10:00:00 GMT")
+        assertTrue(byDate.matches(byDate.copy(length = 5)))
+        assertEquals(null, es.empresa.tabletsetup.core.net.ResourceFingerprint.decode("1|2|3"))
     }
 
     @Test

@@ -26,6 +26,7 @@ import es.empresa.tabletsetup.core.model.ValidationException
 import es.empresa.tabletsetup.core.net.DownloadException
 import es.empresa.tabletsetup.core.net.Downloader
 import es.empresa.tabletsetup.core.net.ProbeResult
+import es.empresa.tabletsetup.core.net.ResourceFingerprint
 import es.empresa.tabletsetup.core.policy.CompatibilityPolicy
 import java.io.File
 
@@ -253,7 +254,7 @@ class DirectSourceRepository(context: Context, private val downloader: Downloade
     /** Construye la versión publicada: conocida si las cabeceras no han cambiado desde la última descarga. */
     fun release(app: ManagedApp, url: String, publisher: String, probe: ProbeResult?, pins: Set<String>): AppRelease {
         val cache = cached(app.packageName)
-        val known = cache != null && probe?.fingerprint != null && probe.fingerprint == cache.fingerprint
+        val known = cache != null && probe != null && probe.fingerprint.matches(ResourceFingerprint.decode(cache.fingerprint))
         return AppRelease(
             packageName = app.packageName,
             versionCode = if (known) cache!!.versionCode else null,

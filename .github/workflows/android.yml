@@ -56,7 +56,10 @@ jobs:
       - name: Compilar APK debug
         id: assemble
         continue-on-error: true
-        run: ./gradlew --stacktrace $CATALOG_ARGS collectDebugApks
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace $CATALOG_ARGS collectDebugApks 2>&1 | tee dist/logs/01-compilar-debug.log
 
       - name: Verificar APK (aapt2 + apksigner + contenido)
         id: verify
@@ -64,8 +67,9 @@ jobs:
         continue-on-error: true
         run: |
           export PATH="$ANDROID_HOME/build-tools/35.0.0:$PATH"
+          set -o pipefail
           python3 tools/verify_apks.py --installer dist/TabletSetupInstaller-debug.apk \
-            --updater dist/TabletUpdater-debug.apk --report dist/VERIFICACION_APK.md
+            --updater dist/TabletUpdater-debug.apk --report dist/VERIFICACION_APK.md 2>&1 | tee dist/logs/02-verificacion.log
           aapt2 dump badging dist/TabletSetupInstaller-debug.apk > dist/badging-installer.txt
           aapt2 dump badging dist/TabletUpdater-debug.apk > dist/badging-updater.txt
           apksigner verify --print-certs -v dist/TabletSetupInstaller-debug.apk > dist/firma-installer.txt
@@ -74,18 +78,27 @@ jobs:
       - name: Pruebas unitarias (núcleo JVM + Robolectric)
         id: tests
         continue-on-error: true
-        run: ./gradlew --stacktrace :core:testDebugUnitTest :updater:testDebugUnitTest
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace :core:testDebugUnitTest :updater:testDebugUnitTest 2>&1 | tee dist/logs/03-pruebas.log
 
       - name: Lint (manifiestos, recursos y API)
         id: lint
         continue-on-error: true
-        run: ./gradlew --stacktrace lintDebug
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace lintDebug 2>&1 | tee dist/logs/04-lint.log
 
       - name: Compilación release minificada (R8) sin firmar
         id: release_check
         if: env.HAS_RELEASE_KEY != 'true'
         continue-on-error: true
-        run: ./gradlew --stacktrace $CATALOG_ARGS assembleRelease
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace $CATALOG_ARGS assembleRelease 2>&1 | tee dist/logs/05-release-r8.log
 
       - name: Compilación release firmada
         id: release_signed

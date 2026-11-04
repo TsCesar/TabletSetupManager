@@ -153,7 +153,10 @@ def main():
             bad = z.testzip()
         r.check(f"{short}: integridad ZIP (CRC)", bad is None, bad or "todas las entradas correctas")
         r.check(f"{short}: contiene AndroidManifest.xml y classes.dex", {"AndroidManifest.xml", "classes.dex"} <= names)
-        r.check(f"{short}: sin código nativo (válida para cualquier arquitectura)", not any(n.startswith("lib/") for n in names))
+        abis = sorted({n.split("/")[1] for n in names if n.startswith("lib/") and n.count("/") >= 2})
+        universal = not abis or {"arm64-v8a", "armeabi-v7a", "x86", "x86_64"} <= set(abis)
+        r.check(f"{short}: válida para cualquier arquitectura", universal,
+                "sin código nativo" if not abis else "bibliotecas de Compose para " + ", ".join(abis))
         digest = hashlib.sha256(apk.read_bytes()).hexdigest()
         r.check(f"{short}: SHA-256", True, digest)
         if aapt2:

@@ -39,9 +39,40 @@ data class ProbeResult(
     val etag: String?,
     val lastModified: String?,
 ) {
-    /** Huella para saber si el archivo publicado ha cambiado; null si el servidor no da datos. */
-    val fingerprint: String?
-        get() = listOfNotNull(contentLength?.toString(), etag, lastModified).takeIf { it.isNotEmpty() }?.joinToString("|")
+    val fingerprint: ResourceFingerprint get() = ResourceFingerprint(contentLength, etag, lastModified)
+}
+
+/**
+ * Identidad de un archivo publicado en una URL sin versión. Solo se considera «el mismo archivo»
+ * si coincide el ETag o la fecha Last-Modified (el tamaño por sí solo no basta).
+ */
+data class ResourceFingerprint(val length: Long?, val etag: String?, val lastModified: String?) {
+    /** Las cabeceras HTTP no pueden contener saltos de línea: se usan como separador. */
+    fun encode(): String = "len=${length ?: ""}\netag=${etag.orEmpty()}\nlm=${lastModified.orEmpty()}"
+
+    fun matches(other: ResourceFingerprint?): Boolean {
+        if (other == null) return false
+        val sizeOk = length == null || other.length == null || length == other.length
+        val e1 = etag?.removePrefix("W/")?.takeIf { it.isNotBlank() }
+        val e2 = other.etag?.removePrefix("W/")?.takeIf { it.isNotBlank() }
+        if (e1 != null && e2 != null) return e1 == e2 && sizeOk
+        val m1 = lastModified?.takeIf { it.isNotBlank() }
+        val m2 = other.lastModified?.takeIf { it.isNotBlank() }
+        if (m1 != null && m2 != null) return m1 == m2 && sizeOk
+        return false
+    }
+
+    companion object {
+        fun decode(text: String?): ResourceFingerprint? {
+            if (text.isNullOrBlank() || !text.startsWith("len=")) return null
+            val parts = text.split("\n").associate { it.substringBefore('=') to it.substringAfter('=', "") }
+            return ResourceFingerprint(
+                length = parts["len"]?.toLongOrNull(),
+                etag = parts["etag"]?.takeIf { it.isNotEmpty() },
+                lastModified = parts["lm"]?.takeIf { it.isNotEmpty() },
+            )
+        }
+    }
 }
 
 data class DownloadOutcome(
