@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.updater.UpdateSchedulerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-04T16:03:43.769Z" hostname="runnervm7aw5e" time="1.927">
+  <properties/>
+  <testcase name="cambiar la frecuencia y la red actualiza el mismo trabajo" classname="es.empresa.tabletsetup.updater.UpdateSchedulerTest" time="1.773"/>
+  <testcase name="abrir de nuevo la app no duplica el trabajo" classname="es.empresa.tabletsetup.updater.UpdateSchedulerTest" time="0.059"/>
+  <testcase name="registra la comprobacion periodica cada 24 horas por defecto" classname="es.empresa.tabletsetup.updater.UpdateSchedulerTest" time="0.093"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

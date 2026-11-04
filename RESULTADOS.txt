@@ -1,0 +1,10 @@
+commit=4d87d8e6485df33eba10147775064c14d9d02f07
+run=41863544064
+assemble=success
+verify=success
+tests=failure
+lint=success
+release_unsigned=success
+release_signed=skipped
+build_job=failure
+emulator_jobs=failure

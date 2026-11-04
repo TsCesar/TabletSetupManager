@@ -1,0 +1,106 @@
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:50: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putString(KEY_CATALOG_URL, value.trim()).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:54: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putString(KEY_CATALOG_KEY, value.trim()).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:58: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putLong("catalog_sequence", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:62: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putBoolean("notifications_enabled", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:67: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putInt("check_interval_hours", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:71: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putBoolean("wifi_only", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:75: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putLong("last_check_at", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:79: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putString("last_check_summary", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:83: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putString("last_notified", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:87: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putLong("updater_configured_at", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:91: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putLong("remote_test_at", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:95: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putBoolean("remote_test_ok", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt:99: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        set(value) = prefs.edit().putBoolean("qs_id_confirmed", value).apply()
+                     ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/Repositories.kt:157: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+                prefs.edit().putLong("downloaded_at", now)
+                ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/Repositories.kt:248: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        prefs.edit().putString(packageName, o.toString()).apply()
+        ~~~~~~~~~~~~
+/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/ui/SuiteScreen.kt:64: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+        context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${context.packageName}")))
+                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseKtx":
+   The Android KTX libraries decorates the Android platform SDK as well as
+   various libraries with more convenient extension functions available from
+   Kotlin, allowing you to use default parameters, named parameters, and
+   more.
+
+   Available options:
+
+   **remove-defaults** (default is true):
+   Whether to skip arguments that match the defaults provided by the extension.
+
+   Extensions often provide default values for some of the parameters. For example:
+   ```kotlin
+   fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> { return Files.readAllLines(this, charset) }
+   ```
+   This lint check will by default automatically omit parameters that match the default, so if your code was calling
+
+   ```kotlin
+   Files.readAllLines(file, Charset.UTF_8)
+   ```
+   lint would replace this with
+   ```kotlin
+   file.readLines()
+   ```
+   rather than
+
+   ```kotlin
+   file.readLines(Charset.UTF_8
+   ```
+   You can turn this behavior off using this option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="remove-defaults" value="true" />
+       </issue>
+   </lint>
+   ```
+
+   **require-present** (default is true):
+   Whether to only offer extensions already available.
+
+   This option lets you only have lint suggest extension replacements if those extensions are already available on the class path (in other words, you're already depending on the library containing the extension method.)
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="require-present" value="true" />
+       </issue>
+   </lint>
+   ```
+
+0 errors, 16 warnings

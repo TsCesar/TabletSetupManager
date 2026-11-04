@@ -1,0 +1,134 @@
+[
+  {
+    "prueba": "Emulador arrancado",
+    "ok": true,
+    "detalle": "API 34 · ABI x86_64",
+    "critica": true
+  },
+  {
+    "prueba": "Instalar Tablet Setup Installer",
+    "ok": true,
+    "detalle": "Success",
+    "critica": true
+  },
+  {
+    "prueba": "Installer: comprobación de versiones completada",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Installer: estados de las 9 aplicaciones",
+    "ok": true,
+    "detalle": "app=FUENTE_PENDIENTE, market=NO_INSTALADA, universal=NO_INSTALADA, chrome=FUENTE_PENDIENTE, maps=FUENTE_PENDIENTE, waze=FUENTE_PENDIENTE, whatsapp=FUENTE_PENDIENTE, gm=FUENTE_PENDIENTE, updater=NO_INSTALADA",
+    "critica": true
+  },
+  {
+    "prueba": "FuelSoft no aparece",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Android API 34: Waze no se omite (queda sujeto a su versión/fuente)",
+    "ok": true,
+    "detalle": "FUENTE_PENDIENTE · Sin fuente pública verificada: añádela al catálogo empresarial o importa la APK",
+    "critica": true
+  },
+  {
+    "prueba": "MuPDF disponible desde F-Droid (índice firmado real)",
+    "ok": false,
+    "detalle": "FUENTE_PENDIENTE · Ninguna versión publicada en F-Droid es compatible con esta tablet",
+    "critica": false
+  },
+  {
+    "prueba": "QuickSupport disponible (descarga oficial TeamViewer)",
+    "ok": true,
+    "detalle": "NO_INSTALADA · Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)",
+    "critica": false
+  },
+  {
+    "prueba": "Tablet Updater disponible (embebido)",
+    "ok": true,
+    "detalle": "NO_INSTALADA · Disponible 0.3.0 (3) · Incluida en el Installer",
+    "critica": true
+  },
+  {
+    "prueba": "Lote «Instalar todas las compatibles» terminado",
+    "ok": true,
+    "detalle": "2 confirmación(es) de Android pulsadas",
+    "critica": true
+  },
+  {
+    "prueba": "Resultado del lote: com.teamviewer.quicksupport.market",
+    "ok": true,
+    "detalle": "Instalada correctamente · 15.83.285 (1583285)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: es.empresa.tabletsetup.updater",
+    "ok": true,
+    "detalle": "Instalada correctamente · 0.3.0 (3)",
+    "critica": true
+  },
+  {
+    "prueba": "Tablet Updater instalado por el Installer (sesión PackageInstaller)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "MuPDF instalado",
+    "ok": false,
+    "detalle": "",
+    "critica": false
+  },
+  {
+    "prueba": "QuickSupport instalado",
+    "ok": true,
+    "detalle": "",
+    "critica": false
+  },
+  {
+    "prueba": "Updater: comprobación manual completada",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: no ofrece instalar apps no instaladas",
+    "ok": true,
+    "detalle": "universal",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: tarea periódica registrada en JobScheduler (WorkManager)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Sin Internet: se detecta y se informa sin bloquear la app",
+    "ok": false,
+    "detalle": "QuickSupport: ? · ",
+    "critica": true
+  },
+  {
+    "prueba": "Updater funciona con el Installer desinstalado",
+    "ok": false,
+    "detalle": "Success",
+    "critica": true
+  },
+  {
+    "prueba": "Tarea periódica sigue registrada sin el Installer",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Sin cierres inesperados (logcat crash)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  }
+]

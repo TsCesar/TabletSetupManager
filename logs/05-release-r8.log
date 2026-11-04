@@ -1,0 +1,165 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :updater:preBuild UP-TO-DATE
+> Task :core:preBuild UP-TO-DATE
+> Task :installer:preBuild UP-TO-DATE
+> Task :updater:preReleaseBuild UP-TO-DATE
+> Task :core:preReleaseBuild UP-TO-DATE
+> Task :installer:preReleaseBuild UP-TO-DATE
+> Task :installer:mergeReleaseJniLibFolders
+> Task :core:mergeReleaseJniLibFolders
+> Task :updater:mergeReleaseJniLibFolders
+> Task :core:mergeReleaseNativeLibs NO-SOURCE
+> Task :core:stripReleaseDebugSymbols NO-SOURCE
+> Task :core:copyReleaseJniLibsProjectAndLocalJars
+> Task :installer:buildKotlinToolingMetadata
+> Task :updater:buildKotlinToolingMetadata
+> Task :core:generateReleaseResValues FROM-CACHE
+> Task :core:extractDeepLinksForAarRelease FROM-CACHE
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:generateReleaseBuildConfig FROM-CACHE
+> Task :core:generateReleaseResources FROM-CACHE
+> Task :core:packageReleaseResources FROM-CACHE
+> Task :core:parseReleaseLocalResources FROM-CACHE
+> Task :core:generateReleaseRFile FROM-CACHE
+> Task :installer:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :installer:generateReleaseResValues FROM-CACHE
+> Task :updater:checkReleaseDuplicateClasses
+> Task :updater:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :updater:generateReleaseResValues FROM-CACHE
+> Task :installer:checkReleaseDuplicateClasses
+> Task :installer:mapReleaseSourceSetPaths
+> Task :updater:mapReleaseSourceSetPaths
+> Task :installer:generateReleaseResources FROM-CACHE
+> Task :updater:generateReleaseResources FROM-CACHE
+> Task :updater:mergeReleaseResources FROM-CACHE
+> Task :installer:mergeReleaseResources FROM-CACHE
+> Task :updater:packageReleaseResources FROM-CACHE
+> Task :installer:packageReleaseResources FROM-CACHE
+> Task :updater:parseReleaseLocalResources FROM-CACHE
+> Task :installer:parseReleaseLocalResources FROM-CACHE
+> Task :installer:createReleaseCompatibleScreenManifests
+> Task :updater:createReleaseCompatibleScreenManifests
+> Task :installer:extractDeepLinksRelease FROM-CACHE
+> Task :updater:extractDeepLinksRelease FROM-CACHE
+> Task :installer:javaPreCompileRelease FROM-CACHE
+> Task :updater:javaPreCompileRelease FROM-CACHE
+> Task :installer:extractProguardFiles UP-TO-DATE
+> Task :updater:extractProguardFiles UP-TO-DATE
+> Task :installer:mergeReleaseStartupProfile
+> Task :updater:mergeReleaseStartupProfile
+> Task :core:mergeReleaseShaders
+> Task :core:compileReleaseShaders NO-SOURCE
+> Task :core:generateReleaseAssets UP-TO-DATE
+> Task :installer:mergeReleaseShaders
+> Task :updater:mergeReleaseShaders
+> Task :installer:compileReleaseShaders NO-SOURCE
+> Task :installer:generateReleaseAssets UP-TO-DATE
+> Task :updater:compileReleaseShaders NO-SOURCE
+> Task :updater:generateReleaseAssets UP-TO-DATE
+> Task :core:mergeReleaseAssets
+> Task :core:javaPreCompileRelease FROM-CACHE
+> Task :core:prepareLintJarForPublish UP-TO-DATE
+> Task :core:prepareReleaseArtProfile
+> Task :core:processReleaseManifest FROM-CACHE
+> Task :core:writeReleaseAarMetadata
+> Task :core:mapReleaseSourceSetPaths
+> Task :updater:extractReleaseVersionControlInfo
+> Task :installer:extractReleaseVersionControlInfo
+> Task :core:mergeReleaseResources FROM-CACHE
+> Task :updater:checkReleaseAarMetadata
+> Task :installer:checkReleaseAarMetadata
+> Task :core:verifyReleaseResources FROM-CACHE
+> Task :core:copyReleaseJniLibsProjectOnly
+> Task :core:extractDeepLinksRelease FROM-CACHE
+> Task :updater:mergeReleaseArtProfile
+> Task :installer:mergeReleaseArtProfile
+> Task :updater:mergeReleaseNativeLibs
+> Task :installer:mergeReleaseNativeLibs
+> Task :installer:processReleaseMainManifest FROM-CACHE
+
+> Task :updater:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :installer:processReleaseManifest FROM-CACHE
+
+> Task :installer:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :updater:processReleaseMainManifest FROM-CACHE
+> Task :installer:processReleaseManifestForPackage FROM-CACHE
+> Task :updater:extractReleaseNativeSymbolTables FROM-CACHE
+> Task :installer:extractReleaseNativeSymbolTables FROM-CACHE
+> Task :updater:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :installer:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :updater:processReleaseManifest FROM-CACHE
+> Task :updater:processReleaseManifestForPackage FROM-CACHE
+> Task :installer:processReleaseResources FROM-CACHE
+> Task :updater:processReleaseResources FROM-CACHE
+> Task :updater:mergeReleaseAssets
+> Task :updater:compressReleaseAssets FROM-CACHE
+> Task :updater:collectReleaseDependencies
+> Task :installer:collectReleaseDependencies
+> Task :installer:sdkReleaseDependencyData
+> Task :installer:writeReleaseAppMetadata
+> Task :updater:sdkReleaseDependencyData
+> Task :updater:writeReleaseAppMetadata
+> Task :updater:writeReleaseSigningConfigVersions
+> Task :installer:writeReleaseSigningConfigVersions
+> Task :core:compileReleaseKotlin
+> Task :core:extractReleaseAnnotations
+> Task :core:compileReleaseJavaWithJavac
+> Task :core:mergeReleaseGeneratedProguardFiles
+> Task :core:mergeReleaseConsumerProguardFiles
+> Task :core:processReleaseJavaRes
+> Task :core:exportReleaseConsumerProguardFiles
+> Task :core:bundleLibRuntimeToJarRelease
+> Task :core:bundleLibCompileToJarRelease
+> Task :core:mergeReleaseJavaResource
+> Task :core:syncReleaseLibJars
+> Task :core:bundleReleaseAar
+> Task :core:assembleRelease
+> Task :updater:compileReleaseKotlin
+> Task :updater:compileReleaseJavaWithJavac NO-SOURCE
+> Task :updater:mergeReleaseGeneratedProguardFiles
+> Task :updater:processReleaseJavaRes
+> Task :installer:compileReleaseKotlin
+> Task :installer:compileReleaseJavaWithJavac NO-SOURCE
+> Task :installer:mergeReleaseGeneratedProguardFiles
+> Task :installer:processReleaseJavaRes
+> Task :updater:mergeReleaseJavaResource
+> Task :installer:mergeReleaseJavaResource
+> Task :updater:expandReleaseArtProfileWildcards
+> Task :installer:expandReleaseArtProfileWildcards
+> Task :installer:minifyReleaseWithR8
+> Task :installer:convertShrunkResourcesToBinaryRelease FROM-CACHE
+> Task :installer:optimizeReleaseResources FROM-CACHE
+> Task :installer:compileReleaseArtProfile
+> Task :updater:minifyReleaseWithR8
+> Task :updater:convertShrunkResourcesToBinaryRelease FROM-CACHE
+> Task :updater:optimizeReleaseResources FROM-CACHE
+> Task :updater:compileReleaseArtProfile
+> Task :updater:packageRelease
+> Task :updater:createReleaseApkListingFileRedirect
+> Task :updater:assembleRelease
+
+> Task :installer:embedUpdaterApkRelease
+Aviso: se embebe una APK de Updater SIN FIRMA (updater-release-unsigned.apk); no será instalable.
+
+> Task :installer:mergeReleaseAssets
+> Task :installer:compressReleaseAssets
+> Task :installer:packageRelease
+> Task :installer:createReleaseApkListingFileRedirect
+> Task :installer:assembleRelease
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/release_check-1793808280796.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TabletSetupManager/TabletSetupManager/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 2m 14s
+118 actionable tasks: 74 executed, 41 from cache, 3 up-to-date

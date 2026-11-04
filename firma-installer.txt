@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=TabletSetupManager DEBUG - SOLO PRUEBAS, O=Pruebas internas, C=ES
+Signer #1 certificate SHA-256 digest: c4c88eb8554215e30b766ae81d3a53d600c94fe492433dbf4e060cdb2c7fe911
+Signer #1 certificate SHA-1 digest: f33d1326045cf8fda7902d7832ce31a37fba2da9
+Signer #1 certificate MD5 digest: 38587d535aaa96ce73b7bafcc0a93a1c
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 08ad95868605bf0bc48da1146d871393fbd6a3357b72a8ff2ed14abf427ea6cd
+Signer #1 public key SHA-1 digest: 915a86765339a046701ed75b9338e77d104587ce
+Signer #1 public key MD5 digest: 9ad0ccb918847c0419e84431a90a5cc3

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.10.1">
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putString(KEY_CATALOG_URL, value.trim()).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="50"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putString(KEY_CATALOG_KEY, value.trim()).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="54"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putLong(&quot;catalog_sequence&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="58"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putBoolean(&quot;notifications_enabled&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="62"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putInt(&quot;check_interval_hours&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="67"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putBoolean(&quot;wifi_only&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="71"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putLong(&quot;last_check_at&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="75"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putString(&quot;last_check_summary&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="79"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putString(&quot;last_notified&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="83"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putLong(&quot;updater_configured_at&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="87"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putLong(&quot;remote_test_at&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="91"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putBoolean(&quot;remote_test_ok&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="95"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        set(value) = prefs.edit().putBoolean(&quot;qs_id_confirmed&quot;, value).apply()"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/AndroidPlatform.kt"
+            line="99"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="                prefs.edit().putLong(&quot;downloaded_at&quot;, now)"
+        errorLine2="                ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/Repositories.kt"
+            line="157"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `SharedPreferences.edit` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        prefs.edit().putString(packageName, o.toString()).apply()"
+        errorLine2="        ~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/platform/Repositories.kt"
+            line="248"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UseKtx"
+        severity="Warning"
+        message="Use the KTX extension function `String.toUri` instead?"
+        category="Productivity"
+        priority="6"
+        summary="Use KTX extension function"
+        explanation="The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+        errorLine1="        context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse(&quot;package:${context.packageName}&quot;)))"
+        errorLine2="                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/home/runner/work/TabletSetupManager/TabletSetupManager/core/src/main/java/es/empresa/tabletsetup/core/ui/SuiteScreen.kt"
+            line="64"
+            column="82"/>
+    </issue>
+
+</issues>

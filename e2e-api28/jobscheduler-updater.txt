@@ -1,0 +1,6 @@
+  JOB #u0a70/0: d30b27e es.empresa.tabletsetup.updater/androidx.work.impl.background.systemjob.SystemJobService
+    u0a70 tag=*job*/es.empresa.tabletsetup.updater/androidx.work.impl.background.systemjob.SystemJobService
+    Source: uid=u0a70 user=0 pkg=es.empresa.tabletsetup.updater
+      Service: es.empresa.tabletsetup.updater/androidx.work.impl.background.systemjob.SystemJobService
+  #u0a70/0 from u0a70 active: es.empresa.tabletsetup.updater [RUN_ANY_IN_BACKGROUND allowed] RUNNABLE
+  #u0a70/0 from u0a70: es.empresa.tabletsetup.updater RUNNABLE

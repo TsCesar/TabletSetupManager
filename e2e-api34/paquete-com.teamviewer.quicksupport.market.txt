@@ -1,0 +1,2 @@
+    versionCode=1583285 minSdk=24 targetSdk=37
+    installerPackageName=es.empresa.tabletsetup.installer
