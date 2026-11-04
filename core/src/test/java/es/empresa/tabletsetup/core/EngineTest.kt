@@ -97,6 +97,11 @@ class EngineTest {
         assertEquals(listOf(AppCatalog.MUPDF, AppCatalog.QUICKSUPPORT, AppCatalog.UPDATER), BatchPlanner.plan(statuses, Mode.INSTALLER))
         // Selección individual: el add-on solo entra si se elige.
         assertEquals(listOf(AppCatalog.QS_UNIVERSAL_ADDON), BatchPlanner.plan(statuses, Mode.INSTALLER, setOf(AppCatalog.QS_UNIVERSAL_ADDON)))
+        // Instalada con fuente sin versión anunciada: no entra en «Instalar todas», sí si se elige.
+        val qsInstalled = StatusCalculator.compute(app(AppCatalog.QUICKSUPPORT), android12, installed(3), Resolution.Available(release(AppCatalog.QUICKSUPPORT, null)), Mode.INSTALLER)
+        assertEquals(AppState.POR_VERIFICAR, qsInstalled.state)
+        assertTrue(BatchPlanner.plan(listOf(qsInstalled), Mode.INSTALLER).isEmpty())
+        assertEquals(listOf(AppCatalog.QUICKSUPPORT), BatchPlanner.plan(listOf(qsInstalled), Mode.INSTALLER, setOf(AppCatalog.QUICKSUPPORT)))
     }
 
     @Test

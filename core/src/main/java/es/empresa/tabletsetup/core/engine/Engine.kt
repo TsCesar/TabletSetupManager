@@ -99,8 +99,9 @@ object BatchPlanner {
     fun plan(statuses: List<AppStatus>, mode: Mode, selected: Set<String>? = null): List<String> {
         val eligible = statuses.filter { status ->
             when (mode) {
+                // «Por verificar» (instalada, fuente sin versión anunciada) solo si se elige expresamente.
                 Mode.INSTALLER -> status.state == AppState.NO_INSTALADA || status.state == AppState.ACTUALIZACION ||
-                    status.state == AppState.POR_VERIFICAR
+                    (status.state == AppState.POR_VERIFICAR && selected != null)
                 Mode.UPDATER -> status.installed != null &&
                     (status.state == AppState.ACTUALIZACION || status.state == AppState.POR_VERIFICAR)
             }

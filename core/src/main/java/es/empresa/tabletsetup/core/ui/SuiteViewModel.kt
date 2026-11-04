@@ -106,7 +106,9 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
             it.copy(checking = true, canInstall = engine.packages.canRequestInstalls(), online = DeviceInfo.isOnline(getApplication()))
         }
         try {
-            val result = engine.check(mode, forceRefresh = force, verifyDirect = mode == Mode.UPDATER)
+            // Las descargas de verificación (fuentes oficiales sin versión) respetan «solo Wi-Fi».
+            val verifyDirect = mode == Mode.UPDATER && (!engine.settings.wifiOnly || DeviceInfo.isUnmetered(getApplication()))
+            val result = engine.check(mode, forceRefresh = force, verifyDirect = verifyDirect)
             if (mode == Mode.UPDATER) {
                 engine.settings.lastCheckAt = result.checkedAt
                 val updates = BatchPlanner.updatesAvailable(result.statuses)
@@ -120,7 +122,8 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
                     device = result.device,
                     online = result.online,
                     checking = false,
-                    rows = result.statuses.map { status ->
+                    // En el Updater se muestran primero las aplicaciones instaladas (las únicas que actualiza).
+                    rows = (if (mode == Mode.UPDATER) result.statuses.sortedBy { if (it.installed != null) 0 else 1 } else result.statuses).map { status ->
                         AppRowState(status, phase = previous[status.app.packageName]?.phase?.takeIf { old.running }, outcome = previous[status.app.packageName]?.outcome)
                     },
                     selected = old.selected.filter { pkg -> result.statuses.any { it.app.packageName == pkg } }.toSet(),
