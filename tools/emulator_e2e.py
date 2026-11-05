@@ -124,6 +124,28 @@ def set_network(enabled, api):
         sh("svc data disable")
 
 
+def internet_validated():
+    """(¿la red por defecto tiene Internet validado?, id de la red)."""
+    text = sh("dumpsys connectivity", timeout=60)
+    m = re.search(r"Active default network: (\d+)", text)
+    if not m:
+        return False, "none"
+    nid = m.group(1)
+    return any(f"network{{{nid}}}" in line and "VALIDATED" in line for line in text.splitlines()), nid
+
+
+def wait_internet(timeout):
+    """Espera a que el emulador tenga Internet de verdad (el arranque deja la red sin conectar un rato)."""
+    end = time.time() + timeout
+    nid = "none"
+    while time.time() < end:
+        ok, nid = internet_validated()
+        if ok:
+            return True, nid
+        time.sleep(5)
+    return False, nid
+
+
 def wait_network(online, timeout):
     """Espera a que haya (o deje de haber) red por defecto. Devuelve (conseguido, estado)."""
     end = time.time() + timeout
@@ -272,6 +294,11 @@ def main():
         r.add("Emulador arrancado", sdk == str(a.api), f"API {sdk} · ABI {abis}")
         for setting in ("package_verifier_enable 0", "verifier_verify_adb_installs 0"):
             sh(f"settings put global {setting}")
+        started = time.time()
+        net_ok, net_id = wait_internet(300)
+        r.add("Emulador con Internet antes de empezar (las descargas de F-Droid y TeamViewer son reales)", net_ok,
+              f"red {net_id} validada tras {int(time.time() - started)} s" if net_ok else f"sin Internet validado tras 300 s (red {net_id})",
+              critical=False)
 
         # 1. Instalación del Installer (como haría el técnico con adb o el gestor de archivos).
         res = adb("install", "-r", "-g", a.installer, timeout=300)
@@ -423,8 +450,8 @@ def main():
         time.sleep(2)
         screenshot(out, "05-updater-sin-internet.png")
         set_network(True, a.api)
-        back, net_back = wait_network(True, 120)
-        r.add("Red restablecida después de la prueba sin Internet", back is not False, f"red por defecto: {net_back}", critical=False)
+        back, net_back = wait_internet(180)
+        r.add("Red restablecida después de la prueba sin Internet", back, f"red por defecto: {net_back}", critical=False)
 
         # 5. Retirar el Installer con su botón final (como el técnico) y usar el Updater sin él.
         clear_log("Updater: sin Internet")
