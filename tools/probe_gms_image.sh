@@ -39,3 +39,13 @@ adb shell dumpsys package com.android.chrome | grep -E "enabled=|User 0" | head 
 adb shell pm enable com.android.chrome >> "$OUT/chrome-disable.txt" 2>&1
 rm -rf "$OUT/apk"
 echo FIN >> "$OUT/info.txt"
+# Volcado al log (los artefactos no se pueden descargar desde el entorno de desarrollo).
+echo "######## sistema"; cat "$OUT/sistema.txt"
+echo "######## paquetes de Google/terceros relevantes"; grep -E "chrome|\.gm$|maps|waze|whatsapp|vending|google\.android\.gms$|webview|youtube" "$OUT/paquetes.txt"
+echo "######## desactivados"; cat "$OUT/paquetes-desactivados.txt"
+echo "######## info"; cat "$OUT/info.txt"
+for p in com.waze com.android.chrome; do
+  echo "######## Google Play: $p"; cat "$OUT/play-$p-am.txt" "$OUT/play-$p-actividad.txt"
+  grep -oE 'text="[^"]+"' "$OUT/play-$p-ui.xml" 2>/dev/null | sort -u | head -30
+done
+echo "######## desactivar/activar Chrome"; cat "$OUT/chrome-disable.txt"
