@@ -13,45 +13,39 @@ jobs:
       - uses: android-actions/setup-android@v3
         with:
           packages: "build-tools;35.0.0"
-      - name: Descarga oficial de WhatsApp
+      - name: Descarga oficial de WhatsApp (variantes)
         run: |
-          export PATH="$ANDROID_HOME/build-tools/35.0.0:$PATH"
           mkdir -p out
-          UA='Mozilla/5.0 (Linux; Android 14; Tablet) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
-          echo "### URL histórica /android/current/WhatsApp.apk"
-          curl -sS -L -A "$UA" -D out/wa-current-headers.txt -o out/wa-current.apk \
-            -w 'http=%{http_code} final=%{url_effective} bytes=%{size_download}\n' \
-            https://www.whatsapp.com/android/current/WhatsApp.apk | tee out/wa-current.txt || true
-          grep -iE '^(HTTP|location|content-type|content-length|etag|last-modified)' out/wa-current-headers.txt || true
-          echo "### Página oficial /android/"
-          curl -sS -L -A "$UA" -D out/wa-page-headers.txt -o out/wa-page.html https://www.whatsapp.com/android/ || true
-          wc -c out/wa-page.html
-          grep -oE 'https://scontent[^"'"'"' <>]*\.apk[^"'"'"' <>]*' out/wa-page.html | sort -u | tee out/wa-links.txt
-          grep -oE 'Version [0-9][0-9.]*' out/wa-page.html | sort -u | tee out/wa-version.txt
-          link=$(head -1 out/wa-links.txt | sed 's/&amp;/\&/g')
-          if [ -n "$link" ]; then
-            curl -sS -L -A "$UA" -D out/wa-page-apk-headers.txt -o out/wa-page.apk \
-              -w 'http=%{http_code} bytes=%{size_download}\n' "$link" | tee out/wa-page-apk.txt
-            grep -iE '^(HTTP|content-type|content-length|etag|last-modified|cache-control)' out/wa-page-apk-headers.txt || true
-            echo "### HEAD de la misma URL"
-            curl -sS -I -A "$UA" "$link" | grep -iE '^(HTTP|content-length|etag|last-modified)' || true
-            echo "### Segunda lectura de la página (¿cambia la URL firmada?)"
-            sleep 5
-            curl -sS -L -A "$UA" https://www.whatsapp.com/android/ | grep -oE 'https://scontent[^"'"'"' <>]*\.apk[^"'"'"' <>]*' | sort -u | sed 's/oh=[^&]*/oh=…/' | head -2
-          fi
-          for f in out/*.apk; do
-            echo "== $f"; file "$f"
-            aapt2 dump badging "$f" 2>/dev/null | grep -E "^package|sdkVersion|targetSdkVersion|native-code|^application-label:" || true
-            apksigner verify --print-certs -v "$f" 2>&1 | grep -E "Verified using|Signer #1 certificate (DN|SHA-256|SHA-1)|Number of signers" || true
-            sha256sum "$f"
-          done 2>&1 | tee out/wa-apk-info.txt
-          rm -f out/*.apk
+          probe() {  # $1 etiqueta, resto: argumentos de curl
+            label=$1; shift
+            code=$(curl -sS -L -o out/p.html -D out/p.h -w '%{http_code} %{size_download} %{url_effective}' "$@" || echo "curl-error")
+            links=$(grep -oE 'https://scontent[^"'"'"' <>]*\.apk' out/p.html | sort -u | head -1)
+            ver=$(grep -oE 'Version [0-9][0-9.]*' out/p.html | head -1)
+            echo "[$label] $code · enlace: ${links:-NINGUNO} · ${ver:-sin versión}"
+          }
+          CH='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+          AN='Mozilla/5.0 (Linux; Android 14; SM-X710) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+          probe "curl por defecto" https://www.whatsapp.com/android/
+          probe "Chrome escritorio" -A "$CH" -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: es-ES,es;q=0.9' https://www.whatsapp.com/android/
+          probe "Chrome Android" -A "$AN" -H 'Accept: text/html' -H 'Accept-Language: es-ES,es;q=0.9' https://www.whatsapp.com/android/
+          probe "Okhttp-like" -A "Dalvik/2.1.0 (Linux; U; Android 14; SM-X710 Build/UP1A)" https://www.whatsapp.com/android/
+          probe "download/android" -A "$AN" https://www.whatsapp.com/download/android
+          probe "sin barra" -A "$AN" https://www.whatsapp.com/android
+          echo "### Contenido de la respuesta bloqueada (primeros 1500 caracteres, sin scripts)"
+          curl -sS -L -A "$CH" https://www.whatsapp.com/android/ | sed -E 's/<script[^>]*>[^<]*<\/script>//g' | head -c 1500; echo
+          echo "### Cabeceras"
+          curl -sS -I -A "$CH" https://www.whatsapp.com/android/ | head -20
+          echo "### CDN sin firma"
+          curl -sS -o /dev/null -w '%{http_code} %{size_download}\n' https://scontent.whatsapp.net/v/t61.25591-34/10000000_2555604091620975_4821946127231201755_n.apk/WhatsApp.apk
+          echo "### IP pública del ejecutor"
+          curl -sS https://api.github.com/meta -o /dev/null -w '%{http_code}\n'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: sondeo-whatsapp
           path: out/
   google-play:
+    if: ${{ !contains(github.event.head_commit.message, '[solo-whatsapp]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 50
     strategy:
