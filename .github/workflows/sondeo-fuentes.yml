@@ -1,0 +1,84 @@
+# Sondeo puntual de fuentes oficiales (solo en la rama sondeo-fuentes; no publica nada).
+name: Sondear fuentes
+on:
+  push:
+    branches: [sondeo-fuentes]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  whatsapp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: "build-tools;35.0.0"
+      - name: Descarga oficial de WhatsApp
+        run: |
+          export PATH="$ANDROID_HOME/build-tools/35.0.0:$PATH"
+          mkdir -p out
+          UA='Mozilla/5.0 (Linux; Android 14; Tablet) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
+          echo "### URL histórica /android/current/WhatsApp.apk"
+          curl -sS -L -A "$UA" -D out/wa-current-headers.txt -o out/wa-current.apk \
+            -w 'http=%{http_code} final=%{url_effective} bytes=%{size_download}\n' \
+            https://www.whatsapp.com/android/current/WhatsApp.apk | tee out/wa-current.txt || true
+          grep -iE '^(HTTP|location|content-type|content-length|etag|last-modified)' out/wa-current-headers.txt || true
+          echo "### Página oficial /android/"
+          curl -sS -L -A "$UA" -D out/wa-page-headers.txt -o out/wa-page.html https://www.whatsapp.com/android/ || true
+          wc -c out/wa-page.html
+          grep -oE 'https://scontent[^"'"'"' <>]*\.apk[^"'"'"' <>]*' out/wa-page.html | sort -u | tee out/wa-links.txt
+          grep -oE 'Version [0-9][0-9.]*' out/wa-page.html | sort -u | tee out/wa-version.txt
+          link=$(head -1 out/wa-links.txt | sed 's/&amp;/\&/g')
+          if [ -n "$link" ]; then
+            curl -sS -L -A "$UA" -D out/wa-page-apk-headers.txt -o out/wa-page.apk \
+              -w 'http=%{http_code} bytes=%{size_download}\n' "$link" | tee out/wa-page-apk.txt
+            grep -iE '^(HTTP|content-type|content-length|etag|last-modified|cache-control)' out/wa-page-apk-headers.txt || true
+            echo "### HEAD de la misma URL"
+            curl -sS -I -A "$UA" "$link" | grep -iE '^(HTTP|content-length|etag|last-modified)' || true
+            echo "### Segunda lectura de la página (¿cambia la URL firmada?)"
+            sleep 5
+            curl -sS -L -A "$UA" https://www.whatsapp.com/android/ | grep -oE 'https://scontent[^"'"'"' <>]*\.apk[^"'"'"' <>]*' | sort -u | sed 's/oh=[^&]*/oh=…/' | head -2
+          fi
+          for f in out/*.apk; do
+            echo "== $f"; file "$f"
+            aapt2 dump badging "$f" 2>/dev/null | grep -E "^package|sdkVersion|targetSdkVersion|native-code|^application-label:" || true
+            apksigner verify --print-certs -v "$f" 2>&1 | grep -E "Verified using|Signer #1 certificate (DN|SHA-256|SHA-1)|Number of signers" || true
+            sha256sum "$f"
+          done 2>&1 | tee out/wa-apk-info.txt
+          rm -f out/*.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sondeo-whatsapp
+          path: out/
+  google-play:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [28, 34]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Habilitar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: "build-tools;35.0.0"
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          target: google_apis_playstore
+          profile: pixel_c
+          disable-animations: true
+          emulator-boot-timeout: 900
+          script: bash tools/probe_gms_image.sh out-gms-${{ matrix.api-level }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sondeo-google-play-api${{ matrix.api-level }}
+          path: out-gms-${{ matrix.api-level }}/
