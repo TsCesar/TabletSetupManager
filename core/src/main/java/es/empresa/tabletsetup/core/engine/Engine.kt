@@ -10,6 +10,7 @@ import es.empresa.tabletsetup.core.model.ManagedApp
 import es.empresa.tabletsetup.core.model.Mode
 import es.empresa.tabletsetup.core.model.Resolution
 import es.empresa.tabletsetup.core.model.RuleResult
+import es.empresa.tabletsetup.core.model.SourceKind
 import es.empresa.tabletsetup.core.policy.CompatibilityPolicy
 import es.empresa.tabletsetup.core.util.Hashing
 import kotlinx.coroutines.CancellationException
@@ -31,11 +32,17 @@ object StatusCalculator {
         resolution: Resolution,
         mode: Mode,
     ): AppStatus {
-        val rule = CompatibilityPolicy.deviceRule(app.packageName, device, app.minDeviceSdk)
+        val rule = CompatibilityPolicy.deviceRule(app.packageName, device, app.minDeviceSdk, app.requiresPlayServices)
         if (rule is RuleResult.Blocked) {
             return AppStatus(app, AppState.OMITIDA, installed, null, rule.reason)
         }
         val installedText = installed?.let { "Instalada " + versionLabel(it.versionName, it.versionCode) + if (it.isSystemApp) " (preinstalada)" else "" }
+        if (installed != null && !installed.enabled) {
+            return AppStatus(
+                app, AppState.DESACTIVADA, installed, (resolution as? Resolution.Available)?.release,
+                "$installedText, pero desactivada en Ajustes: pulsa «Activar»",
+            )
+        }
         return when (resolution) {
             is Resolution.Failed -> AppStatus(app, AppState.ERROR, installed, null, resolution.message)
             is Resolution.NoSource -> if (installed != null) {
@@ -59,6 +66,18 @@ object StatusCalculator {
         release: AppRelease,
         mode: Mode,
     ): AppStatus {
+        if (release.origin == SourceKind.GOOGLE_PLAY) {
+            // Google Play instala y actualiza por su cuenta (y verifica la firma): no se compara versión.
+            return if (installed == null) {
+                AppStatus(
+                    app, AppState.NO_INSTALADA, null, release,
+                    if (mode == Mode.UPDATER) "No instalada · el Updater solo actualiza aplicaciones ya instaladas"
+                    else "Disponible en Google Play (tienda oficial): se abre su ficha para pulsar «Instalar»",
+                )
+            } else {
+                AppStatus(app, AppState.GOOGLE_PLAY, installed, release, "$installedText · se actualiza con Google Play")
+            }
+        }
         val compatibility = CompatibilityPolicy.releaseRule(release, device)
         if (compatibility is RuleResult.Blocked) {
             return AppStatus(app, AppState.NO_COMPATIBLE, installed, release, compatibility.reason)
@@ -83,6 +102,10 @@ object StatusCalculator {
             return AppStatus(app, AppState.NO_INSTALADA, null, release, message)
         }
         if (release.versionCode == null) {
+            // La página oficial anuncia la versión (WhatsApp): si coincide con la instalada, no hay que descargar.
+            if (release.versionName != null && release.versionName == installed.versionName) {
+                return AppStatus(app, AppState.AL_DIA, installed, release, "$installedText · al día (${release.originLabel} publica ${release.versionName})")
+            }
             return AppStatus(app, AppState.POR_VERIFICAR, installed, release, "$installedText · ${release.originLabel} no anuncia versión: se comprobará al descargar")
         }
         return if (CompatibilityPolicy.needsUpdate(installed.versionCode, release.versionCode)) {
@@ -105,15 +128,26 @@ object BatchPlanner {
             when (mode) {
                 // «Por verificar» (instalada, fuente sin versión anunciada) solo si se elige expresamente.
                 Mode.INSTALLER -> status.state == AppState.NO_INSTALADA || status.state == AppState.ACTUALIZACION ||
-                    (status.state == AppState.POR_VERIFICAR && selected != null)
+                    status.state == AppState.DESACTIVADA || (status.state == AppState.POR_VERIFICAR && selected != null)
                 Mode.UPDATER -> status.installed != null &&
                     (status.state == AppState.ACTUALIZACION || status.state == AppState.POR_VERIFICAR)
             }
         }.filter { status ->
             if (selected != null) status.app.packageName in selected else !status.app.optional
         }
-        // El Updater se instala/actualiza al final para no interrumpir el lote.
-        return eligible.sortedBy { if (it.app.packageName == AppCatalog.UPDATER) 1 else 0 }.map { it.app.packageName }
+        // Primero las instalaciones con confirmación de Android, después las que se hacen fuera de la
+        // app (ficha de Google Play, activar en Ajustes) y el Updater al final para no interrumpir el lote.
+        return eligible.sortedBy { order(it) }.map { it.app.packageName }
+    }
+
+    /** La tarea se completa fuera de la app (Google Play o Ajustes). */
+    fun isExternalStep(status: AppStatus): Boolean =
+        status.state == AppState.DESACTIVADA || status.release?.origin == SourceKind.GOOGLE_PLAY
+
+    private fun order(status: AppStatus): Int = when {
+        status.app.packageName == AppCatalog.UPDATER -> 2
+        isExternalStep(status) -> 1
+        else -> 0
     }
 
     /** Aplicaciones que pueden actualizarse en modo Updater (para notificaciones). */

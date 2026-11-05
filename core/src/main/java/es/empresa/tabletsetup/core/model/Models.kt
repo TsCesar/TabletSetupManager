@@ -12,6 +12,8 @@ enum class SourceKind(val label: String) {
     ENTERPRISE_CATALOG("Catálogo empresarial firmado"),
     EMBEDDED("Incluida en Tablet Setup Installer"),
     LOCAL_FILE("Archivo local importado"),
+    /** Tienda oficial de Google: se abre la ficha de la app y el técnico pulsa «Instalar». */
+    GOOGLE_PLAY("Google Play (tienda oficial)"),
 }
 
 /** Fuente predeterminada definida en el código para cada aplicación del catálogo. */
@@ -25,6 +27,26 @@ sealed interface BuiltInSource {
         val publisher: String,
         val reference: String,
     ) : BuiltInSource
+
+    /**
+     * Página oficial de descarga del desarrollador que publica un enlace firmado y temporal a la APK
+     * (WhatsApp). Se lee la página en cada comprobación para obtener el enlace vigente.
+     */
+    data class OfficialPage(
+        val pageUrl: String,
+        /** Expresión regular del enlace a la APK dentro de la página (grupo 0). */
+        val linkPattern: String,
+        /** Expresión regular con un grupo para la versión publicada en la página (opcional). */
+        val versionPattern: String?,
+        val publisher: String,
+        val reference: String,
+    ) : BuiltInSource
+
+    /**
+     * Apps que su desarrollador distribuye solo por Google Play (Chrome, Maps, Gmail, Waze):
+     * si la tablet tiene Google Play se abre su ficha oficial; si no, catálogo empresarial o importación.
+     */
+    data object GooglePlay : BuiltInSource
 
     /** Sin fuente pública automatizable: catálogo empresarial o importación manual. */
     data object EnterpriseOnly : BuiltInSource
@@ -49,6 +71,13 @@ data class ManagedApp(
     val initials: String = label.take(2),
     /** Color ARGB del avatar. */
     val avatarColor: Long = 0xFF3F51B5,
+    /** No funciona sin los servicios de Google Play (Maps, Gmail). */
+    val requiresPlayServices: Boolean = false,
+    /**
+     * SHA-256 de los certificados de firma auténticos del desarrollador. Toda APK de esta app
+     * (catálogo, descarga o importación) debe estar firmada con uno de ellos.
+     */
+    val knownSigners: Set<String> = emptySet(),
 )
 
 /** Datos del dispositivo relevantes para la compatibilidad. */
@@ -58,6 +87,10 @@ data class DeviceProfile(
     val supportedAbis: List<String>,
     val manufacturer: String = "",
     val model: String = "",
+    /** Google Play Store instalada y activada. */
+    val hasPlayStore: Boolean = false,
+    /** Servicios de Google Play instalados y activados (tablet con GMS). */
+    val hasPlayServices: Boolean = false,
 )
 
 /** Fichero APK publicado por una fuente. */
@@ -94,6 +127,8 @@ data class InstalledInfo(
     /** SHA-256 de los certificados actuales e históricos (rotación v3). */
     val signers: Set<String>,
     val installerPackage: String? = null,
+    /** false si está desactivada en Ajustes (habitual en apps preinstaladas que no se usan). */
+    val enabled: Boolean = true,
 )
 
 /** Estado calculado de cada aplicación en pantalla. */
@@ -116,6 +151,10 @@ enum class AppState {
     POR_VERIFICAR,
     /** Error al consultar la fuente. */
     ERROR,
+    /** Instalada; sus actualizaciones las gestiona Google Play. */
+    GOOGLE_PLAY,
+    /** Instalada pero desactivada en Ajustes: hay que activarla. */
+    DESACTIVADA,
 }
 
 data class AppStatus(

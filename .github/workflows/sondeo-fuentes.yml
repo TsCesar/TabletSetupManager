@@ -32,7 +32,9 @@ jobs:
           echo "### APK"
           file out/WhatsApp.apk; sha256sum out/WhatsApp.apk
           aapt2 dump badging out/WhatsApp.apk 2>/dev/null | grep -E "^package|sdkVersion|targetSdkVersion|native-code|^application-label:|supports-screens|uses-permission: name='android.permission.REQUEST_INSTALL_PACKAGES'" 
-          apksigner verify --print-certs -v out/WhatsApp.apk 2>&1 | grep -E "Verified using|Signer #1 certificate (DN|SHA-256|SHA-1)|Number of signers|WARNING" | head -12
+          apksigner verify --print-certs out/WhatsApp.apk 2>/dev/null | grep -E "^Signer #1 certificate (DN|SHA-256 digest|SHA-1 digest)"
+          apksigner verify --print-certs --min-sdk-version 28 out/WhatsApp.apk 2>/dev/null | grep -E "^Signer #1 certificate SHA-256 digest" | sed 's/^/min-sdk 28: /'
+          apksigner verify -v out/WhatsApp.apk 2>/dev/null | grep -E "^Verified using v3.1|^Verified using v3 "
           unzip -l out/WhatsApp.apk | grep -oE 'lib/[^/]+/' | sort | uniq -c
           echo "### Segunda lectura: ¿cambia el enlace firmado?"
           sleep 3

@@ -13,6 +13,7 @@ object CompatibilityPolicy {
     const val WAZE_PACKAGE = "com.waze"
     const val WAZE_MIN_SDK = 29 // Android 10: requisito interno expreso
     const val MSG_WAZE_ANDROID9 = "No compatible con Android 9"
+    const val MSG_NO_PLAY_SERVICES = "Necesita los servicios de Google Play, que esta tablet no tiene"
 
     /** Nombre comercial de la versión de Android para un nivel de API. */
     fun androidName(sdk: Int): String = when (sdk) {
@@ -29,7 +30,12 @@ object CompatibilityPolicy {
     }
 
     /** Regla del dispositivo para un paquete, independiente de la versión publicada. */
-    fun deviceRule(packageName: String, device: DeviceProfile, appMinDeviceSdk: Int = MIN_SUPPORTED_SDK): RuleResult {
+    fun deviceRule(
+        packageName: String,
+        device: DeviceProfile,
+        appMinDeviceSdk: Int = MIN_SUPPORTED_SDK,
+        requiresPlayServices: Boolean = false,
+    ): RuleResult {
         if (ExcludedApps.isExcluded(packageName)) {
             return RuleResult.Blocked("Aplicación excluida de esta suite (se instala con su propio procedimiento)")
         }
@@ -41,6 +47,10 @@ object CompatibilityPolicy {
         }
         if (device.sdkInt < appMinDeviceSdk) {
             return RuleResult.Blocked("Requiere Android ${androidName(appMinDeviceSdk)} o superior")
+        }
+        // Maps y Gmail no funcionan sin los servicios de Google Play: instalarlas sería engañoso.
+        if (requiresPlayServices && !device.hasPlayServices) {
+            return RuleResult.Blocked(MSG_NO_PLAY_SERVICES)
         }
         return RuleResult.Allowed
     }
