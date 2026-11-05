@@ -13,32 +13,31 @@ jobs:
       - uses: android-actions/setup-android@v3
         with:
           packages: "build-tools;35.0.0"
-      - name: Descarga oficial de WhatsApp (variantes)
+      - name: Descarga oficial de WhatsApp (APK real)
         run: |
+          export PATH="$ANDROID_HOME/build-tools/35.0.0:$PATH"
           mkdir -p out
-          probe() {  # $1 etiqueta, resto: argumentos de curl
-            label=$1; shift
-            code=$(curl -sS -L -o out/p.html -D out/p.h -w '%{http_code} %{size_download} %{url_effective}' "$@" || echo "curl-error")
-            links=$(grep -oE 'https://scontent[^"'"'"' <>]*\.apk' out/p.html | sort -u | head -1)
-            ver=$(grep -oE 'Version [0-9][0-9.]*' out/p.html | head -1)
-            echo "[$label] $code · enlace: ${links:-NINGUNO} · ${ver:-sin versión}"
-          }
-          CH='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
-          AN='Mozilla/5.0 (Linux; Android 14; SM-X710) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
-          probe "curl por defecto" https://www.whatsapp.com/android/
-          probe "Chrome escritorio" -A "$CH" -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: es-ES,es;q=0.9' https://www.whatsapp.com/android/
-          probe "Chrome Android" -A "$AN" -H 'Accept: text/html' -H 'Accept-Language: es-ES,es;q=0.9' https://www.whatsapp.com/android/
-          probe "Okhttp-like" -A "Dalvik/2.1.0 (Linux; U; Android 14; SM-X710 Build/UP1A)" https://www.whatsapp.com/android/
-          probe "download/android" -A "$AN" https://www.whatsapp.com/download/android
-          probe "sin barra" -A "$AN" https://www.whatsapp.com/android
-          echo "### Contenido de la respuesta bloqueada (primeros 1500 caracteres, sin scripts)"
-          curl -sS -L -A "$CH" https://www.whatsapp.com/android/ | sed -E 's/<script[^>]*>[^<]*<\/script>//g' | head -c 1500; echo
-          echo "### Cabeceras"
-          curl -sS -I -A "$CH" https://www.whatsapp.com/android/ | head -20
-          echo "### CDN sin firma"
-          curl -sS -o /dev/null -w '%{http_code} %{size_download}\n' https://scontent.whatsapp.net/v/t61.25591-34/10000000_2555604091620975_4821946127231201755_n.apk/WhatsApp.apk
-          echo "### IP pública del ejecutor"
-          curl -sS https://api.github.com/meta -o /dev/null -w '%{http_code}\n'
+          for UA in "TabletSetupManager/0.3.0 (Android)" "Dalvik/2.1.0 (Linux; U; Android 14; SM-X710 Build/UP1A)"; do
+            code=$(curl -sS -L -A "$UA" -o out/page.html -w '%{http_code} %{url_effective} %{size_download}' https://www.whatsapp.com/android/)
+            echo "UA [$UA] -> $code · enlaces: $(grep -oE 'https://scontent[^"'"'"' <>]*\.apk/WhatsApp\.apk' out/page.html | sort -u | wc -l) · $(grep -oE 'Version [0-9][0-9.]*' out/page.html | head -1)"
+          done
+          grep -oE 'href="https://scontent[^"]*"' out/page.html | head -3 | sed -E 's/(oh|oe)=[^&"]*/\1=…/g'
+          link=$(grep -oE 'href="https://scontent[^"]*WhatsApp\.apk[^"]*"' out/page.html | head -1 | sed -E 's/^href="//; s/"$//; s/&amp;/\&/g')
+          echo "Parámetros del enlace: $(echo "$link" | sed -E 's/^[^?]*\?//; s/=[^&]*/=…/g')"
+          code=$(curl -sS -L -A "TabletSetupManager/0.3.0 (Android)" -D out/apk.h -o out/WhatsApp.apk -w '%{http_code} %{size_download}' "$link")
+          echo "Descarga APK: $code"
+          grep -iE '^(HTTP|content-type|content-length|etag|last-modified|cache-control|accept-ranges)' out/apk.h
+          echo "HEAD:"; curl -sS -I -A "TabletSetupManager/0.3.0 (Android)" "$link" | grep -iE '^(HTTP|content-length|etag|last-modified|accept-ranges)'
+          echo "Rango 0-0:"; curl -sS -r 0-0 -o /dev/null -D - -A "TabletSetupManager/0.3.0 (Android)" "$link" | grep -iE '^(HTTP|content-range|etag|last-modified)'
+          echo "### APK"
+          file out/WhatsApp.apk; sha256sum out/WhatsApp.apk
+          aapt2 dump badging out/WhatsApp.apk 2>/dev/null | grep -E "^package|sdkVersion|targetSdkVersion|native-code|^application-label:|supports-screens|uses-permission: name='android.permission.REQUEST_INSTALL_PACKAGES'" 
+          apksigner verify --print-certs -v out/WhatsApp.apk 2>&1 | grep -E "Verified using|Signer #1 certificate (DN|SHA-256|SHA-1)|Number of signers|WARNING" | head -12
+          unzip -l out/WhatsApp.apk | grep -oE 'lib/[^/]+/' | sort | uniq -c
+          echo "### Segunda lectura: ¿cambia el enlace firmado?"
+          sleep 3
+          curl -sS -L -A "TabletSetupManager/0.3.0 (Android)" https://www.whatsapp.com/android/ | grep -oE 'https://scontent[^"'"'"' <>]*\.apk/WhatsApp\.apk[^"'"'"' <>]*' | head -1 | sed -E 's/(oh|oe|_nc_gid|_nc_ohc|_nc_zt|ccb)=[^&]*/\1=…/g'
+          rm -f out/WhatsApp.apk
       - uses: actions/upload-artifact@v4
         if: always()
         with:
