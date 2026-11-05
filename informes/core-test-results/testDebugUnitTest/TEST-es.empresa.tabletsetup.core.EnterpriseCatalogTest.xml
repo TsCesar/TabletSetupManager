@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.EnterpriseCatalogTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-05T07:41:36.333Z" hostname="runnervm48cm3" time="0.067">
+  <properties/>
+  <testcase name="fuentes directas y certificados fijados" classname="es.empresa.tabletsetup.core.EnterpriseCatalogTest" time="0.024"/>
+  <testcase name="rechaza HTTP, hashes invalidos y firmas ausentes por entrada" classname="es.empresa.tabletsetup.core.EnterpriseCatalogTest" time="0.002"/>
+  <testcase name="ignora FuelSoft y paquetes ajenos al catalogo" classname="es.empresa.tabletsetup.core.EnterpriseCatalogTest" time="0.002"/>
+  <testcase name="firma ECDSA valida en DER, Base64 y r-s" classname="es.empresa.tabletsetup.core.EnterpriseCatalogTest" time="0.022"/>
+  <testcase name="errores estructurales rechazan el catalogo" classname="es.empresa.tabletsetup.core.EnterpriseCatalogTest" time="0.002"/>
+  <testcase name="firma invalida si el catalogo se altera o la clave es otra" classname="es.empresa.tabletsetup.core.EnterpriseCatalogTest" time="0.012"/>
+  <testcase name="analiza entradas validas con splits" classname="es.empresa.tabletsetup.core.EnterpriseCatalogTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

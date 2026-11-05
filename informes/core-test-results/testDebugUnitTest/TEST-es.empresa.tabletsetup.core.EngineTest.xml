@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.EngineTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-05T07:41:36.291Z" hostname="runnervm48cm3" time="0.039">
+  <properties/>
+  <testcase name="instalar todas excluye opcionales y deja el Updater al final" classname="es.empresa.tabletsetup.core.EngineTest" time="0.007"/>
+  <testcase name="estados segun fuente y version instalada" classname="es.empresa.tabletsetup.core.EngineTest" time="0.001"/>
+  <testcase name="Waze omitido en Android 9 sin bloquear el resto" classname="es.empresa.tabletsetup.core.EngineTest" time="0.0"/>
+  <testcase name="firma distinta a la instalada se detecta antes de descargar" classname="es.empresa.tabletsetup.core.EngineTest" time="0.001"/>
+  <testcase name="el Updater solo actualiza aplicaciones instaladas" classname="es.empresa.tabletsetup.core.EngineTest" time="0.0"/>
+  <testcase name="la cola secuencial continua tras un fallo y admite cancelacion" classname="es.empresa.tabletsetup.core.EngineTest" time="0.029"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

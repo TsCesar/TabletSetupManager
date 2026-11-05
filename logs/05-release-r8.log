@@ -1,0 +1,164 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:preBuild UP-TO-DATE
+> Task :installer:preBuild UP-TO-DATE
+> Task :updater:preBuild UP-TO-DATE
+> Task :core:preReleaseBuild UP-TO-DATE
+> Task :installer:preReleaseBuild UP-TO-DATE
+> Task :updater:preReleaseBuild UP-TO-DATE
+> Task :core:mergeReleaseJniLibFolders
+> Task :updater:mergeReleaseJniLibFolders
+> Task :installer:mergeReleaseJniLibFolders
+> Task :core:mergeReleaseNativeLibs NO-SOURCE
+> Task :core:stripReleaseDebugSymbols NO-SOURCE
+> Task :core:copyReleaseJniLibsProjectAndLocalJars
+> Task :updater:buildKotlinToolingMetadata
+> Task :installer:buildKotlinToolingMetadata
+> Task :core:generateReleaseResValues FROM-CACHE
+> Task :core:extractDeepLinksForAarRelease FROM-CACHE
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:generateReleaseBuildConfig FROM-CACHE
+> Task :core:generateReleaseResources FROM-CACHE
+> Task :core:packageReleaseResources FROM-CACHE
+> Task :core:parseReleaseLocalResources FROM-CACHE
+> Task :core:generateReleaseRFile FROM-CACHE
+> Task :updater:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :updater:generateReleaseResValues FROM-CACHE
+> Task :installer:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :installer:generateReleaseResValues FROM-CACHE
+> Task :installer:checkReleaseDuplicateClasses
+> Task :updater:checkReleaseDuplicateClasses
+> Task :updater:mapReleaseSourceSetPaths
+> Task :installer:mapReleaseSourceSetPaths
+> Task :updater:generateReleaseResources FROM-CACHE
+> Task :installer:generateReleaseResources FROM-CACHE
+> Task :core:compileReleaseKotlin FROM-CACHE
+> Task :updater:mergeReleaseResources FROM-CACHE
+> Task :installer:mergeReleaseResources FROM-CACHE
+> Task :updater:packageReleaseResources FROM-CACHE
+> Task :updater:parseReleaseLocalResources FROM-CACHE
+> Task :installer:packageReleaseResources FROM-CACHE
+> Task :installer:parseReleaseLocalResources FROM-CACHE
+> Task :updater:createReleaseCompatibleScreenManifests
+> Task :installer:createReleaseCompatibleScreenManifests
+> Task :updater:extractDeepLinksRelease FROM-CACHE
+> Task :installer:extractDeepLinksRelease FROM-CACHE
+> Task :updater:javaPreCompileRelease FROM-CACHE
+> Task :installer:javaPreCompileRelease FROM-CACHE
+> Task :core:extractReleaseAnnotations FROM-CACHE
+> Task :updater:extractProguardFiles UP-TO-DATE
+> Task :installer:extractProguardFiles UP-TO-DATE
+> Task :updater:mergeReleaseStartupProfile
+> Task :installer:mergeReleaseStartupProfile
+> Task :core:mergeReleaseShaders
+> Task :updater:mergeReleaseShaders
+> Task :core:compileReleaseShaders NO-SOURCE
+> Task :core:generateReleaseAssets UP-TO-DATE
+> Task :updater:compileReleaseShaders NO-SOURCE
+> Task :updater:generateReleaseAssets UP-TO-DATE
+> Task :installer:mergeReleaseShaders
+> Task :installer:compileReleaseShaders NO-SOURCE
+> Task :installer:generateReleaseAssets UP-TO-DATE
+> Task :core:mergeReleaseAssets
+> Task :core:javaPreCompileRelease FROM-CACHE
+> Task :core:compileReleaseJavaWithJavac FROM-CACHE
+> Task :core:mergeReleaseGeneratedProguardFiles
+> Task :core:mergeReleaseConsumerProguardFiles
+> Task :core:prepareLintJarForPublish UP-TO-DATE
+> Task :core:prepareReleaseArtProfile
+> Task :core:processReleaseManifest FROM-CACHE
+> Task :installer:extractReleaseVersionControlInfo
+> Task :updater:extractReleaseVersionControlInfo
+> Task :core:processReleaseJavaRes
+> Task :updater:mergeReleaseArtProfile
+> Task :installer:mergeReleaseArtProfile
+> Task :core:writeReleaseAarMetadata
+> Task :core:mapReleaseSourceSetPaths
+> Task :updater:mergeReleaseAssets
+> Task :core:mergeReleaseResources FROM-CACHE
+> Task :core:mergeReleaseJavaResource
+> Task :updater:checkReleaseAarMetadata
+> Task :updater:compressReleaseAssets FROM-CACHE
+> Task :core:verifyReleaseResources FROM-CACHE
+> Task :core:syncReleaseLibJars FROM-CACHE
+> Task :installer:collectReleaseDependencies
+> Task :updater:collectReleaseDependencies
+> Task :installer:checkReleaseAarMetadata
+> Task :core:bundleReleaseAar
+> Task :core:assembleRelease
+> Task :core:copyReleaseJniLibsProjectOnly
+> Task :core:exportReleaseConsumerProguardFiles
+> Task :core:bundleLibCompileToJarRelease
+> Task :core:bundleLibRuntimeToJarRelease
+> Task :installer:sdkReleaseDependencyData
+> Task :updater:sdkReleaseDependencyData
+> Task :core:extractDeepLinksRelease FROM-CACHE
+> Task :installer:mergeReleaseNativeLibs
+> Task :updater:mergeReleaseNativeLibs
+> Task :installer:processReleaseMainManifest FROM-CACHE
+> Task :updater:processReleaseMainManifest FROM-CACHE
+> Task :updater:processReleaseManifest FROM-CACHE
+> Task :updater:processReleaseManifestForPackage FROM-CACHE
+> Task :installer:processReleaseManifest FROM-CACHE
+> Task :installer:processReleaseManifestForPackage FROM-CACHE
+
+> Task :installer:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :updater:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :updater:processReleaseResources FROM-CACHE
+> Task :updater:extractReleaseNativeSymbolTables FROM-CACHE
+> Task :installer:processReleaseResources FROM-CACHE
+> Task :updater:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :installer:extractReleaseNativeSymbolTables FROM-CACHE
+> Task :installer:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :installer:compileReleaseKotlin FROM-CACHE
+> Task :updater:compileReleaseKotlin FROM-CACHE
+> Task :installer:compileReleaseJavaWithJavac NO-SOURCE
+> Task :updater:compileReleaseJavaWithJavac NO-SOURCE
+> Task :updater:expandReleaseArtProfileWildcards FROM-CACHE
+> Task :updater:mergeReleaseGeneratedProguardFiles
+> Task :installer:expandReleaseArtProfileWildcards FROM-CACHE
+> Task :installer:mergeReleaseGeneratedProguardFiles
+> Task :updater:processReleaseJavaRes
+> Task :installer:processReleaseJavaRes
+> Task :updater:writeReleaseAppMetadata
+> Task :installer:writeReleaseAppMetadata
+> Task :updater:writeReleaseSigningConfigVersions
+> Task :installer:writeReleaseSigningConfigVersions
+> Task :updater:mergeReleaseJavaResource
+> Task :installer:mergeReleaseJavaResource
+> Task :updater:minifyReleaseWithR8 FROM-CACHE
+> Task :updater:compileReleaseArtProfile FROM-CACHE
+> Task :updater:convertShrunkResourcesToBinaryRelease FROM-CACHE
+> Task :updater:optimizeReleaseResources FROM-CACHE
+> Task :installer:minifyReleaseWithR8 FROM-CACHE
+> Task :installer:compileReleaseArtProfile FROM-CACHE
+> Task :installer:convertShrunkResourcesToBinaryRelease FROM-CACHE
+> Task :installer:optimizeReleaseResources FROM-CACHE
+> Task :updater:packageRelease
+> Task :updater:createReleaseApkListingFileRedirect
+> Task :updater:assembleRelease
+
+> Task :installer:embedUpdaterApkRelease
+Aviso: se embebe una APK de Updater SIN FIRMA (updater-release-unsigned.apk); no será instalable.
+
+> Task :installer:mergeReleaseAssets
+> Task :installer:compressReleaseAssets
+> Task :installer:packageRelease
+> Task :installer:createReleaseApkListingFileRedirect
+> Task :installer:assembleRelease
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/release_check-1793865293300.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TabletSetupManager/TabletSetupManager/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 16s
+118 actionable tasks: 62 executed, 53 from cache, 3 up-to-date

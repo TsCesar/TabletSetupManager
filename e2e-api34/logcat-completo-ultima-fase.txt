@@ -1,0 +1,283 @@
+--------- beginning of system
+11-05 08:00:30.501 I/ActivityManager(  506): Force stopping es.empresa.tabletsetup.updater appid=10143 user=0: from pid 3630
+11-05 08:00:30.502 D/DisplayManagerService(  506): Drop pending events for gone uid 10143
+11-05 08:00:30.502 I/ActivityManager(  506): Killing 3207:es.empresa.tabletsetup.updater/u0a143 (adj 0): stop es.empresa.tabletsetup.updater due to from pid 3630
+11-05 08:00:30.503 W/ActivityTaskManager(  506): Force removing ActivityRecord{ff7ab29 u0 es.empresa.tabletsetup.updater/.MainActivity t10 f}}: app died, no saved state
+11-05 08:00:30.503 V/WindowManagerShell(  804): Transition requested: android.os.BinderProxy@24488ed TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=10 displayId=0 isRunning=false baseIntent=Intent { flg=0x10008000 cmp=es.empresa.tabletsetup.updater/.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} numActivities=0 lastActiveTime=260506 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@d34b322} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+--------- beginning of main
+11-05 08:00:30.522 D/CarrierSvcBindHelper( 1011): onHandleForceStop: [es.empresa.tabletsetup.updater]
+11-05 08:00:30.528 I/BpBinder(  391): onLastStrongRef automatically unlinking death recipients: 
+11-05 08:00:30.533 I/Zygote  (  327): Process 3207 exited due to signal 9 (Killed)
+11-05 08:00:30.534 V/ActivityManager(  506): Got obituary of 3207:es.empresa.tabletsetup.updater
+11-05 08:00:30.535 I/WindowManager(  506): WIN DEATH: Window{59ba83b u0 es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity}
+11-05 08:00:30.535 W/InputManager-JNI(  506): Input channel object '59ba83b es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity (client)' was disposed without first being removed with the input manager!
+11-05 08:00:30.536 D/CarrierSvcBindHelper( 1011): No carrier app for: 0
+11-05 08:00:30.536 I/ImeTracker(  506): es.empresa.tabletsetup.updater:6d757c92: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_REMOVE_CLIENT
+11-05 08:00:30.536 I/ImeTracker(  506): es.empresa.tabletsetup.updater:6d757c92: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-05 08:00:30.539 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(1), isTaskbarPresent: true
+11-05 08:00:30.540 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:30.545 W/WindowManager(  506): Failed to deliver inset control state change to w=Window{59ba83b u0 es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity EXITING}
+11-05 08:00:30.545 W/WindowManager(  506): android.os.DeadObjectException
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.os.BinderProxy.transactNative(Native Method)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.os.BinderProxy.transact(BinderProxy.java:584)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.view.IWindow$Stub$Proxy.insetsControlChanged(IWindow.java:479)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.WindowState.notifyInsetsControlChanged(WindowState.java:3802)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.InsetsStateController.lambda$notifyPendingInsetsControlChanged$3(InsetsStateController.java:343)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.InsetsStateController.$r8$lambda$8yykPRG1GyNq_J17QvL9d5xANMc(InsetsStateController.java:0)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.InsetsStateController$$ExternalSyntheticLambda2.run(R8$$SyntheticClass:0)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.WindowAnimator.executeAfterPrepareSurfacesRunnables(WindowAnimator.java:294)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.WindowAnimator.animate(WindowAnimator.java:202)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.WindowAnimator.lambda$new$1(WindowAnimator.java:99)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.WindowAnimator.$r8$lambda$aHNu1uhcqxihX5NZc4McDDQPAyw(WindowAnimator.java:0)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.wm.WindowAnimator$$ExternalSyntheticLambda1.doFrame(R8$$SyntheticClass:0)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1337)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1348)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.view.Choreographer.doCallbacks(Choreographer.java:952)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.view.Choreographer.doFrame(Choreographer.java:878)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1322)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.os.Handler.handleCallback(Handler.java:958)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.os.Looper.loopOnce(Looper.java:205)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.os.Looper.loop(Looper.java:294)
+11-05 08:00:30.545 W/WindowManager(  506): 	at android.os.HandlerThread.run(HandlerThread.java:67)
+11-05 08:00:30.545 W/WindowManager(  506): 	at com.android.server.ServiceThread.run(ServiceThread.java:46)
+11-05 08:00:30.629 D/EGL_emulation(  804): app_time_stats: avg=513.01ms min=434.04ms max=559.21ms count=3
+11-05 08:00:30.757 V/WindowManager(  506): Sent Transition #20 createdAt=11-05 08:00:30.503 via request=TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=10 displayId=0 isRunning=false baseIntent=Intent { flg=0x10008000 cmp=es.empresa.tabletsetup.updater/.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} numActivities=0 lastActiveTime=260506 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{9e370f8 Task{d508eae #10 type=standard A=10143:es.empresa.tabletsetup.updater}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isVisible=true isVisibleRequested=true isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-05 08:00:30.757 V/WindowManager(  506):     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+11-05 08:00:30.757 V/WindowManager(  506):     info={id=20 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{9e370f8 Task{d508eae #10 type=standard A=10143:es.empresa.tabletsetup.updater}}} m=CLOSE f=NONE leash=Surface(name=Task=10)/@0x75cb36a sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{RemoteToken{32baddd Task{6544743 #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xb1890c5 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{e6adfc1 token=android.os.Binder@a9eb08e})/@0x39e1bdf sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:30.758 V/WindowManagerShell(  804): onTransitionReady android.os.BinderProxy@24488ed: {id=20 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@3fcd60f} m=CLOSE f=NONE leash=Surface(name=Task=10)/@0xc50d1b3 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@a79e69c} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x1c00370 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{e6adfc1 token=android.os.Binder@a9eb08e})/@0x86dc6e9 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:30.758 V/WindowManagerShell(  804): Playing animation for (#20)android.os.BinderProxy@24488ed@0
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.transition.DefaultMixedHandler@aa600ce
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@a414bef
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@cca56fc
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.recents.RecentsTransitionHandler@b900185
+11-05 08:00:30.758 V/ShellRecents(  804): RecentsTransitionHandler.startAnimation: no controller found
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.pip.PipTransition@ea55bda
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.splitscreen.StageCoordinator@300b80b
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.transition.RemoteTransitionHandler@2e3e6e8
+11-05 08:00:30.758 V/WindowManagerShell(  804): Transition doesn't have explicit remote, search filters for match for {id=20 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@3fcd60f} m=CLOSE f=NONE leash=Surface(name=Task=10)/@0xc50d1b3 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@a79e69c} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x1c00370 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{e6adfc1 token=android.os.Binder@a9eb08e})/@0x86dc6e9 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:30.758 V/WindowManagerShell(  804):  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@ad43101, appThread = android.app.IApplicationThread$Stub$Proxy@b0d5ba6, debugName = QuickstepLaunchHome }}
+11-05 08:00:30.758 V/WindowManagerShell(  804):  Delegate animation for #20 to null
+11-05 08:00:30.758 V/WindowManagerShell(  804):  try handler com.android.wm.shell.transition.DefaultTransitionHandler@f00c9e7
+11-05 08:00:30.759 V/WindowManagerShell(  804): start default transition animation, info = {id=20 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@3fcd60f} m=CLOSE f=NONE leash=Surface(name=Task=10)/@0xc50d1b3 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@a79e69c} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x1c00370 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{e6adfc1 token=android.os.Binder@a9eb08e})/@0x86dc6e9 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:30.760 V/WindowManagerShell(  804): loadAnimation: anim=android.view.animation.AnimationSet@b4d847a animAttr=0x10 type=CLOSE isEntrance=true
+11-05 08:00:30.760 V/WindowManagerShell(  804): loadAnimation: anim=android.view.animation.AnimationSet@1ae6a21 animAttr=0x11 type=CLOSE isEntrance=false
+11-05 08:00:30.761 D/CompatibilityChangeReporter(  506): Compat change id reported: 161252188; UID 10143; state: DISABLED
+11-05 08:00:30.761 W/ActivityTaskManager(  506): callingPackage for (uid=2000, pid=3637) has no WPC
+11-05 08:00:30.761 D/CompatibilityChangeReporter(  506): Compat change id reported: 265464455; UID 10143; state: DISABLED
+11-05 08:00:30.761 D/CompatibilityChangeReporter(  506): Compat change id reported: 265452344; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 266124927; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 265451093; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 265456536; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 255940284; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 236283604; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 263959004; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 264304459; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 264301586; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 254631730; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 273509367; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 263259275; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 174042980; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 174042936; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 181136395; UID 10143; state: DISABLED
+11-05 08:00:30.762 D/CompatibilityChangeReporter(  506): Compat change id reported: 194480991; UID 10143; state: ENABLED
+11-05 08:00:30.763 V/WindowManagerShell(  804):  animated by com.android.wm.shell.transition.DefaultTransitionHandler@f00c9e7
+11-05 08:00:30.767 D/CompatibilityChangeReporter(  506): Compat change id reported: 184838306; UID 10143; state: DISABLED
+11-05 08:00:30.767 D/CompatibilityChangeReporter(  506): Compat change id reported: 185004937; UID 10143; state: DISABLED
+11-05 08:00:30.768 V/SplashScreenExceptionList(  506): SplashScreen checking exception for package es.empresa.tabletsetup.updater (target sdk:35) -> false
+11-05 08:00:30.768 D/CompatibilityChangeReporter(  506): Compat change id reported: 205907456; UID 10143; state: ENABLED
+11-05 08:00:30.769 I/ActivityTaskManager(  506): Add Task{d508eae #10 type=standard A=10143:es.empresa.tabletsetup.updater} to hidden list because adding Task{3e1d677 #11 type=standard A=10143:es.empresa.tabletsetup.updater}
+11-05 08:00:30.770 V/WindowManagerShell(  804): Transition requested: android.os.BinderProxy@b1f7807 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=11 displayId=0 isRunning=true baseIntent=Intent { flg=0x10008000 cmp=es.empresa.tabletsetup.updater/.MainActivity } baseActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} topActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} origActivity=null realActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} numActivities=1 lastActiveTime=262503 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@f626d34} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{466875d es.empresa.tabletsetup.updater.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-05 08:00:30.770 I/ActivityTaskManager(  506): START u0 {flg=0x10008000 cmp=es.empresa.tabletsetup.updater/.MainActivity} with LAUNCH_SINGLE_TOP from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+11-05 08:00:30.771 D/CompatibilityChangeReporter(  506): Compat change id reported: 135634846; UID 10143; state: DISABLED
+11-05 08:00:30.771 D/CompatibilityChangeReporter(  506): Compat change id reported: 143937733; UID 10143; state: ENABLED
+11-05 08:00:30.778 D/Zygote  (  327): Forked child process 3640
+11-05 08:00:30.781 I/ActivityManager(  506): Start proc 3640:es.empresa.tabletsetup.updater/u0a143 for next-top-activity {es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity}
+11-05 08:00:30.782 V/WindowManagerShell(  804): Transition animation finished (aborted=false), notifying core (#20)android.os.BinderProxy@24488ed@0
+11-05 08:00:30.789 V/WindowManager(  506): Finish Transition #20: created at 11-05 08:00:30.503 collect-started=0.017ms request-sent=0.053ms started=20.533ms ready=20.454ms sent=248.714ms finished=286.06ms
+11-05 08:00:30.790 W/WindowManager(  506): Exception thrown during dispatchAppVisibility Window{59ba83b u0 es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity EXITING}
+11-05 08:00:30.790 W/WindowManager(  506): android.os.DeadObjectException
+11-05 08:00:30.790 W/WindowManager(  506): 	at android.os.BinderProxy.transactNative(Native Method)
+11-05 08:00:30.790 W/WindowManager(  506): 	at android.os.BinderProxy.transact(BinderProxy.java:584)
+11-05 08:00:30.790 W/WindowManager(  506): 	at android.view.IWindow$Stub$Proxy.dispatchAppVisibility(IWindow.java:546)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.WindowState.sendAppVisibilityToClients(WindowState.java:3271)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.WindowContainer.sendAppVisibilityToClients(WindowContainer.java:1221)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.WindowToken.setClientVisible(WindowToken.java:409)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.ActivityRecord.setClientVisible(ActivityRecord.java:6946)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.ActivityRecord.postApplyAnimation(ActivityRecord.java:5637)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.ActivityRecord.commitVisibility(ActivityRecord.java:5580)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.Transition.finishTransition(Transition.java:1151)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.TransitionController.finishTransition(TransitionController.java:868)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.WindowOrganizerController.finishTransition(WindowOrganizerController.java:396)
+11-05 08:00:30.790 W/WindowManager(  506): 	at android.window.IWindowOrganizerController$Stub.onTransact(IWindowOrganizerController.java:286)
+11-05 08:00:30.790 W/WindowManager(  506): 	at com.android.server.wm.WindowOrganizerController.onTransact(WindowOrganizerController.java:181)
+11-05 08:00:30.790 W/WindowManager(  506): 	at android.os.Binder.execTransactInternal(Binder.java:1339)
+11-05 08:00:30.790 W/WindowManager(  506): 	at android.os.Binder.execTransact(Binder.java:1275)
+11-05 08:00:30.790 I/Process (  506): Sending signal. PID: 3207 SIG: 9
+11-05 08:00:30.792 W/ActivityManager(  506): setHasOverlayUi called on unknown pid: 3207
+11-05 08:00:30.797 V/WindowManagerShell(  804): Track 0 became idle
+11-05 08:00:30.800 D/SplashScreenView(  804): Build android.window.SplashScreenView{8712593 V.E...... ......ID 0,0-0,0}
+11-05 08:00:30.800 D/SplashScreenView(  804): Icon: view: null drawable: null size: 0
+11-05 08:00:30.800 D/SplashScreenView(  804): Branding: view: android.view.View{451f9d0 G.ED..... ......I. 0,0-0,0 #10204ef android:id/splashscreen_branding_view} drawable: null size w: 0 h: 0
+11-05 08:00:30.810 I/etsetup.updater( 3640): Late-enabling -Xcheck:jni
+11-05 08:00:30.824 D/CompatibilityChangeReporter(  506): Compat change id reported: 168419799; UID 10143; state: DISABLED
+11-05 08:00:30.824 D/CompatibilityChangeReporter(  506): Compat change id reported: 273564678; UID 10143; state: DISABLED
+11-05 08:00:30.827 D/CoreBackPreview(  506): Window{9c7b5a u0 Splash Screen es.empresa.tabletsetup.updater}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@932d268, mPriority=0, mIsAnimationCallback=false}
+11-05 08:00:30.859 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:30.903 I/etsetup.updater( 3640): Using CollectorTypeCC GC.
+11-05 08:00:30.904 W/etsetup.updater( 3640): Unexpected CPU variant for x86: x86_64.
+11-05 08:00:30.904 W/etsetup.updater( 3640): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+11-05 08:00:30.920 I/adbd    (  401): jdwp connection from 3640
+11-05 08:00:31.074 W/ActivityManager(  506): Slow operation: 112ms so far, now at finishAttachApplicationInner: after mServices.attachApplicationLocked
+11-05 08:00:31.074 W/ActivityManager(  506): Slow operation: 112ms so far, now at finishAttachApplicationInner: after dispatching broadcasts
+11-05 08:00:31.074 W/ActivityManager(  506): Slow operation: 113ms so far, now at finishAttachApplicationInner: after updateOomAdjLocked
+11-05 08:00:31.081 V/WindowManager(  506): Sent Transition #21 createdAt=11-05 08:00:30.763 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=11 displayId=0 isRunning=true baseIntent=Intent { flg=0x10008000 cmp=es.empresa.tabletsetup.updater/.MainActivity } baseActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} topActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} origActivity=null realActivity=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} numActivities=1 lastActiveTime=262503 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{796ad14 Task{3e1d677 #11 type=standard A=10143:es.empresa.tabletsetup.updater}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{55bf9bd es.empresa.tabletsetup.updater.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-05 08:00:31.082 V/WindowManager(  506):     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+11-05 08:00:31.082 V/WindowManager(  506):     info={id=21 t=OPEN f=0x0 trk=1 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{796ad14 Task{3e1d677 #11 type=standard A=10143:es.empresa.tabletsetup.updater}}} m=OPEN f=NONE leash=Surface(name=Task=11)/@0x216f326 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{RemoteToken{32baddd Task{6544743 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xb1890c5 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:31.082 D/CompatibilityChangeReporter(  506): Compat change id reported: 265195908; UID 10143; state: ENABLED
+11-05 08:00:31.141 V/WindowManagerShell(  804): onTransitionReady android.os.BinderProxy@b1f7807: {id=21 t=OPEN f=0x0 trk=1 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@1ef83d} m=OPEN f=NONE leash=Surface(name=Task=11)/@0xd3387a6 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@9007832} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x2a985e7 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:31.144 V/WindowManagerShell(  804): Playing animation for (#21)android.os.BinderProxy@b1f7807@1
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.transition.DefaultMixedHandler@aa600ce
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@a414bef
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@cca56fc
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.recents.RecentsTransitionHandler@b900185
+11-05 08:00:31.144 V/ShellRecents(  804): RecentsTransitionHandler.startAnimation: no controller found
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.pip.PipTransition@ea55bda
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.splitscreen.StageCoordinator@300b80b
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.transition.RemoteTransitionHandler@2e3e6e8
+11-05 08:00:31.144 V/WindowManagerShell(  804): Transition doesn't have explicit remote, search filters for match for {id=21 t=OPEN f=0x0 trk=1 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@1ef83d} m=OPEN f=NONE leash=Surface(name=Task=11)/@0xd3387a6 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@9007832} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x2a985e7 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:31.144 V/WindowManagerShell(  804):  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@ad43101, appThread = android.app.IApplicationThread$Stub$Proxy@b0d5ba6, debugName = QuickstepLaunchHome }}
+11-05 08:00:31.144 V/WindowManagerShell(  804):  Delegate animation for #21 to null
+11-05 08:00:31.144 V/WindowManagerShell(  804):  try handler com.android.wm.shell.transition.DefaultTransitionHandler@f00c9e7
+11-05 08:00:31.144 V/WindowManagerShell(  804): start default transition animation, info = {id=21 t=OPEN f=0x0 trk=1 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@1ef83d} m=OPEN f=NONE leash=Surface(name=Task=11)/@0xd3387a6 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@9007832} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x2a985e7 sb=Rect(0, 0 - 2560, 1800) eb=Rect(0, 0 - 2560, 1800) d=0}]}
+11-05 08:00:31.151 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:31.152 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:31.154 V/WindowManagerShell(  804): loadAnimation: anim=android.view.animation.AnimationSet@d07db39 animAttr=0x13 type=OPEN isEntrance=false
+11-05 08:00:31.155 V/WindowManagerShell(  804): loadAnimation: anim=android.view.animation.AnimationSet@b01f1f5 animAttr=0x12 type=OPEN isEntrance=true
+11-05 08:00:31.155 V/WindowManagerShell(  804):  animated by com.android.wm.shell.transition.DefaultTransitionHandler@f00c9e7
+11-05 08:00:31.173 D/AddWorkspaceItemsTask( 1052): Adding item info to workspace: WorkspaceItemInfo(id=5 type=APP container=# com.android.launcher3.logger.LauncherAtom$ContainerInfo@21a259b
+11-05 08:00:31.173 D/AddWorkspaceItemsTask( 1052): workspace {
+11-05 08:00:31.173 D/AddWorkspaceItemsTask( 1052):   grid_x: 0
+11-05 08:00:31.173 D/AddWorkspaceItemsTask( 1052):   grid_y: 0
+11-05 08:00:31.173 D/AddWorkspaceItemsTask( 1052):   page_index: 1
+11-05 08:00:31.173 D/AddWorkspaceItemsTask( 1052): } targetComponent=ComponentInfo{com.teamviewer.quicksupport.market/com.teamviewer.quicksupport.ui.QSActivity} screen=1 cell(0,0) span(1,1) minSpan(1,1) rank=0 user=UserHandle{0} title=QuickSupport)
+11-05 08:00:31.186 D/CompatibilityChangeReporter( 3640): Compat change id reported: 171979766; UID 10143; state: ENABLED
+11-05 08:00:31.187 D/CompatibilityChangeReporter( 3640): Compat change id reported: 242716250; UID 10143; state: ENABLED
+11-05 08:00:31.219 D/CompatibilityChangeReporter(  506): Compat change id reported: 170503758; UID 10143; state: ENABLED
+11-05 08:00:31.237 W/Looper  (  804): Slow delivery took 42ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.DefaultTransitionHandler$$ExternalSyntheticLambda7@5a36aad m=0
+11-05 08:00:31.245 W/ziparchive( 3640): Unable to open '/data/app/~~SzDTITvrJRcfUQvbFWuWrQ==/es.empresa.tabletsetup.updater-5lLcJV_FMTMUtogoWfD1BQ==/base.dm': No such file or directory
+11-05 08:00:31.245 W/ziparchive( 3640): Unable to open '/data/app/~~SzDTITvrJRcfUQvbFWuWrQ==/es.empresa.tabletsetup.updater-5lLcJV_FMTMUtogoWfD1BQ==/base.dm': No such file or directory
+11-05 08:00:31.247 V/WindowManagerShell(  804): Transition animation finished (aborted=false), notifying core (#21)android.os.BinderProxy@b1f7807@1
+11-05 08:00:31.313 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:31.340 V/WindowManager(  506): Finish Transition #21: created at 11-05 08:00:30.763 collect-started=0.034ms request-sent=6.46ms started=18.757ms ready=315.315ms sent=317.049ms finished=576.682ms
+11-05 08:00:31.340 D/android.hardware.audio@7.1-impl.ranchu(  332): threadLoop: entering standby, frames: 687616
+11-05 08:00:31.343 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:31.352 V/WindowManagerShell(  804): Track 1 became idle
+11-05 08:00:31.353 V/WindowManagerShell(  804): All active transition animations finished
+11-05 08:00:31.353 W/Looper  (  804): Slow dispatch took 105ms wmshell.main h=android.os.Handler c=com.android.wm.shell.transition.DefaultTransitionHandler$$ExternalSyntheticLambda7@fe351e2 m=0
+11-05 08:00:31.374 E/BpTransactionCompletedListener(  391): Failed to transact (-32)
+11-05 08:00:31.495 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:31.506 W/Looper  (  804): Drained
+11-05 08:00:31.506 W/Looper  (  804): Slow dispatch took 152ms wmshell.main h=android.os.Handler c=com.android.wm.shell.common.ShellExecutor$$ExternalSyntheticLambda0@d88e973 m=0
+11-05 08:00:31.506 W/Looper  (  804): Slow delivery took 154ms wmshell.main h=android.os.Handler c=android.window.TaskOrganizer$1$$ExternalSyntheticLambda3@c5ea030 m=0
+11-05 08:00:31.559 W/Looper  (  804): Drained
+11-05 08:00:31.620 D/nativeloader( 3640): Configuring clns-6 for other apk /data/app/~~SzDTITvrJRcfUQvbFWuWrQ==/es.empresa.tabletsetup.updater-5lLcJV_FMTMUtogoWfD1BQ==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~SzDTITvrJRcfUQvbFWuWrQ==/es.empresa.tabletsetup.updater-5lLcJV_FMTMUtogoWfD1BQ==/lib/x86_64:/data/app/~~SzDTITvrJRcfUQvbFWuWrQ==/es.empresa.tabletsetup.updater-5lLcJV_FMTMUtogoWfD1BQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/es.empresa.tabletsetup.updater
+11-05 08:00:31.629 V/GraphicsEnvironment( 3640): Currently set values for:
+11-05 08:00:31.629 V/GraphicsEnvironment( 3640):   angle_gl_driver_selection_pkgs=[]
+11-05 08:00:31.629 V/GraphicsEnvironment( 3640):   angle_gl_driver_selection_values=[]
+11-05 08:00:31.629 V/GraphicsEnvironment( 3640): ANGLE GameManagerService for es.empresa.tabletsetup.updater: false
+11-05 08:00:31.629 V/GraphicsEnvironment( 3640): es.empresa.tabletsetup.updater is not listed in per-application setting
+11-05 08:00:31.629 V/GraphicsEnvironment( 3640): Neither updatable production driver nor prerelease driver is supported.
+11-05 08:00:31.636 D/WM-WrkMgrInitializer( 3640): Initializing WorkManager with default configuration.
+11-05 08:00:31.638 D/AddWorkspaceItemsTask( 1052): Adding item info to workspace: WorkspaceItemInfo(id=6 type=APP container=# com.android.launcher3.logger.LauncherAtom$ContainerInfo@21c6b28
+11-05 08:00:31.638 D/AddWorkspaceItemsTask( 1052): workspace {
+11-05 08:00:31.638 D/AddWorkspaceItemsTask( 1052):   grid_x: 1
+11-05 08:00:31.638 D/AddWorkspaceItemsTask( 1052):   grid_y: 0
+11-05 08:00:31.638 D/AddWorkspaceItemsTask( 1052):   page_index: 1
+11-05 08:00:31.638 D/AddWorkspaceItemsTask( 1052): } targetComponent=ComponentInfo{es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity} screen=1 cell(1,0) span(1,1) minSpan(1,1) rank=0 user=UserHandle{0} title=Tablet Updater)
+11-05 08:00:31.674 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:31.784 D/b/260135164( 1052): updateIconAlphaForHome - setIconsAlpha(0), isTaskbarPresent: true
+11-05 08:00:31.784 D/WM-PackageManagerHelper( 3640): Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-05 08:00:31.784 D/WM-Schedulers( 3640): Created SystemJobScheduler and enabled SystemJobService
+11-05 08:00:31.851 D/WM-ForceStopRunnable( 3640): The default process name was not specified.
+11-05 08:00:31.852 D/WM-ForceStopRunnable( 3640): Performing cleanup operations.
+11-05 08:00:31.903 D/WM-SystemJobScheduler( 3640): Reconciling jobs
+11-05 08:00:31.909 D/CompatibilityChangeReporter( 3640): Compat change id reported: 160794467; UID 10143; state: ENABLED
+11-05 08:00:31.911 D/WM-ForceStopRunnable( 3640): Application was force-stopped, rescheduling.
+11-05 08:00:31.913 I/ActivityManager(  506): Flag disabled. Ignoring finishAttachApplication from uid: 10143. pid: 3640
+11-05 08:00:31.914 I/ImeTracker( 1052): com.android.launcher3:7d37bf7d: onRequestHide at ORIGIN_CLIENT_HIDE_SOFT_INPUT reason HIDE_SOFT_INPUT
+11-05 08:00:31.914 I/ImeTracker( 1052): com.android.launcher3:7d37bf7d: onFailed at PHASE_CLIENT_VIEW_SERVED
+11-05 08:00:31.931 D/StatusBarIconController(  804): ignoring old pipeline callback because the new wifi icon is enabled
+11-05 08:00:31.934 D/libEGL  ( 3640): loaded /vendor/lib64/egl/libEGL_emulation.so
+11-05 08:00:31.936 D/libEGL  ( 3640): loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+11-05 08:00:31.938 D/libEGL  ( 3640): loaded /vendor/lib64/egl/libGLESv2_emulation.so
+11-05 08:00:31.956 D/CompatibilityChangeReporter( 3640): Compat change id reported: 194532703; UID 10143; state: ENABLED
+11-05 08:00:31.956 D/CompatibilityChangeReporter( 3640): Compat change id reported: 253665015; UID 10143; state: ENABLED
+11-05 08:00:31.957 D/WM-SystemJobScheduler( 3640): Scheduling work ID d2e10018-654d-48be-958b-eaba439cfcb3Job ID 0
+11-05 08:00:31.960 D/CompatibilityChangeReporter(  506): Compat change id reported: 271850009; UID 10143; state: ENABLED
+11-05 08:00:31.960 D/CompatibilityChangeReporter(  506): Compat change id reported: 253665015; UID 10143; state: ENABLED
+11-05 08:00:31.960 D/CompatibilityChangeReporter(  506): Compat change id reported: 194532703; UID 10143; state: ENABLED
+11-05 08:00:31.971 D/ConnectivityService(  506): handleLingerComplete for [102 CELLULAR]
+11-05 08:00:31.971 I/ConnectivityService(  506): Update capabilities for net 102 : -FOREGROUND
+11-05 08:00:31.974 I/netd    (  326): networkSetPermissionForNetwork(102, 1) <2.60ms>
+11-05 08:00:31.981 D/NetworkStatsObservers(  506): Unregistering RequestInfo from pid/uid:506/1000(android) for DataUsageRequest [ requestId=10, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3535345 ] accessLevel:3
+11-05 08:00:31.981 D/NetworkStatsObservers(  506): Registering observer for RequestInfo from pid/uid:506/1000(android) for DataUsageRequest [ requestId=11, networkTemplate=NetworkTemplate: matchRule=MOBILE, matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, thresholdInBytes=3514857 ] accessLevel:3
+11-05 08:00:31.988 I/netd    (  326): tetherGetStats() -> {[]} <0.31ms>
+11-05 08:00:32.025 D/WM-PackageManagerHelper( 3640): Skipping component enablement for androidx.work.impl.background.systemalarm.RescheduleReceiver
+11-05 08:00:32.075 D/CompatibilityChangeReporter( 3640): Compat change id reported: 237531167; UID 10143; state: DISABLED
+11-05 08:00:32.077 W/OpenGLRenderer( 3640): Unknown dataspace 0
+11-05 08:00:32.283 D/AutofillManagerService(  506): Close system dialogs
+11-05 08:00:32.291 I/vol.VolumeDialogImpl(  804): mDialog.dismiss() reason: volume_controller from: com.android.systemui.volume.VolumeDialogImpl$7.onDismissRequested:3
+11-05 08:00:32.297 D/CoreBackPreview(  506): Window{4d4aeba u0 es.empresa.tabletsetup.updater/es.empresa.tabletsetup.updater.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@6768947, mPriority=0, mIsAnimationCallback=false}
+11-05 08:00:32.543 W/OpenGLRenderer( 3640): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+--------- beginning of kernel
+11-05 08:00:32.761 I/servicemanager(    0): Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+11-05 08:00:32.588 I/hwservicemanager(  135): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+11-05 08:00:32.588 I/Gralloc4( 3640): mapper 4.x is not supported
+11-05 08:00:33.143 W/NotificationService(  506): Toast already killed. pkg=com.android.packageinstaller token=android.os.BinderProxy@12c44e0
+11-05 08:00:33.265 W/ziparchive(  506): Unable to open '/data/app/~~SzDTITvrJRcfUQvbFWuWrQ==/es.empresa.tabletsetup.updater-5lLcJV_FMTMUtogoWfD1BQ==/base.dm': No such file or directory
+11-05 08:00:33.266 I/ActivityTaskManager(  506): Displayed es.empresa.tabletsetup.updater/.MainActivity for user 0: +2s504ms
+11-05 08:00:33.283 W/WindowOnBackDispatcher(  804): sendCancelIfRunning: isInProgress=falsecallback=android.view.ViewRootImpl$$ExternalSyntheticLambda17@5a4e2fc
+11-05 08:00:33.283 D/CoreBackPreview(  506): Window{9c7b5a u0 Splash Screen es.empresa.tabletsetup.updater EXITING}: Setting back callback null
+11-05 08:00:33.284 W/InputManager-JNI(  506): Input channel object '9c7b5a Splash Screen es.empresa.tabletsetup.updater (client)' was disposed without first being removed with the input manager!
+11-05 08:00:33.311 I/Choreographer( 3640): Skipped 70 frames!  The application may be doing too much work on its main thread.
+11-05 08:00:33.366 I/OpenGLRenderer( 3640): Davey! duration=1399ms; Flags=1, FrameTimelineVsyncId=11319, IntendedVsync=263609458205, Vsync=263809458197, InputEventId=0, HandleInputStart=263816575053, AnimationStart=263816579933, PerformTraversalsStart=263816688655, DrawStart=264341075899, FrameDeadline=263626124871, FrameInterval=263816401390, FrameStartTime=16666666, SyncQueued=264359731568, SyncStart=264360008965, IssueDrawCommandsStart=264360469864, SwapBuffers=264813930903, FrameCompleted=265009654566, DequeueBufferDuration=3898, QueueBufferDuration=347999, GpuCompleted=265009654566, SwapBuffersCompleted=264994022543, DisplayPresentTime=0, CommandSubmissionCompleted=264813930903, 
+11-05 08:00:33.382 D/EGL_emulation(  804): app_time_stats: avg=1376.11ms min=701.64ms max=2050.58ms count=2
+11-05 08:00:33.405 D/CompatibilityChangeReporter(  506): Compat change id reported: 214016041; UID 10143; state: ENABLED
+11-05 08:00:33.405 I/ImeTracker(  506): es.empresa.tabletsetup.updater:f088be0f: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+11-05 08:00:33.405 I/ImeTracker(  506): es.empresa.tabletsetup.updater:f088be0f: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-05 08:00:33.609 I/logd    (    0): logdr: UID=2000 GID=2000 PID=3673 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+11-05 08:00:34.591 D/ActivityManager(  506): freezing 1507 android.process.acore
+11-05 08:00:34.608 I/resolv  (  326): GetAddrInfoHandler::run: {103 103 103 983143 10143 0}
+11-05 08:00:34.608 I/resolv  (  326): res_nmkquery: (QUERY, IN, AAAA)
+11-05 08:00:34.608 I/resolv  (  326): res_nmkquery: (QUERY, IN, A)
+11-05 08:00:34.608 I/resolv  (  326): resolv_cache_lookup: FOUND IN CACHE entry=0x757442424370
+11-05 08:00:34.608 I/resolv  (  326): doQuery: rcode=0, ancount=3, return value=117
+11-05 08:00:34.609 I/resolv  (  326): resolv_cache_lookup: FOUND IN CACHE entry=0x7573d2429ed0
+11-05 08:00:34.609 I/resolv  (  326): doQuery: rcode=0, ancount=3, return value=173
+11-05 08:00:34.610 D/TrafficStats( 3640): tagSocket(80) with statsTag=0xffffffff, statsUid=-1
+11-05 08:00:34.773 E/TaskPersister(  506): File error accessing recents directory (directory doesn't exist?).
+11-05 08:00:34.935 D/StatusBarIconController(  804): ignoring old pipeline callback because the new wifi icon is enabled
+11-05 08:00:35.185 I/resolv  (  326): GetAddrInfoHandler::run: {103 103 103 983143 10143 0}
+11-05 08:00:35.185 I/resolv  (  326): res_nmkquery: (QUERY, IN, A)
+11-05 08:00:35.185 I/resolv  (  326): resolv_cache_lookup: FOUND IN CACHE entry=0x757442424490
+11-05 08:00:35.185 I/resolv  (  326): doQuery: rcode=0, ancount=3, return value=129
+11-05 08:00:35.185 I/resolv  (  326): res_nmkquery: (QUERY, IN, AAAA)
+11-05 08:00:35.185 I/resolv  (  326): resolv_cache_lookup: FOUND IN CACHE entry=0x7573d2428cf0
+11-05 08:00:35.185 I/resolv  (  326): doQuery: rcode=0, ancount=3, return value=185
+11-05 08:00:35.186 D/TrafficStats( 3640): tagSocket(105) with statsTag=0xffffffff, statsUid=-1
+11-05 08:00:35.791 I/TabletSuite( 3640): comprobacion terminada modo=UPDATER online=true apps=9
+11-05 08:00:35.791 I/TabletSuite( 3640): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+11-05 08:00:35.791 I/TabletSuite( 3640): estado com.teamviewer.quicksupport.market AL_DIA | Instalada 15.83.285 (1583285) · al día
+11-05 08:00:35.791 I/TabletSuite( 3640): estado com.teamviewer.quicksupport.addon.universal NO_INSTALADA | No instalada · el Updater solo actualiza aplicaciones ya instaladas
+11-05 08:00:35.792 I/TabletSuite( 3640): estado com.android.chrome FUENTE_PENDIENTE | Sin fuente pública verificada: añádela al catálogo empresarial o importa la APK
+11-05 08:00:35.792 I/TabletSuite( 3640): estado com.google.android.apps.maps FUENTE_PENDIENTE | Sin fuente pública verificada: añádela al catálogo empresarial o importa la APK
+11-05 08:00:35.792 I/TabletSuite( 3640): estado com.waze FUENTE_PENDIENTE | Sin fuente pública verificada: añádela al catálogo empresarial o importa la APK
+11-05 08:00:35.792 I/TabletSuite( 3640): estado com.whatsapp FUENTE_PENDIENTE | Sin fuente pública verificada: añádela al catálogo empresarial o importa la APK
+11-05 08:00:35.792 I/TabletSuite( 3640): estado com.google.android.gm FUENTE_PENDIENTE | Sin fuente pública verificada: añádela al catálogo empresarial o importa la APK
+11-05 08:00:35.792 I/TabletSuite( 3640): estado es.empresa.tabletsetup.updater INSTALADA_SIN_FUENTE | Instalada 0.3.0 (3) · Sus nuevas versiones llegan por el catálogo empresarial o con un Installer más reciente
+11-05 08:00:36.158 D/EGL_emulation( 3640): app_time_stats: avg=1448.99ms min=110.43ms max=2787.55ms count=2
+11-05 08:00:36.394 D/StatusBarIconController(  804): ignoring old pipeline callbacks, because the new mobile icons are enabled
+11-05 08:00:36.632 I/logd    (    0): logdr: UID=2000 GID=2000 PID=3688 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+11-05 08:00:36.688 I/logd    (    0): logdr: UID=2000 GID=2000 PID=3699 n tail=0 logMask=10 pid=0 start=0ns deadline=0ns
+11-05 08:00:36.702 I/logd    (    0): logdr: UID=2000 GID=2000 PID=3702 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

@@ -1,0 +1,182 @@
+[
+  {
+    "prueba": "Emulador arrancado",
+    "ok": true,
+    "detalle": "API 28 · ABI x86_64,x86",
+    "critica": true
+  },
+  {
+    "prueba": "Emulador con Internet antes de empezar (las descargas de F-Droid y TeamViewer son reales)",
+    "ok": true,
+    "detalle": "red 100 validada tras 0 s",
+    "critica": false
+  },
+  {
+    "prueba": "Instalar Tablet Setup Installer",
+    "ok": true,
+    "detalle": "Success",
+    "critica": true
+  },
+  {
+    "prueba": "Installer: comprobación de versiones completada",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Installer: estados de las 9 aplicaciones",
+    "ok": true,
+    "detalle": "app=NO_INSTALADA, market=NO_INSTALADA, universal=NO_INSTALADA, chrome=FUENTE_PENDIENTE, maps=FUENTE_PENDIENTE, waze=OMITIDA, whatsapp=FUENTE_PENDIENTE, gm=FUENTE_PENDIENTE, updater=NO_INSTALADA",
+    "critica": true
+  },
+  {
+    "prueba": "FuelSoft no aparece",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Android 9: Waze bloqueado con «No compatible con Android 9»",
+    "ok": true,
+    "detalle": "OMITIDA · No compatible con Android 9",
+    "critica": true
+  },
+  {
+    "prueba": "MuPDF disponible desde F-Droid (índice firmado real)",
+    "ok": true,
+    "detalle": "NO_INSTALADA · Disponible 1.28.5a (270) · F-Droid",
+    "critica": false
+  },
+  {
+    "prueba": "QuickSupport disponible (descarga oficial TeamViewer)",
+    "ok": true,
+    "detalle": "NO_INSTALADA · Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)",
+    "critica": false
+  },
+  {
+    "prueba": "Tablet Updater disponible (embebido)",
+    "ok": true,
+    "detalle": "NO_INSTALADA · Disponible 0.3.0 (3) · Incluida en el Installer",
+    "critica": true
+  },
+  {
+    "prueba": "Lote «Instalar todas las compatibles» terminado",
+    "ok": true,
+    "detalle": "3 confirmación(es) de Android pulsadas",
+    "critica": true
+  },
+  {
+    "prueba": "Resultado del lote: com.artifex.mupdf.viewer.app",
+    "ok": true,
+    "detalle": "Instalada correctamente · 1.28.5a (270)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: com.teamviewer.quicksupport.market",
+    "ok": true,
+    "detalle": "Instalada correctamente · 15.83.285 (1583285)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: es.empresa.tabletsetup.updater",
+    "ok": true,
+    "detalle": "Instalada correctamente · 0.3.0 (3)",
+    "critica": true
+  },
+  {
+    "prueba": "Tablet Updater instalado por el Installer (sesión PackageInstaller)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "MuPDF instalado",
+    "ok": true,
+    "detalle": "",
+    "critica": false
+  },
+  {
+    "prueba": "QuickSupport instalado",
+    "ok": true,
+    "detalle": "",
+    "critica": false
+  },
+  {
+    "prueba": "Installer: no permite desinstalarse antes de activar el Updater",
+    "ok": true,
+    "detalle": "botón deshabilitado",
+    "critica": true
+  },
+  {
+    "prueba": "Installer → «Activar y configurar Updater» (actividad protegida por permiso de firma) registra la comprobación periódica",
+    "ok": true,
+    "detalle": "tarea del Updater en JobScheduler sin haber abierto el Updater",
+    "critica": true
+  },
+  {
+    "prueba": "Installer: permite desinstalarse con el Updater activado",
+    "ok": true,
+    "detalle": "botón habilitado",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: comprobación manual completada",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: no ofrece instalar apps no instaladas",
+    "ok": true,
+    "detalle": "universal",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: tarea periódica registrada en JobScheduler (WorkManager)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Sin Internet: se detecta y se informa sin bloquear la app",
+    "ok": true,
+    "detalle": "red por defecto 101 → none · QuickSupport: ERROR · Sin conexión a Internet: no se puede consultar la descarga oficial",
+    "critica": true
+  },
+  {
+    "prueba": "Red restablecida después de la prueba sin Internet",
+    "ok": true,
+    "detalle": "red por defecto: 103",
+    "critica": false
+  },
+  {
+    "prueba": "Installer retirado desde su botón final (con confirmación de Android)",
+    "ok": true,
+    "detalle": "desinstalado",
+    "critica": false
+  },
+  {
+    "prueba": "Updater funciona con el Installer desinstalado",
+    "ok": true,
+    "detalle": "desinstalación: Success · comprobación: terminada (online=true)",
+    "critica": true
+  },
+  {
+    "prueba": "Installer desinstalado",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Tarea periódica sigue registrada sin el Installer",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Sin cierres inesperados (logcat crash)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  }
+]

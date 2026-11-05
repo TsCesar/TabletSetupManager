@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.FdroidIndexTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-05T07:41:36.403Z" hostname="runnervm48cm3" time="0.063">
+  <properties/>
+  <testcase name="verifica la firma JAR y el certificado fijado" classname="es.empresa.tabletsetup.core.FdroidIndexTest" time="0.039"/>
+  <testcase name="rechaza indice sin firma o alterado" classname="es.empresa.tabletsetup.core.FdroidIndexTest" time="0.014"/>
+  <testcase name="elige la version sugerida compatible y no las beta" classname="es.empresa.tabletsetup.core.FdroidIndexTest" time="0.003"/>
+  <testcase name="paquete inexistente en F-Droid" classname="es.empresa.tabletsetup.core.FdroidIndexTest" time="0.002"/>
+  <testcase name="respeta arquitectura y minSdk" classname="es.empresa.tabletsetup.core.FdroidIndexTest" time="0.002"/>
+  <testcase name="analiza index-v1 en streaming con packages como objeto" classname="es.empresa.tabletsetup.core.FdroidIndexTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

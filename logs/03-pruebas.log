@@ -1,0 +1,78 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :updater:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :updater:preBuild UP-TO-DATE
+> Task :core:preBuild UP-TO-DATE
+> Task :core:preDebugBuild UP-TO-DATE
+> Task :updater:preDebugBuild UP-TO-DATE
+> Task :updater:generateDebugResValues UP-TO-DATE
+> Task :core:generateDebugBuildConfig UP-TO-DATE
+> Task :core:generateDebugResValues UP-TO-DATE
+> Task :updater:generateDebugResources UP-TO-DATE
+> Task :core:generateDebugResources UP-TO-DATE
+> Task :updater:packageDebugResources UP-TO-DATE
+> Task :core:packageDebugResources UP-TO-DATE
+> Task :core:parseDebugLocalResources UP-TO-DATE
+> Task :core:generateDebugRFile UP-TO-DATE
+> Task :updater:mapDebugSourceSetPaths UP-TO-DATE
+> Task :updater:mergeDebugResources UP-TO-DATE
+> Task :updater:parseDebugLocalResources UP-TO-DATE
+> Task :updater:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :updater:extractDeepLinksDebug UP-TO-DATE
+> Task :updater:javaPreCompileDebug UP-TO-DATE
+> Task :updater:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:compileDebugKotlin UP-TO-DATE
+> Task :core:javaPreCompileDebug UP-TO-DATE
+> Task :updater:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :core:compileDebugJavaWithJavac UP-TO-DATE
+> Task :updater:mergeDebugShaders UP-TO-DATE
+> Task :updater:compileDebugShaders NO-SOURCE
+> Task :updater:generateDebugAssets UP-TO-DATE
+> Task :core:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :core:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :core:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:generateDebugUnitTestStubRFile FROM-CACHE
+> Task :core:compileDebugUnitTestKotlin FROM-CACHE
+> Task :core:javaPreCompileDebugUnitTest FROM-CACHE
+> Task :core:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :core:processDebugJavaRes UP-TO-DATE
+> Task :core:processDebugUnitTestJavaRes
+> Task :core:testDebugUnitTest FROM-CACHE
+> Task :core:compileDebugLibraryResources UP-TO-DATE
+> Task :core:writeDebugAarMetadata UP-TO-DATE
+> Task :core:extractDeepLinksDebug UP-TO-DATE
+> Task :core:processDebugManifest UP-TO-DATE
+> Task :core:mergeDebugShaders UP-TO-DATE
+> Task :core:compileDebugShaders NO-SOURCE
+> Task :core:generateDebugAssets UP-TO-DATE
+> Task :core:mergeDebugAssets UP-TO-DATE
+> Task :updater:checkDebugAarMetadata UP-TO-DATE
+> Task :updater:processDebugMainManifest UP-TO-DATE
+> Task :updater:processDebugManifest UP-TO-DATE
+> Task :updater:processDebugManifestForPackage UP-TO-DATE
+> Task :updater:processDebugResources UP-TO-DATE
+> Task :updater:compileDebugKotlin UP-TO-DATE
+> Task :updater:compileDebugJavaWithJavac NO-SOURCE
+> Task :updater:mergeDebugAssets UP-TO-DATE
+> Task :updater:bundleDebugClassesToCompileJar
+> Task :updater:bundleDebugClassesToRuntimeJar
+> Task :updater:packageDebugUnitTestForUnitTest
+> Task :updater:compileDebugUnitTestKotlin FROM-CACHE
+> Task :updater:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :updater:processDebugJavaRes UP-TO-DATE
+> Task :updater:generateDebugUnitTestConfig
+> Task :updater:processDebugUnitTestJavaRes
+> Task :updater:testDebugUnitTest FROM-CACHE
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/tests-1793865258758.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TabletSetupManager/TabletSetupManager/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 14s
+49 actionable tasks: 6 executed, 7 from cache, 36 up-to-date
