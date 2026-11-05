@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.core.content.edit
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import es.empresa.tabletsetup.core.BuildConfig
@@ -47,56 +48,56 @@ class SuiteSettings(context: Context) {
 
     var catalogUrl: String
         get() = prefs.getString(KEY_CATALOG_URL, null) ?: BuildConfig.DEFAULT_CATALOG_URL
-        set(value) = prefs.edit().putString(KEY_CATALOG_URL, value.trim()).apply()
+        set(value) = prefs.edit { putString(KEY_CATALOG_URL, value.trim()) }
 
     var catalogPublicKey: String
         get() = prefs.getString(KEY_CATALOG_KEY, null) ?: BuildConfig.DEFAULT_CATALOG_PUBLIC_KEY
-        set(value) = prefs.edit().putString(KEY_CATALOG_KEY, value.trim()).apply()
+        set(value) = prefs.edit { putString(KEY_CATALOG_KEY, value.trim()) }
 
     var lastCatalogSequence: Long
         get() = prefs.getLong("catalog_sequence", 0L)
-        set(value) = prefs.edit().putLong("catalog_sequence", value).apply()
+        set(value) = prefs.edit { putLong("catalog_sequence", value) }
 
     var notificationsEnabled: Boolean
         get() = prefs.getBoolean("notifications_enabled", true)
-        set(value) = prefs.edit().putBoolean("notifications_enabled", value).apply()
+        set(value) = prefs.edit { putBoolean("notifications_enabled", value) }
 
     /** Intervalo aproximado de comprobación periódica (horas). */
     var checkIntervalHours: Int
         get() = prefs.getInt("check_interval_hours", DEFAULT_INTERVAL_HOURS)
-        set(value) = prefs.edit().putInt("check_interval_hours", value).apply()
+        set(value) = prefs.edit { putInt("check_interval_hours", value) }
 
     var wifiOnly: Boolean
         get() = prefs.getBoolean("wifi_only", true)
-        set(value) = prefs.edit().putBoolean("wifi_only", value).apply()
+        set(value) = prefs.edit { putBoolean("wifi_only", value) }
 
     var lastCheckAt: Long
         get() = prefs.getLong("last_check_at", 0L)
-        set(value) = prefs.edit().putLong("last_check_at", value).apply()
+        set(value) = prefs.edit { putLong("last_check_at", value) }
 
     var lastCheckSummary: String
         get() = prefs.getString("last_check_summary", "").orEmpty()
-        set(value) = prefs.edit().putString("last_check_summary", value).apply()
+        set(value) = prefs.edit { putString("last_check_summary", value) }
 
     var lastNotifiedSignature: String
         get() = prefs.getString("last_notified", "").orEmpty()
-        set(value) = prefs.edit().putString("last_notified", value).apply()
+        set(value) = prefs.edit { putString("last_notified", value) }
 
     var updaterConfiguredAt: Long
         get() = prefs.getLong("updater_configured_at", 0L)
-        set(value) = prefs.edit().putLong("updater_configured_at", value).apply()
+        set(value) = prefs.edit { putLong("updater_configured_at", value) }
 
     var remoteTestAt: Long
         get() = prefs.getLong("remote_test_at", 0L)
-        set(value) = prefs.edit().putLong("remote_test_at", value).apply()
+        set(value) = prefs.edit { putLong("remote_test_at", value) }
 
     var remoteTestOk: Boolean
         get() = prefs.getBoolean("remote_test_ok", false)
-        set(value) = prefs.edit().putBoolean("remote_test_ok", value).apply()
+        set(value) = prefs.edit { putBoolean("remote_test_ok", value) }
 
     var quickSupportIdConfirmed: Boolean
         get() = prefs.getBoolean("qs_id_confirmed", false)
-        set(value) = prefs.edit().putBoolean("qs_id_confirmed", value).apply()
+        set(value) = prefs.edit { putBoolean("qs_id_confirmed", value) }
 
     val catalogConfigured: Boolean get() = catalogUrl.isNotBlank()
 

@@ -1,6 +1,7 @@
 package es.empresa.tabletsetup.core.platform
 
 import android.content.Context
+import androidx.core.content.edit
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -155,8 +156,11 @@ class FdroidRepository(context: Context, private val downloader: Downloader) {
                     parsed = verified
                     parsedFor = jar.lastModified() to packages
                 }
-                prefs.edit().putLong("downloaded_at", now)
-                    .putString("etag", outcome.etag).putString("last_modified", outcome.lastModified).apply()
+                prefs.edit {
+                    putLong("downloaded_at", now)
+                    putString("etag", outcome.etag)
+                    putString("last_modified", outcome.lastModified)
+                }
                 fromCache = false
             } catch (e: Exception) {
                 val tooOld = now - downloadedAt > MAX_OFFLINE_AGE_MS
@@ -246,7 +250,7 @@ class DirectSourceRepository(context: Context, private val downloader: Downloade
             add("signers", JsonArray().apply { entry.signers.forEach { add(it) } })
             addProperty("t", entry.checkedAt)
         }
-        prefs.edit().putString(packageName, o.toString()).apply()
+        prefs.edit { putString(packageName, o.toString()) }
     }
 
     /** APK descargada y verificada previamente (para no repetir la descarga al instalar). */
@@ -384,7 +388,9 @@ class ReleaseResolver(
                                     val release = selection.release
                                     return Resolution.Available(if (pins.isEmpty()) release else release.copy(expectedSigners = release.expectedSigners + pins))
                                 }
-                                is FdroidSelector.Selection.Unavailable -> if (bestCatalog == null) return Resolution.NoSource(selection.reason)
+                                is FdroidSelector.Selection.Unavailable -> if (bestCatalog == null) {
+                                    return if (selection.incompatible) Resolution.Incompatible(selection.reason) else Resolution.NoSource(selection.reason)
+                                }
                             }
                         }
                     }

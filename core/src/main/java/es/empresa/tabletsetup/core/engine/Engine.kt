@@ -43,6 +43,10 @@ object StatusCalculator {
             } else {
                 AppStatus(app, AppState.FUENTE_PENDIENTE, null, null, resolution.reason)
             }
+            is Resolution.Incompatible -> AppStatus(
+                app, AppState.NO_COMPATIBLE, installed, null,
+                if (installedText != null) "$installedText · ${resolution.reason}" else resolution.reason,
+            )
             is Resolution.Available -> available(app, device, installed, installedText, resolution.release, mode)
         }
     }

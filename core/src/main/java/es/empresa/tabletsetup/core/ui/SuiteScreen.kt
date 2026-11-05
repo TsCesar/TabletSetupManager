@@ -3,9 +3,9 @@ package es.empresa.tabletsetup.core.ui
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.core.net.toUri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -61,7 +61,7 @@ import es.empresa.tabletsetup.core.platform.InstallEvents
 /** Abre los ajustes para autorizar la instalación de apps desde esta aplicación. */
 fun openUnknownSourcesSettings(context: android.content.Context) {
     try {
-        context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${context.packageName}")))
+        context.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, "package:${context.packageName}".toUri()))
     } catch (e: Exception) {
         context.startActivity(Intent(Settings.ACTION_SETTINGS))
     }

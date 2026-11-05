@@ -13,6 +13,10 @@ name: Compilar APK
 on:
   push:
     branches: [main]
+    # Los cambios solo de documentación no recompilan (ni sustituyen la rama apk-dist).
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
   pull_request:
   workflow_dispatch:
 

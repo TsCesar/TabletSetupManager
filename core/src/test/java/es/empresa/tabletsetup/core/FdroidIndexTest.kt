@@ -77,17 +77,23 @@ class FdroidIndexTest {
         val lookup = FdroidIndexReader.parse(index(suggested = "999").byteInputStream(), setOf(mupdf)).getValue(mupdf)
         // En x86_64 la 280 también vale (incluye x86), pero sin sugerida restrictiva gana la mayor.
         assertEquals(280L, (FdroidSelector.choose(lookup, mupdf, x86) as FdroidSelector.Selection.Found).release.versionCode)
+        // Publicada, pero sin APK para esta tablet: «no compatible» (no «fuente pendiente»), con el motivo.
         val onlyX8664 = lookup.copy(candidates = lookup.candidates.filter { it.versionCode == 260L })
-        assertTrue(FdroidSelector.choose(onlyX8664, mupdf, arm) is FdroidSelector.Selection.Unavailable)
+        val byAbi = FdroidSelector.choose(onlyX8664, mupdf, arm) as FdroidSelector.Selection.Unavailable
+        assertTrue(byAbi.incompatible)
+        assertTrue(byAbi.reason, byAbi.reason.contains("x86_64") && byAbi.reason.contains("arm64-v8a"))
         val onlyHighMin = lookup.copy(candidates = lookup.candidates.filter { it.versionCode == 250L })
-        assertTrue(FdroidSelector.choose(onlyHighMin, mupdf, arm) is FdroidSelector.Selection.Unavailable)
+        val bySdk = FdroidSelector.choose(onlyHighMin, mupdf, arm) as FdroidSelector.Selection.Unavailable
+        assertTrue(bySdk.incompatible)
+        assertTrue(bySdk.reason, bySdk.reason.contains("requiere Android"))
     }
 
     @Test
     fun `paquete inexistente en F-Droid`() {
         val lookup = FdroidIndexReader.parse(index().byteInputStream(), setOf("com.no.existe")).getValue("com.no.existe")
         assertFalse(lookup.packageFound)
-        assertTrue(FdroidSelector.choose(lookup, "com.no.existe", arm) is FdroidSelector.Selection.Unavailable)
+        val missing = FdroidSelector.choose(lookup, "com.no.existe", arm) as FdroidSelector.Selection.Unavailable
+        assertFalse(missing.incompatible) // sin publicar: fuente pendiente
     }
 
     @Test

@@ -130,6 +130,9 @@ data class AppStatus(
 sealed interface Resolution {
     data class Available(val release: AppRelease) : Resolution
     data class NoSource(val reason: String) : Resolution
+
+    /** La fuente publica la app, pero ninguna versión sirve para esta tablet. */
+    data class Incompatible(val reason: String) : Resolution
     data class Failed(val message: String) : Resolution
 }
 

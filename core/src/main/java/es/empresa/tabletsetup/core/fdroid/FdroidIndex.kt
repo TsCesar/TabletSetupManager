@@ -231,7 +231,12 @@ object FdroidIndexReader {
 object FdroidSelector {
     sealed interface Selection {
         data class Found(val release: AppRelease, val candidate: FdroidCandidate) : Selection
-        data class Unavailable(val reason: String) : Selection
+
+        /**
+         * Sin APK utilizable. [incompatible] = la app está publicada pero ninguna versión estable
+         * sirve para esta tablet (Android o arquitectura): se muestra «No compatible», no «Fuente pendiente».
+         */
+        data class Unavailable(val reason: String, val incompatible: Boolean = false) : Selection
     }
 
     fun choose(lookup: FdroidLookup, packageName: String, device: DeviceProfile, repoUrl: String = FdroidRepo.REPO_URL): Selection {
@@ -244,12 +249,20 @@ object FdroidSelector {
                 CompatibilityPolicy.abiCompatible(c.abis, device.supportedAbis)
         }
         if (compatible.isEmpty()) {
-            return Selection.Unavailable("Ninguna versión publicada en F-Droid es compatible con esta tablet")
+            val abiOk = lookup.candidates.filter { CompatibilityPolicy.abiCompatible(it.abis, device.supportedAbis) }
+            val detail = when {
+                abiOk.isEmpty() -> "arquitecturas en F-Droid: ${lookup.candidates.flatMap { it.abis }.distinct().sorted().joinToString(", ")}; " +
+                    "tablet: ${device.supportedAbis.joinToString(", ")}"
+                device.sdkInt < abiOk.minOf { it.minSdk } ->
+                    "requiere Android ${CompatibilityPolicy.androidName(abiOk.minOf { it.minSdk })} o superior"
+                else -> "las APK publicadas no admiten Android ${CompatibilityPolicy.androidName(device.sdkInt)}"
+            }
+            return Selection.Unavailable("Ninguna versión publicada en F-Droid es compatible con esta tablet ($detail)", incompatible = true)
         }
         val suggested = lookup.suggestedVersionCode
         val stable = if (suggested != null && suggested > 0) compatible.filter { it.versionCode <= suggested } else compatible
         if (stable.isEmpty()) {
-            return Selection.Unavailable("F-Droid solo ofrece versiones de prueba (beta) compatibles")
+            return Selection.Unavailable("F-Droid solo ofrece versiones de prueba (beta) compatibles", incompatible = true)
         }
         val best = stable.maxWith(
             compareBy<FdroidCandidate>({ it.versionCode }, { -CompatibilityPolicy.abiRank(it.abis, device.supportedAbis) })

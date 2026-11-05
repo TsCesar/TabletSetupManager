@@ -19,8 +19,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.io.IOException
+import java.net.InetAddress
 import java.net.ServerSocket
+import java.net.Socket
+import java.util.Collections
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.concurrent.thread
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
@@ -158,6 +163,36 @@ class DownloaderTest {
             assertEquals(FailureKind.NO_NETWORK, e.kind)
             assertTrue(e.message!!.contains("conectar"))
             assertTrue(e.retryable)
+        }
+    }
+
+    @Test
+    fun `sondeo contra un servidor que no responde falla pronto y sin reintentos`() {
+        val accepted = AtomicInteger()
+        val sockets = Collections.synchronizedList(mutableListOf<Socket>())
+        ServerSocket(0, 50, InetAddress.getByName("127.0.0.1")).use { blackhole ->
+            thread(isDaemon = true) {
+                try {
+                    while (true) {
+                        sockets += blackhole.accept() // acepta TCP pero nunca responde (red «colgada»)
+                        accepted.incrementAndGet()
+                    }
+                } catch (e: IOException) {
+                    // servidor cerrado
+                }
+            }
+            val quick = Downloader(probeConnectTimeoutMs = 500, probeReadTimeoutMs = 500, sleep = { fail("El sondeo no debe reintentar") })
+            val start = System.nanoTime()
+            try {
+                quick.probe("https://127.0.0.1:${blackhole.localPort}/QuickSupport.apk")
+                fail("Debía fallar")
+            } catch (e: DownloadException) {
+                assertTrue(e.kind.name, e.kind == FailureKind.TIMEOUT || e.kind == FailureKind.TLS)
+            }
+            val elapsedMs = (System.nanoTime() - start) / 1_000_000
+            assertTrue("tardó $elapsedMs ms", elapsedMs < 5_000)
+            assertEquals(1, accepted.get())
+            sockets.forEach { it.close() }
         }
     }
 

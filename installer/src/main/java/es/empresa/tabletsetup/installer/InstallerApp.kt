@@ -3,8 +3,8 @@ package es.empresa.tabletsetup.installer
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.provider.Settings
+import androidx.core.net.toUri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -191,7 +191,7 @@ private fun InstallerMain(vm: SuiteViewModel, onQuickSupport: () -> Unit, onHist
             confirmButton = {
                 Button(onClick = {
                     confirmUninstall = false
-                    context.startActivity(Intent(Intent.ACTION_DELETE, Uri.parse("package:${context.packageName}")))
+                    context.startActivity(Intent(Intent.ACTION_DELETE, "package:${context.packageName}".toUri()))
                 }) { Text("Solicitar desinstalación") }
             },
             dismissButton = { TextButton(onClick = { confirmUninstall = false }) { Text("Cancelar") } },
@@ -408,7 +408,7 @@ private fun launch(context: Context, packageName: String) {
 }
 
 private fun appDetails(context: Context, packageName: String) =
-    open(context, Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
+    open(context, Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, "package:$packageName".toUri()))
 
 private fun open(context: Context, intent: Intent) {
     try {

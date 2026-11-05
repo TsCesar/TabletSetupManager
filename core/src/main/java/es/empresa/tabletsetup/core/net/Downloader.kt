@@ -95,6 +95,9 @@ class Downloader(
     private val sslSocketFactory: SSLSocketFactory? = null,
     private val connectTimeoutMs: Int = 15_000,
     private val readTimeoutMs: Int = 30_000,
+    /** El sondeo de cabeceras solo consulta: falla pronto (sin reintentos) para no retrasar la comprobación. */
+    private val probeConnectTimeoutMs: Int = 8_000,
+    private val probeReadTimeoutMs: Int = 10_000,
     private val retryDelaysMs: List<Long> = listOf(2_000L, 5_000L, 10_000L),
     private val sleep: (Long) -> Unit = { Thread.sleep(it) },
 ) {
@@ -244,10 +247,10 @@ class Downloader(
         }
     }
 
-    /** Consulta cabeceras (HEAD; si el servidor no lo admite, GET del primer byte). */
+    /** Consulta cabeceras (HEAD; si el servidor no lo admite, GET del primer byte). Sin reintentos. */
     fun probe(url: String): ProbeResult {
         val head = try {
-            connect(url, "HEAD", emptyMap())
+            connect(url, "HEAD", emptyMap(), probeConnectTimeoutMs, probeReadTimeoutMs)
         } catch (e: DownloadException) {
             if (e.kind != FailureKind.HTTP) throw e
             null
@@ -270,7 +273,7 @@ class Downloader(
                 connection.disconnect()
             }
         }
-        val connection = connect(url, "GET", mapOf("Range" to "bytes=0-0"))
+        val connection = connect(url, "GET", mapOf("Range" to "bytes=0-0"), probeConnectTimeoutMs, probeReadTimeoutMs)
         try {
             val code = responseCode(connection)
             if (code != HttpURLConnection.HTTP_OK && code != HttpURLConnection.HTTP_PARTIAL) throw httpError(code)
@@ -314,7 +317,13 @@ class Downloader(
         return written
     }
 
-    private fun connect(initialUrl: String, method: String, headers: Map<String, String>): HttpURLConnection {
+    private fun connect(
+        initialUrl: String,
+        method: String,
+        headers: Map<String, String>,
+        connectTimeout: Int = connectTimeoutMs,
+        readTimeout: Int = readTimeoutMs,
+    ): HttpURLConnection {
         var url = try {
             URI(initialUrl).toURL()
         } catch (e: Exception) {
@@ -333,8 +342,8 @@ class Downloader(
                 connection.sslSocketFactory = sslSocketFactory
             }
             connection.instanceFollowRedirects = false
-            connection.connectTimeout = connectTimeoutMs
-            connection.readTimeout = readTimeoutMs
+            connection.connectTimeout = connectTimeout
+            connection.readTimeout = readTimeout
             connection.requestMethod = method
             connection.setRequestProperty("User-Agent", userAgent)
             connection.setRequestProperty("Accept-Encoding", "identity")

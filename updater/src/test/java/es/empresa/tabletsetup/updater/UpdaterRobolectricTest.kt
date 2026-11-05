@@ -1,6 +1,8 @@
 package es.empresa.tabletsetup.updater
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,11 +21,15 @@ import es.empresa.tabletsetup.core.model.RuleResult
 import es.empresa.tabletsetup.core.platform.DeviceInfo
 import es.empresa.tabletsetup.core.platform.SuiteSettings
 import es.empresa.tabletsetup.core.policy.CompatibilityPolicy
+import es.empresa.tabletsetup.core.ui.SuiteContract
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import java.util.concurrent.TimeUnit
 
@@ -76,6 +82,33 @@ class UpdateSchedulerTest {
         val info = infos().single()
         assertEquals(TimeUnit.HOURS.toMillis(12), info.periodicityInfo!!.repeatIntervalMillis)
         assertEquals(NetworkType.CONNECTED, info.constraints.requiredNetworkType)
+    }
+}
+
+/** La activación desde el Installer solo se acepta de un llamante de confianza. */
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [34])
+class ConfigureActivityTest {
+    private lateinit var context: Context
+
+    @Before
+    fun setUp() {
+        context = ApplicationProvider.getApplicationContext()
+        WorkManagerTestInitHelper.initializeTestWorkManager(context, Configuration.Builder().setExecutor(SynchronousExecutor()).build())
+        context.getSharedPreferences("tablet_suite_settings", Context.MODE_PRIVATE).edit().clear().commit()
+    }
+
+    @Test
+    fun `rechaza una activacion que no viene del Installer firmado`() {
+        val evil = "https://otro.example/catalogo.json"
+        val intent = Intent(SuiteContract.ACTION_CONFIGURE)
+            .setClassName(context, ConfigureActivity::class.java.name)
+            .putExtra(SuiteContract.EXTRA_CATALOG_URL, evil)
+        val activity = Robolectric.buildActivity(ConfigureActivity::class.java, intent).create().get()
+        assertTrue(activity.isFinishing)
+        assertEquals(Activity.RESULT_CANCELED, shadowOf(activity).resultCode)
+        assertTrue(WorkManager.getInstance(context).getWorkInfosForUniqueWork(UpdateScheduler.WORK_NAME).get().isEmpty())
+        assertNotEquals(evil, SuiteSettings(context).catalogUrl)
     }
 }
 

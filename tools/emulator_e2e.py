@@ -3,8 +3,10 @@
 
 Instala las APK debug, ejecuta el flujo real del Installer (F-Droid, descarga oficial de
 TeamViewer, Updater embebido) pulsando las confirmaciones del sistema, y comprueba:
-regla de Waze, FuelSoft ausente, instalación por lotes, registro de WorkManager,
-comportamiento sin Internet, independencia del Updater y ausencia de cierres inesperados.
+regla de Waze, FuelSoft ausente, instalación por lotes, activación del Updater desde el
+Installer (con el permiso de notificaciones de Android 13+), registro de WorkManager,
+comportamiento sin Internet (Wi-Fi, datos y modo avión), retirada del Installer con su botón
+final, independencia del Updater y ausencia de cierres inesperados.
 
   python3 tools/emulator_e2e.py --api 28 --installer dist/TabletSetupInstaller-debug.apk --out e2e-api28
 
@@ -27,8 +29,11 @@ QS = "com.teamviewer.quicksupport.market"
 WAZE = "com.waze"
 TAG = "TabletSuite"
 INSTALLER_PKGS = ("com.android.packageinstaller", "com.google.android.packageinstaller")
+PERMISSION_PKGS = ("com.android.permissioncontroller", "com.google.android.permissioncontroller")
 CONFIRM_TEXTS = {"install", "instalar", "update", "actualizar"}
+ALLOW_TEXTS = {"allow", "permitir"}
 DISMISS_TEXTS = {"wait", "esperar", "ok", "aceptar", "got it", "install anyway", "instalar de todos modos", "don't send", "no enviar"}
+LOG_CHUNKS = []  # logcat de la app acumulado entre limpiezas (para el informe)
 
 
 def run(args, timeout=180, check=False):
@@ -72,16 +77,66 @@ def logcat():
     return adb("logcat", "-d", "-v", "brief", f"{TAG}:I", "*:S")
 
 
-def wait_log(pattern, timeout, after=0):
+def clear_log(label):
+    """Guarda el logcat de la app hasta ahora y lo vacía para la siguiente fase."""
+    LOG_CHUNKS.append(f"===== {label} =====\n{logcat()}")
+    adb("logcat", "-c")
+
+
+def start_activity(package):
+    """Abre la actividad principal en una tarea nueva y limpia. Sin --activity-clear-task, si quedó
+    un diálogo de permisos del sistema en la tarea de la app, Android solo trae esa tarea al frente
+    y la actividad no se vuelve a crear."""
+    return sh(f"am start -W --activity-clear-task -n {package}/.MainActivity")
+
+
+def wait_log(pattern, timeout, after=0, on_poll=None):
     """Espera a que aparezca un patrón en el logcat de la app; devuelve el texto completo."""
     end = time.time() + timeout
     regex = re.compile(pattern)
     while time.time() < end:
+        if on_poll:
+            on_poll()
         text = logcat()
         if len(regex.findall(text)) > after:
             return text
         time.sleep(3)
     return None
+
+
+def active_network():
+    """Red por defecto según ConnectivityService: un identificador, «none» o «?» si no se sabe."""
+    m = re.search(r"Active default network: (\S+)", sh("dumpsys connectivity", timeout=60))
+    return m.group(1) if m else "?"
+
+
+def set_network(enabled, api):
+    """Corta o restablece toda la conectividad del emulador (Wi-Fi, datos y, en API 30+, modo avión)."""
+    if enabled:
+        if api >= 30:
+            sh("cmd connectivity airplane-mode disable")
+        sh("svc wifi enable")
+        sh("svc data enable")
+    else:
+        if api >= 30:
+            sh("cmd connectivity airplane-mode enable")
+        sh("svc wifi disable")
+        sh("svc data disable")
+
+
+def wait_network(online, timeout):
+    """Espera a que haya (o deje de haber) red por defecto. Devuelve (conseguido, estado)."""
+    end = time.time() + timeout
+    state = "?"
+    while time.time() < end:
+        state = active_network()
+        if state == "?":
+            time.sleep(10)  # este Android no informa: espera fija
+            return None, state
+        if (state != "none") == online:
+            return True, state
+        time.sleep(3)
+    return False, state
 
 
 def states(text):
@@ -135,6 +190,52 @@ def handle_system_dialogs(out, shots):
     return False
 
 
+def allow_permission_dialog():
+    """Pulsa «Permitir» en el diálogo de permisos de Android (notificaciones, Android 13+)."""
+    for node in ui_nodes():
+        text = (node.get("text") or "").strip().lower()
+        rid = node.get("resource-id") or ""
+        if node.get("package") in PERMISSION_PKGS and (text in ALLOW_TEXTS or rid.endswith("permission_allow_button")):
+            return tap(node)
+    return False
+
+
+def notifications_granted(package):
+    return "POST_NOTIFICATIONS: granted=true" in sh(f"dumpsys package {package} | grep POST_NOTIFICATIONS")
+
+
+def tap_button(packages, texts):
+    """Pulsa un botón habilitado de los paquetes indicados cuyo texto (en minúsculas) esté en [texts]."""
+    for node in ui_nodes():
+        text = (node.get("text") or "").strip().lower()
+        if node.get("package") in packages and text in texts and node.get("enabled") == "true":
+            return tap(node)
+    return False
+
+
+def find_node(text, swipes=12):
+    """Busca un elemento por su texto exacto, desplazando la lista hacia abajo si hace falta."""
+    m = re.search(r"(\d+)x(\d+)", sh("wm size"))
+    w, h = (int(m.group(1)), int(m.group(2))) if m else (1080, 1920)
+    for i in range(swipes + 1):
+        for node in ui_nodes():
+            if (node.get("text") or "").strip() == text:
+                return node
+        if i < swipes:
+            sh(f"input swipe {w // 2} {int(h * 0.75)} {w // 2} {int(h * 0.3)} 400")
+            time.sleep(1.5)
+    return None
+
+
+def updater_job_registered(timeout=30):
+    end = time.time() + timeout
+    while time.time() < end:
+        if UPDATER in sh("dumpsys jobscheduler", timeout=120):
+            return True
+        time.sleep(3)
+    return False
+
+
 def wait_boot():
     adb("wait-for-device", timeout=600)
     end = time.time() + 600
@@ -181,8 +282,14 @@ def main():
         else:
             r.add(f"Android API {a.api}: Waze no se omite (queda sujeto a su versión/fuente)", waze[0] != "OMITIDA", f"{waze[0]} · {waze[1]}")
         mupdf = st.get(MUPDF, ("?", ""))
-        r.add("MuPDF disponible desde F-Droid (índice firmado real)", mupdf[0] in ("NO_INSTALADA", "AL_DIA", "ACTUALIZACION") and "F-Droid" in mupdf[1],
-              f"{mupdf[0]} · {mupdf[1]}", critical=False)
+        mupdf_expected = mupdf[0] != "NO_COMPATIBLE"
+        if mupdf_expected:
+            r.add("MuPDF disponible desde F-Droid (índice firmado real)", mupdf[0] in ("NO_INSTALADA", "AL_DIA", "ACTUALIZACION") and "F-Droid" in mupdf[1],
+                  f"{mupdf[0]} · {mupdf[1]}", critical=False)
+        else:
+            # Emuladores solo x86_64 (API 30+): F-Droid puede no publicar esa arquitectura. Debe verse «No compatible».
+            r.add("MuPDF sin APK de F-Droid para la arquitectura del emulador: «No compatible», sin bloquear el lote",
+                  "arquitectura" in mupdf[1], f"{mupdf[0]} · {mupdf[1]}", critical=False)
         qs = st.get(QS, ("?", ""))
         r.add("QuickSupport disponible (descarga oficial TeamViewer)", qs[0] in ("NO_INSTALADA", "POR_VERIFICAR", "AL_DIA"), f"{qs[0]} · {qs[1]}", critical=False)
         upd = st.get(UPDATER, ("?", ""))
@@ -211,21 +318,74 @@ def main():
         screenshot(out, "03-installer-tras-lote.png")
         packages = sh("pm list packages")
         r.add("Tablet Updater instalado por el Installer (sesión PackageInstaller)", f"package:{UPDATER}" in packages)
-        r.add("MuPDF instalado", f"package:{MUPDF}" in packages, critical=False)
+        if mupdf_expected:
+            r.add("MuPDF instalado", f"package:{MUPDF}" in packages, critical=False)
+        else:
+            r.add("MuPDF no compatible: no se intentó instalar", f"package:{MUPDF}" not in packages and MUPDF not in results)
         r.add("QuickSupport instalado", f"package:{QS}" in packages, critical=False)
         for pkg in (MUPDF, QS, UPDATER):
-            info = sh(f"dumpsys package {pkg} | grep -E 'versionCode|installerPackageName' | head -3")
+            info = sh(f"dumpsys package {pkg} | grep -E 'versionCode|installerPackageName|primaryCpuAbi' | head -4")
             if info.strip():
                 (out / f"paquete-{pkg}.txt").write_text(info)
 
+        # 2b. Activar el Updater desde el Installer, como el técnico. Antes de activarlo, el
+        #     Installer no debe permitir su propia desinstalación.
+        button = find_node("Desinstalar Tablet Setup Installer")
+        r.add("Installer: no permite desinstalarse antes de activar el Updater",
+              button is not None and button.get("enabled") == "false",
+              "botón deshabilitado" if button is not None and button.get("enabled") == "false"
+              else ("botón habilitado" if button is not None else "botón no encontrado en la interfaz"), critical=False)
+        activate = find_node("Activar y configurar Updater")
+        notif_at_activation = False
+        if activate is None:
+            r.add("Installer → «Activar y configurar Updater»", False, "botón no encontrado en la interfaz", critical=False)
+        else:
+            tap(activate)
+            time.sleep(4)
+            if a.api >= 33:
+                for _ in range(8):
+                    if allow_permission_dialog():
+                        break
+                    time.sleep(2)
+                time.sleep(2)
+                notif_at_activation = notifications_granted(UPDATER)
+            r.add("Installer → «Activar y configurar Updater» (actividad protegida por permiso de firma) registra la comprobación periódica",
+                  updater_job_registered(), "tarea del Updater en JobScheduler sin haber abierto el Updater")
+            if a.api >= 33:
+                r.add("Activación: el Updater pide el permiso de notificaciones (Android 13+) y queda concedido", notif_at_activation,
+                      "«Permitir» pulsado en el diálogo del sistema", critical=False)
+            time.sleep(2)
+            button = find_node("Desinstalar Tablet Setup Installer", swipes=3)
+            r.add("Installer: permite desinstalarse con el Updater activado", button is not None and button.get("enabled") == "true",
+                  "botón habilitado" if button is not None and button.get("enabled") == "true" else "botón deshabilitado o no encontrado", critical=False)
+        screenshot(out, "03b-installer-updater-activado.png")
+
         # 3. Tablet Updater: comprobación y registro de la tarea periódica.
-        adb("logcat", "-c")
-        sh(f"am start -W -n {UPDATER}/.MainActivity")
-        text = wait_log(r"comprobacion terminada modo=UPDATER", 240)
+        clear_log("Installer: comprobación e instalación por lotes")
+        start_activity(UPDATER)
+        perm = {"tapped": False}
+
+        def allow_notifications():
+            # Android 13+: el Updater (instalado por el Installer, sin -g) pide el permiso de notificaciones.
+            if a.api >= 33 and not perm["tapped"]:
+                perm["tapped"] = allow_permission_dialog()
+
+        text = wait_log(r"comprobacion terminada modo=UPDATER", 240, on_poll=allow_notifications)
         r.add("Updater: comprobación manual completada", text is not None)
         ust = states(text or "")
         not_installed = [k for k, v in ust.items() if "solo actualiza aplicaciones ya instaladas" in v[1]]
         r.add("Updater: no ofrece instalar apps no instaladas", len(not_installed) > 0, ", ".join(x.split(".")[-1] for x in not_installed))
+        if a.api >= 33 and not notif_at_activation:
+            for _ in range(6):
+                if perm["tapped"] or notifications_granted(UPDATER):
+                    break
+                allow_notifications()
+                time.sleep(2)
+            granted = notifications_granted(UPDATER)
+            r.add("Updater: pide el permiso de notificaciones al abrirse (Android 13+) y queda concedido", granted,
+                  "«Permitir» pulsado en el diálogo del sistema" if perm["tapped"] else "no apareció el diálogo", critical=False)
+            if not granted:
+                sh(f"pm grant {UPDATER} android.permission.POST_NOTIFICATIONS")
         time.sleep(3)
         screenshot(out, "04-updater.png")
         jobs = sh("dumpsys jobscheduler", timeout=120)
@@ -233,31 +393,56 @@ def main():
         block = "\n".join(l for l in jobs.splitlines() if UPDATER in l)[:2000]
         (out / "jobscheduler-updater.txt").write_text(block)
 
-        # 4. Sin Internet.
-        sh("svc wifi disable")
-        sh("svc data disable")
-        time.sleep(8)
-        adb("logcat", "-c")
+        # 4. Sin Internet (Wi-Fi y datos apagados; en API 30+ además modo avión).
+        net_before = active_network()
+        set_network(False, a.api)
+        _, net_off = wait_network(False, 60)
+        clear_log("Updater: comprobación con red")
         sh(f"am force-stop {UPDATER}")
-        sh(f"am start -W -n {UPDATER}/.MainActivity")
-        text = wait_log(r"comprobacion terminada modo=UPDATER", 180)
+        start_activity(UPDATER)
+        text = wait_log(r"comprobacion terminada modo=UPDATER", 240)
         offline = text is not None and "online=false" in text
         ost = states(text or "")
         qs_off = ost.get(QS, ("?", ""))
-        r.add("Sin Internet: se detecta y se informa sin bloquear la app", offline, f"QuickSupport: {qs_off[0]} · {qs_off[1]}")
+        r.add("Sin Internet: se detecta y se informa sin bloquear la app", offline,
+              f"red por defecto {net_before} → {net_off} · QuickSupport: {qs_off[0]} · {qs_off[1]}")
         time.sleep(2)
         screenshot(out, "05-updater-sin-internet.png")
-        sh("svc wifi enable")
-        sh("svc data enable")
-        time.sleep(8)
+        set_network(True, a.api)
+        back, net_back = wait_network(True, 120)
+        r.add("Red restablecida después de la prueba sin Internet", back is not False, f"red por defecto: {net_back}", critical=False)
 
-        # 5. El Updater funciona sin el Installer.
-        uninstall = adb("uninstall", INSTALLER)
-        adb("logcat", "-c")
+        # 5. Retirar el Installer con su botón final (como el técnico) y usar el Updater sin él.
+        clear_log("Updater: sin Internet")
+        start_activity(INSTALLER)
+        wait_log(r"comprobacion terminada modo=INSTALLER", 240)
+        time.sleep(2)
+        removed_by_ui = False
+        button = find_node("Desinstalar Tablet Setup Installer")
+        if button is not None and button.get("enabled") == "true" and tap(button):
+            time.sleep(2)
+            confirm = find_node("Solicitar desinstalación", swipes=0)
+            if confirm is not None and tap(confirm):
+                for _ in range(10):  # diálogo de Android «¿Desinstalar esta aplicación?»
+                    time.sleep(2)
+                    if tap_button(INSTALLER_PKGS, {"ok", "aceptar", "desinstalar", "uninstall"}):
+                        break
+                for _ in range(15):
+                    if f"package:{INSTALLER}" not in sh("pm list packages"):
+                        removed_by_ui = True
+                        break
+                    time.sleep(2)
+        r.add("Installer retirado desde su botón final (con confirmación de Android)", removed_by_ui,
+              "desinstalado" if removed_by_ui else "no se completó por la interfaz: se usa adb uninstall", critical=False)
+        uninstall = "Success" if removed_by_ui else adb("uninstall", INSTALLER)
+        clear_log("Installer: desinstalación")
         sh(f"am force-stop {UPDATER}")
-        sh(f"am start -W -n {UPDATER}/.MainActivity")
-        text = wait_log(r"comprobacion terminada modo=UPDATER", 240)
-        r.add("Updater funciona con el Installer desinstalado", "Success" in uninstall and text is not None, uninstall.strip())
+        start_activity(UPDATER)
+        text = wait_log(r"comprobacion terminada modo=UPDATER", 300)
+        online = re.search(r"comprobacion terminada modo=UPDATER online=(\w+)", text or "")
+        r.add("Updater funciona con el Installer desinstalado", "Success" in uninstall and text is not None,
+              f"desinstalación: {uninstall.strip()} · comprobación: " + (f"terminada (online={online.group(1)})" if online else "no terminó"))
+        r.add("Installer desinstalado", f"package:{INSTALLER}" not in sh("pm list packages"))
         jobs = sh("dumpsys jobscheduler", timeout=120)
         r.add("Tarea periódica sigue registrada sin el Installer", UPDATER in jobs)
 
@@ -268,7 +453,12 @@ def main():
     except Exception as e:  # noqa: BLE001
         r.add("Ejecución de la prueba", False, f"{type(e).__name__}: {e}")
     finally:
-        (out / "logcat-tabletsuite.txt").write_text(logcat())
+        try:
+            LOG_CHUNKS.append(f"===== Final =====\n{logcat()}")
+            (out / "logcat-completo-ultima-fase.txt").write_text(adb("logcat", "-d", "-v", "time", "-t", "4000", timeout=120))
+        except Exception as e:  # noqa: BLE001
+            LOG_CHUNKS.append(f"(no se pudo leer logcat: {e})")
+        (out / "logcat-tabletsuite.txt").write_text("\n".join(LOG_CHUNKS))
         (out / "resultados.json").write_text(json.dumps(r.rows, ensure_ascii=False, indent=2))
         (out / f"RESULTADOS_EMULADOR_API{a.api}.md").write_text(r.markdown())
     sys.exit(0 if r.ok else 1)

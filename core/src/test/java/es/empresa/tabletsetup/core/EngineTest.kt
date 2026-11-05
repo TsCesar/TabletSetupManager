@@ -62,6 +62,14 @@ class EngineTest {
         assertEquals(AppState.ERROR, error.state)
         val direct = StatusCalculator.compute(app(AppCatalog.QUICKSUPPORT), android12, installed(3), Resolution.Available(release(AppCatalog.QUICKSUPPORT, null)), Mode.UPDATER)
         assertEquals(AppState.POR_VERIFICAR, direct.state)
+        // Fuente que publica la app sin ninguna versión para esta tablet (p. ej. F-Droid sin x86_64).
+        val noBuild = StatusCalculator.compute(app(AppCatalog.MUPDF), android12, null, Resolution.Incompatible("sin APK para x86_64"), Mode.INSTALLER)
+        assertEquals(AppState.NO_COMPATIBLE, noBuild.state)
+        assertEquals("sin APK para x86_64", noBuild.message)
+        val noBuildInstalled = StatusCalculator.compute(app(AppCatalog.MUPDF), android12, installed(4), Resolution.Incompatible("sin APK"), Mode.UPDATER)
+        assertEquals(AppState.NO_COMPATIBLE, noBuildInstalled.state)
+        assertTrue(noBuildInstalled.message.startsWith("Instalada v4"))
+        assertTrue(BatchPlanner.plan(listOf(noBuild, noBuildInstalled), Mode.INSTALLER, selected = setOf(AppCatalog.MUPDF)).isEmpty())
     }
 
     @Test

@@ -1,6 +1,7 @@
 package es.empresa.tabletsetup.updater
 
 import android.content.Context
+import androidx.core.content.edit
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -67,7 +68,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : CoroutineWorker
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getLong("notified_at", 0L)
 
     private fun markNotified(context: Context) =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putLong("notified_at", System.currentTimeMillis()).apply()
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit { putLong("notified_at", System.currentTimeMillis()) }
 
     companion object {
         private const val PREFS = "updater_worker"
