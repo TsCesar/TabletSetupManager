@@ -93,7 +93,11 @@ object AppCatalog {
             packageName = WHATSAPP,
             label = "WhatsApp",
             description = "Mensajería (solo instalación; no se configuran cuentas)",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.OfficialPage(
+                pageUrl = "https://www.whatsapp.com/download/android",
+                publisher = "WhatsApp",
+                reference = "https://www.whatsapp.com/download/android",
+            ),
             initials = "Wa", avatarColor = 0xFF25A244,
         ),
         ManagedApp(

@@ -30,6 +30,8 @@ import es.empresa.tabletsetup.core.net.ProbeResult
 import es.empresa.tabletsetup.core.net.ResourceFingerprint
 import es.empresa.tabletsetup.core.policy.CompatibilityPolicy
 import java.io.File
+import es.empresa.tabletsetup.core.sources.WhatsAppSource
+
 
 /** Estado del catálogo empresarial tras intentar cargarlo. */
 sealed interface CatalogState {
@@ -49,6 +51,7 @@ data class SourcesSnapshot(
     val catalog: CatalogState,
     val fdroid: FdroidState?,
     val probes: Map<String, Result<ProbeResult>>,
+    val resolvedUrls: Map<String, String> = emptyMap(),
 )
 
 /**
@@ -214,6 +217,21 @@ class DirectSourceRepository(context: Context, private val downloader: Downloade
     private val prefs = context.applicationContext.getSharedPreferences("direct_sources", Context.MODE_PRIVATE)
     val prefetchDir = File(context.applicationContext.filesDir, "prefetch").apply { mkdirs() }
 
+    /** Proveedor de enlaces oficiales de WhatsApp. */
+    private val whatsAppSource = WhatsAppSource(downloader)
+
+    /**
+    * Consulta la página oficial y obtiene su enlace APK.
+    * Un fallo se devuelve como Result.failure.
+    */
+    fun resolveWhatsAppPage(pageUrl: String): Result<String> = try {
+        Result.success(
+            whatsAppSource.resolveDownloadUrl(pageUrl)
+        )
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     fun probe(url: String): Result<ProbeResult> = try {
         Result.success(downloader.probe(url))
     } catch (e: Exception) {
@@ -343,13 +361,52 @@ class ReleaseResolver(
         val fdroidApps = apps.filter { it.builtInSource == BuiltInSource.FDroid && isAllowed(it, device) }
         val fdroid = if (fdroidApps.isEmpty()) null else fdroidRepository.load(fdroidApps.map { it.packageName }.toSet(), allowNetwork, fdroidMaxAgeMs)
         val probes = mutableMapOf<String, Result<ProbeResult>>()
+        val resolvedUrls = mutableMapOf<String, String>()
         if (allowNetwork) {
             apps.filter { isAllowed(it, device) }.forEach { app ->
-                val url = directUrl(app, catalog)
-                if (url != null) probes[app.packageName] = directRepository.probe(url)
+
+                val direct = directUrl(app, catalog)
+
+                when {
+                    // Descargas directas existentes: TeamViewer, etc.
+                    direct != null -> {
+                        probes[app.packageName] =
+                            directRepository.probe(direct)
+                    }
+
+                    // Página oficial de WhatsApp
+                    app.builtInSource is BuiltInSource.OfficialPage -> {
+                        val source = app.builtInSource
+
+                        val resolved = directRepository.resolveWhatsAppPage(
+                            source.pageUrl
+                        )
+
+                        probes[app.packageName] = resolved.fold(
+                            onSuccess = { url ->
+                                val probeResult = directRepository.probe(url)
+
+                                if (probeResult.isSuccess) {
+                                    resolvedUrls[app.packageName] = url
+                                }
+
+                                probeResult
+                            },
+                            onFailure = { error ->
+                                Result.failure(error)
+                            }
+                        )
+                    }
+                }
             }
         }
-        return SourcesSnapshot(catalog, fdroid, probes)
+
+        return SourcesSnapshot(
+            catalog = catalog,
+            fdroid = fdroid,
+            probes = probes,
+            resolvedUrls = resolvedUrls,
+        )
     }
 
     private fun isAllowed(app: ManagedApp, device: DeviceProfile) =
@@ -399,6 +456,28 @@ class ReleaseResolver(
                 }
             }
             is BuiltInSource.OfficialDirect -> return directResolution(app, source.url, source.publisher, snapshot, pins)
+            is BuiltInSource.OfficialPage -> {
+                val url = snapshot.resolvedUrls[app.packageName]
+
+                if (url != null) {
+                    return directResolution(
+                        app = app,
+                        url = url,
+                        publisher = source.publisher,
+                        snapshot = snapshot,
+                        pins = pins
+                    )
+                }
+
+                val error = snapshot.probes[app.packageName]
+                    ?.exceptionOrNull()
+
+                if (error != null) {
+                    return Resolution.Failed(
+                        "${source.publisher}: ${error.message ?: "No se pudo obtener el enlace APK"}"
+                    )
+                }
+            }
             BuiltInSource.Embedded -> if (mode == Mode.INSTALLER) {
                 val embeddedRelease = try {
                     embedded.release(device, packages.ownSigners())

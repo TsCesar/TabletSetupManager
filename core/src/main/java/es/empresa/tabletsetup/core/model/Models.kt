@@ -9,6 +9,7 @@ package es.empresa.tabletsetup.core.model
 enum class SourceKind(val label: String) {
     FDROID("F-Droid (índice firmado)"),
     OFFICIAL_DIRECT("Descarga oficial del desarrollador"),
+    OFFICIAL_PAGE("Descarga desde página oficial"),
     ENTERPRISE_CATALOG("Catálogo empresarial firmado"),
     EMBEDDED("Incluida en Tablet Setup Installer"),
     LOCAL_FILE("Archivo local importado"),
@@ -22,6 +23,17 @@ sealed interface BuiltInSource {
     /** URL HTTPS publicada por el propio desarrollador (sin versión en el nombre). */
     data class OfficialDirect(
         val url: String,
+        val publisher: String,
+        val reference: String,
+    ) : BuiltInSource
+
+    /**
+    * Página oficial desde la que se obtiene
+    * dinámicamente el enlace de descarga APK.
+    * Ejemplo: WhatsApp.
+    */
+    data class OfficialPage(
+        val pageUrl: String,
         val publisher: String,
         val reference: String,
     ) : BuiltInSource
