@@ -155,6 +155,8 @@ def screenshot(out, name):
 
 
 def ui_nodes():
+    """Nodos de la pantalla. Cada nodo lleva «_enabled»: el estado del elemento pulsable que lo
+    contiene (en Compose el texto de un botón es un nodo hijo que siempre figura como habilitado)."""
     out = sh("uiautomator dump /sdcard/ui.xml", timeout=60)
     if "dumped" not in out.lower():
         return []
@@ -163,7 +165,14 @@ def ui_nodes():
         root = ET.fromstring(xml[xml.find("<?xml"):] if "<?xml" in xml else xml)
     except ET.ParseError:
         return []
-    return list(root.iter("node"))
+    parents = {child: parent for parent in root.iter() for child in parent}
+    nodes = list(root.iter("node"))
+    for node in nodes:
+        holder = node
+        while holder is not None and holder.get("clickable") != "true" and holder.get("class") != "android.widget.Button":
+            holder = parents.get(holder)
+        node.set("_enabled", (holder if holder is not None else node).get("enabled", "false"))
+    return nodes
 
 
 def tap(node):
@@ -331,10 +340,15 @@ def main():
         # 2b. Activar el Updater desde el Installer, como el técnico. Antes de activarlo, el
         #     Installer no debe permitir su propia desinstalación.
         button = find_node("Desinstalar Tablet Setup Installer")
-        r.add("Installer: no permite desinstalarse antes de activar el Updater",
-              button is not None and button.get("enabled") == "false",
-              "botón deshabilitado" if button is not None and button.get("enabled") == "false"
-              else ("botón habilitado" if button is not None else "botón no encontrado en la interfaz"), critical=False)
+        if button is None:
+            r.add("Installer: no permite desinstalarse antes de activar el Updater", False, "botón no encontrado en la interfaz", critical=False)
+        else:
+            # Encontrado: si estuviera habilitado sería un fallo real del requisito.
+            r.add("Installer: no permite desinstalarse antes de activar el Updater", button.get("_enabled") == "false",
+                  "botón deshabilitado" if button.get("_enabled") == "false" else "botón habilitado")
+        screenshot(out, "03a-installer-antes-de-activar.png")
+        if "dumped" in sh("uiautomator dump /sdcard/ui.xml", timeout=60).lower():
+            (out / "ui-antes-de-activar.xml").write_text(adb("exec-out", "cat", "/sdcard/ui.xml", timeout=60))
         activate = find_node("Activar y configurar Updater")
         notif_at_activation = False
         if activate is None:
@@ -356,8 +370,8 @@ def main():
                       "«Permitir» pulsado en el diálogo del sistema", critical=False)
             time.sleep(2)
             button = find_node("Desinstalar Tablet Setup Installer", swipes=3)
-            r.add("Installer: permite desinstalarse con el Updater activado", button is not None and button.get("enabled") == "true",
-                  "botón habilitado" if button is not None and button.get("enabled") == "true" else "botón deshabilitado o no encontrado", critical=False)
+            r.add("Installer: permite desinstalarse con el Updater activado", button is not None and button.get("_enabled") == "true",
+                  "botón habilitado" if button is not None and button.get("_enabled") == "true" else "botón deshabilitado o no encontrado")
         screenshot(out, "03b-installer-updater-activado.png")
 
         # 3. Tablet Updater: comprobación y registro de la tarea periódica.
@@ -419,7 +433,7 @@ def main():
         time.sleep(2)
         removed_by_ui = False
         button = find_node("Desinstalar Tablet Setup Installer")
-        if button is not None and button.get("enabled") == "true" and tap(button):
+        if button is not None and button.get("_enabled") == "true" and tap(button):
             time.sleep(2)
             confirm = find_node("Solicitar desinstalación", swipes=0)
             if confirm is not None and tap(confirm):

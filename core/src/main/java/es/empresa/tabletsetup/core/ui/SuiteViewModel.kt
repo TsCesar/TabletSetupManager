@@ -207,6 +207,10 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
                 task = { id -> runOne(id) },
                 onResult = { id, outcome ->
                     Log.i(TAG, "resultado $id ok=${outcome.success} omitida=${outcome.skipped} | ${outcome.message}")
+                    // Updater recién (re)instalado: hay que volver a activarlo antes de retirar el Installer.
+                    if (mode == Mode.INSTALLER && id == AppCatalog.UPDATER && outcome.success && !outcome.skipped) {
+                        engine.settings.updaterConfiguredAt = 0L
+                    }
                     updateRow(id) { it.copy(phase = null, outcome = outcome) }
                 },
                 isCancelled = { cancelRequested },

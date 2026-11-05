@@ -86,8 +86,13 @@ private data class UpdaterCompanion(
     val configuredAt: Long,
 ) {
     val installedOk: Boolean get() = installed != null && sameSigner
-    /** Activado = instalado con nuestra firma y abierto al menos una vez (sus comprobaciones periódicas están registradas). */
-    val ready: Boolean get() = installedOk && !stopped
+
+    /**
+     * Activado = instalado con nuestra firma y con la activación aceptada desde este Installer
+     * («Activar y configurar Updater»): comprobaciones periódicas registradas y catálogo enviado.
+     * Abrir el Updater a mano no basta, porque no recibiría la configuración del catálogo.
+     */
+    val ready: Boolean get() = installedOk && !stopped && configuredAt > 0
 }
 
 private fun readCompanion(context: Context): UpdaterCompanion {
@@ -230,8 +235,11 @@ private fun UpdaterCard(companion: UpdaterCompanion?, onActivate: () -> Unit, on
             CheckLine(companion.installed != null, companion.installed?.let { "Instalado: " + versionLabel(it.versionName, it.versionCode) } ?: "No instalado")
             if (companion.installed != null) {
                 CheckLine(companion.sameSigner, if (companion.sameSigner) "Firmado con la misma clave que el Installer" else "Firma distinta: reinstala el Updater de esta suite")
-                CheckLine(!companion.stopped, if (companion.stopped) "Pendiente de activar (no se ha abierto nunca)" else "Activado")
-                if (companion.configuredAt > 0) CheckLine(true, "Configuración del catálogo enviada el ${formatDate(companion.configuredAt)}")
+                CheckLine(
+                    companion.ready,
+                    if (companion.ready) "Activado el ${formatDate(companion.configuredAt)}: comprobaciones periódicas registradas y catálogo enviado"
+                    else "Pendiente de activar: pulsa «Activar y configurar Updater»",
+                )
             }
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

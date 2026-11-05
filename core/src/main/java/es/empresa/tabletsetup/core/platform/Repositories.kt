@@ -430,6 +430,8 @@ class ReleaseResolver(
     private fun noSourceReason(app: ManagedApp, catalog: CatalogState): String = when (catalog) {
         CatalogState.NotConfigured -> when (app.builtInSource) {
             BuiltInSource.EnterpriseOnly -> "Sin fuente pública verificada: añádela al catálogo empresarial o importa la APK"
+            // El propio Updater: su APK nueva llega por el catálogo empresarial o con un Installer más reciente.
+            BuiltInSource.Embedded -> "Sus nuevas versiones llegan por el catálogo empresarial o con un Installer más reciente"
             else -> "Fuente no disponible"
         }
         is CatalogState.Failed -> catalog.message
