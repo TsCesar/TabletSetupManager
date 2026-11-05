@@ -19,7 +19,7 @@ Android 9 (API 28) o superior · Kotlin · Jetpack Compose + Material 3 (modo cl
 Cada compilación de `main` en GitHub Actions publica:
 
 * **Artefacto** `TabletSetupManager-APK` en la pestaña *Actions* del repositorio.
-* **Rama `apk-dist`** con la última compilación: `TabletSetupInstaller-debug.apk`, `TabletUpdater-debug.apk`, `SHA256SUMS.txt`, `VERIFICACION_APK.md` e informes de pruebas y lint.
+* **Rama `apk-dist`** con la última compilación: `TabletSetupInstaller-debug.apk`, `TabletUpdater-debug.apk`, `SHA256SUMS.txt`, `VERIFICACION_APK.md`, informes de pruebas y lint, y los resultados y capturas de las pruebas en emulador (`e2e-api28/`, `e2e-api34/`).
 
 Las APK **debug** están firmadas con el keystore de pruebas del repositorio (`keystore/debug.keystore`, público, solo para tablets de prueba). Para producción se generan `TabletSetupInstaller.apk` y `TabletUpdater.apk` firmadas con vuestra clave release (sección 7).
 
@@ -41,8 +41,8 @@ Con la tablet conectada a Wi-Fi:
 5. Pulsa **Instalar todas las compatibles**. Se instalan **de una en una**: en cada aplicación Android muestra su confirmación, pulsa **Instalar**. Waze se omite automáticamente en Android 9 sin bloquear el resto. Si algo falla, pulsa **Reintentar fallidas**.
 6. **Importar APK desde archivos** para aplicaciones sin fuente automática: selecciona la APK (o la base y sus splits a la vez, o un paquete `.apks`/`.xapk`/`.zip`). Si no hay certificado de referencia, se muestra la huella SHA-256 del firmante para que confirmes la procedencia.
 7. **TeamViewer QuickSupport → Comprobar funcionamiento:** abre QuickSupport y verifica que muestra un ID, instala el *Universal Add-On* solo si QuickSupport lo pide, activa su servicio de accesibilidad y haz una **prueba real de conexión remota** desde un PC. Marca el resultado: la app no da por bueno el control remoto solo porque la APK esté instalada.
-8. **Tablet Updater:** se instala desde el propio Installer (va incluido dentro, no necesita red). Pulsa **Activar y configurar Updater**: le pasa la configuración del catálogo y registra sus comprobaciones periódicas.
-9. **Desinstalar Tablet Setup Installer:** el botón solo se habilita cuando Tablet Updater está instalado, con la misma firma, y activado. Android pedirá confirmación.
+8. **Tablet Updater:** se instala desde el propio Installer (va incluido dentro, no necesita red). Pulsa **Activar y configurar Updater**: le pasa la configuración del catálogo y registra sus comprobaciones periódicas. En **Android 13 o superior** Android pregunta si Tablet Updater puede enviar notificaciones: pulsa **Permitir** (sin ese permiso no llegan los avisos de actualización).
+9. **Desinstalar Tablet Setup Installer:** el botón solo se habilita cuando Tablet Updater está instalado, con la misma firma, y ha aceptado **Activar y configurar Updater** (abrirlo a mano no basta, porque no recibiría la configuración del catálogo). Android pedirá confirmación.
 
 ### Uso diario de Tablet Updater
 
@@ -50,6 +50,7 @@ Con la tablet conectada a Wi-Fi:
 * En la app: **Comprobar versiones** (icono de actualizar), **Actualizar** por aplicación, **Actualizar todo** o **Actualizar seleccionadas**.
 * **Historial** con los resultados y **fecha de la última comprobación**; ajustes de **frecuencia** y **notificaciones on/off**.
 * Solo actualiza aplicaciones ya instaladas, nunca instala nuevas, y siempre con la confirmación que exige Android (no hay instalaciones silenciosas en tablets convencionales).
+* La primera vez que actualice algo, Android pedirá permitir *Instalar aplicaciones desconocidas* también para Tablet Updater: botón **Autorizar** del aviso.
 
 ## 3. Estado real de cada aplicación
 
@@ -68,6 +69,7 @@ Con la tablet conectada a Wi-Fi:
 Notas:
 
 * **Firma de MuPDF:** la versión de F-Droid está firmada por F-Droid. Si una tablet ya tuviera MuPDF de otra tienda (otra firma), la app lo detecta y avisa de que no puede actualizarla desde F-Droid.
+* **Arquitectura de MuPDF:** F-Droid publica una APK por arquitectura (arm64-v8a, armeabi-v7a y x86 a 05/11/2026, suficiente para las tablets ARM habituales). Si no hay ninguna para la de la tablet (ocurre, por ejemplo, en emuladores solo x86_64), MuPDF aparece como *No compatible* con el motivo y no se intenta instalar.
 * **Nada se simula:** si una aplicación no tiene fuente funcional aparece como *Fuente pendiente* (no instalada) o *Instalada · sin fuente* y se ofrece la importación manual.
 * El catálogo empresarial **no concede derechos de redistribución**: alojad solo binarios cuya distribución esté autorizada, o declarad URL oficiales del desarrollador (entradas `direct`).
 

@@ -22,9 +22,22 @@ Revisión completa del ZIP `TabletSetupManager_v02` (README, `docs/`, módulos `
 | 14 | QuickSupport: solo un texto de ayuda | No se comprobaba el funcionamiento | Asistente: instalación, apertura con ID, detección del add-on y de su servicio de accesibilidad, accesos a Ajustes, prueba manual de conexión registrada |
 | 15 | `kotlinOptions` (obsoleto) y versiones de 2024 | Avisos y riesgo de rotura | `compilerOptions`, catálogo de versiones (`gradle/libs.versions.toml`), AGP 8.10.1, Kotlin 2.2.21 |
 | 16 | Versión 0.1.0 en Gradle frente a 0.2 en la documentación | Incoherencia | 0.3.0 (`versionCode` 3) en ambas apps desde `gradle.properties` |
-| 17 | Pruebas: un `main()` con 10 comprobaciones y comprobaciones de texto | Cobertura insuficiente | 46 pruebas JUnit del núcleo, pruebas Robolectric de WorkManager y de la regla de Waze, verificación automática de las APK generadas |
+| 17 | Pruebas: un `main()` con 10 comprobaciones y comprobaciones de texto | Cobertura insuficiente | 47 pruebas JUnit del núcleo, 6 pruebas Robolectric (WorkManager, regla de Waze, activación protegida), verificación automática de las APK generadas y pruebas de extremo a extremo en emuladores Android 9 y 14 |
 | 18 | `UpdateWorker` reintentaba indefinidamente ante cualquier error | Consumo innecesario | Máximo 3 reintentos con espera exponencial; los errores de una fuente no bloquean las demás |
 | 19 | Fuentes oficiales directas no soportadas | QuickSupport solo era manual | Descargas oficiales de TeamViewer integradas, con detección de cambios por cabeceras y versión real tras descargar |
+
+## Corregido durante las pruebas en la nube de la 0.3
+
+| # | Problema detectado | Dónde | Corrección |
+|---|---|---|---|
+| 20 | F-Droid publica MuPDF, pero sin APK para la arquitectura de la tablet, y se mostraba «Fuente pendiente» | Emulador Android 14 solo x86_64 | Nuevo resultado **«No compatible»** con el motivo (arquitecturas publicadas frente a las de la tablet, o versión mínima de Android); no entra en «Instalar todas» |
+| 21 | En Android 13+ el permiso de notificaciones del Updater solo se pedía al abrir el Updater | Emulador Android 14 | **«Activar y configurar Updater»** pide el permiso en la activación: los avisos funcionan aunque el técnico no abra nunca el Updater |
+| 22 | El sondeo de las descargas oficiales usaba los tiempos de espera de una descarga completa | Revisión del modo sin red | Sondeo con tiempos cortos (8 s/10 s) y sin reintentos; prueba con un servidor que acepta la conexión y no responde |
+| 23 | Avisos de lint `UseKtx` (19) y `DataExtractionRules` (2) | Lint en CI | `SharedPreferences.edit {}` y `toUri()` de AndroidX; reglas `dataExtractionRules` que excluyen los datos de la app de las copias en la nube y de las transferencias entre dispositivos |
+| 24 | La prueba de emulador de Android 14 abría el Updater sin recrear su pantalla cuando quedaba un diálogo de permisos del sistema en su tarea | Script de prueba (no la app) | `am start --activity-clear-task`, pulsación de «Permitir», modo avión en API 30+ y espera real de la red |
+| 25 | «Updater activado» se daba por bueno con solo haber abierto el Updater alguna vez | Revisión de la prueba de desinstalación | El botón final exige que el Updater haya aceptado **«Activar y configurar Updater»** (comprobaciones registradas y catálogo enviado); si el Installer reinstala el Updater, hay que activarlo de nuevo |
+| 26 | El propio Updater, sin catálogo, se mostraba como «Fuente no disponible» | Emulador | Mensaje claro: sus versiones nuevas llegan por el catálogo empresarial o con un Installer más reciente |
+| 27 | La prueba leía el estado «habilitado» del texto del botón (en Compose es un nodo hijo siempre habilitado) | Script de prueba | Se lee el del elemento pulsable que lo contiene; comprobación crítica antes y después de activar, con volcado de la interfaz |
 
 ## Se mantiene de la 0.2
 

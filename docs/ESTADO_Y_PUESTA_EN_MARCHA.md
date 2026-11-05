@@ -9,13 +9,13 @@ Android 9+ · aplicaciones originales: MuPDF, TeamViewer QuickSupport (+ Univers
 * Installer: detección de Android y arquitecturas, catálogo visual con iconos y estados, versión instalada y disponible, selección individual, «Instalar todas las compatibles», descargas con progreso, instalación secuencial con confirmación de Android, detección de errores, reintento de fallidas, APK individuales y divididas, importación desde almacenamiento, instalación y activación del Updater, asistente de QuickSupport, desinstalación final condicionada al Updater.
 * Updater: comprobación manual y periódica (WorkManager, 24 h por defecto), frecuencia configurable, avisos on/off, botón «Actualizar» (individual, seleccionadas y todo), comparación por `versionCode`, identificación de incompatibles, historial, fecha de última comprobación, solo apps instaladas.
 * Seguridad: las 10 validaciones previas a instalar, descargas HTTPS robustas, catálogo empresarial firmado, `PackageInstaller` nativo.
-* Compilación sin Android Studio: Gradle Wrapper + GitHub Actions; pruebas JUnit/Robolectric; verificación automática de las APK.
+* Compilación sin Android Studio: Gradle Wrapper + GitHub Actions; pruebas JUnit/Robolectric; verificación automática de las APK; pruebas de extremo a extremo en emuladores Android 9 y 14 (30 de 30 correctas en cada uno; ver `docs/INFORME_DE_PRUEBAS.md`).
 
 ## Estado real por aplicación
 
 | Aplicación | Estado | Detalle |
 |---|---|---|
-| MuPDF | **Automática** (instalación y actualización) | F-Droid, índice firmado |
+| MuPDF | **Automática** (instalación y actualización) | F-Droid, índice firmado. F-Droid publica APK para arm64-v8a, armeabi-v7a y x86 (consultado el 05/11/2026); en un equipo solo x86_64 aparece «No compatible» |
 | TeamViewer QuickSupport | **Automática** (descarga oficial) | `dl.teamviewer.com`; se recomienda fijar su certificado en el catálogo |
 | TeamViewer Universal Add-On | **Automática, opcional** | Solo si QuickSupport lo pide; requiere activar accesibilidad y prueba manual |
 | Tablet Updater | **Automática** (embebido en el Installer) | Actualizaciones posteriores vía catálogo empresarial |
@@ -40,4 +40,4 @@ Android 9+ · aplicaciones originales: MuPDF, TeamViewer QuickSupport (+ Univers
 
 ## Nota operativa
 
-`Tablet Setup Installer` se puede desinstalar cuando Tablet Updater está instalado y activado (la app lo comprueba). Las comprobaciones de WorkManager dependen de la batería, la red y el modo Doze: no ocurren a una hora exacta.
+`Tablet Setup Installer` se puede desinstalar cuando Tablet Updater está instalado con la misma firma y ha aceptado «Activar y configurar Updater» (la app lo comprueba). Las comprobaciones de WorkManager dependen de la batería, la red y el modo Doze: no ocurren a una hora exacta.
