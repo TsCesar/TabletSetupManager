@@ -3,6 +3,7 @@ package es.empresa.tabletsetup.core.sources
 import com.google.gson.JsonParser
 import es.empresa.tabletsetup.core.model.ValidationException
 import es.empresa.tabletsetup.core.net.Downloader
+import es.empresa.tabletsetup.core.net.DownloadException
 import java.net.URI
 import java.util.Base64
 import java.util.Locale
@@ -55,6 +56,23 @@ class AptoideSource(
         )
         private val PROVIDER_TOKEN_PATTERN =
             Regex("[A-Za-z0-9_-]+={0,2}")
+
+        /**
+         * Estrategia progresiva para metadatos de Aptoide.
+         * Se prioriza la variante específica; solo si esta no existe o no
+         * es compatible se amplía la búsqueda. El APK real se valida después.
+         */
+        internal fun deviceQueryCandidates(
+            sdkInt: Int,
+            validAbis: List<String>,
+            densityDpi: Int
+        ): List<String> {
+            val sdk = "maxSdk=$sdkInt"
+            val cpu = if (validAbis.isEmpty()) sdk
+                      else "$sdk&myCPU=${validAbis.joinToString(",")}"
+            val full = if (densityDpi in 1..1000) "$cpu&myDensity=$densityDpi" else cpu
+            return listOf(full, cpu, sdk, "").distinct()
+        }
     }
 
     /**
@@ -97,29 +115,88 @@ class AptoideSource(
             }
             .distinct()
 
-        val deviceQuery = buildString {
-            append("maxSdk=$sdkInt")
+        val queries = deviceQueryCandidates(sdkInt, validAbis, densityDpi)
+        var candidateResponse: ByteArray? = null
+        var lastUnavailable = "Aptoide no ofrece una variante compatible para este dispositivo"
 
-            if (validAbis.isNotEmpty()) {
-                append("&myCPU=")
-                append(validAbis.joinToString(","))
+        for (deviceQuery in queries) {
+            val qPart = if (deviceQuery.isEmpty()) {
+                ""
+            } else {
+                val encodedQuery = Base64.getUrlEncoder()
+                    .withoutPadding()
+                    .encodeToString(deviceQuery.toByteArray(Charsets.UTF_8))
+                "/q=$encodedQuery"
             }
 
-            if (densityDpi in 1..1000) {
-                append("&myDensity=$densityDpi")
+            val bytes = try {
+                downloader.fetch(
+                    url = "$API_URL/package_name=$packageName$qPart/aab=1",
+                    maxBytes = MAX_RESPONSE_BYTES
+                )
+            } catch (e: DownloadException) {
+                if (e.httpCode == 404) {
+                    lastUnavailable = "Aptoide: no se encontró una variante (HTTP 404)"
+                    continue
+                }
+                throw e
             }
+
+            // Comprobar metadatos antes de elegir la variante y descargarla.
+            // La validación criptográfica y del manifiesto se realiza al instalar.
+            val candidate = JsonParser.parseString(
+                String(bytes, Charsets.UTF_8)
+            ).asJsonObject
+            val status = candidate.getAsJsonObject("info")
+                ?.get("status")
+                ?.takeIf { !it.isJsonNull }
+                ?.asString
+            if (status != "OK") {
+                throw ValidationException("Aptoide no devolvió una respuesta válida")
+            }
+
+            val candidateData = candidate.getAsJsonObject("data")
+                ?: throw ValidationException("Aptoide no devolvió datos de la aplicación")
+            if (candidateData.get("package")?.asString != packageName) {
+                throw ValidationException("El paquete devuelto por Aptoide no coincide")
+            }
+            val candidateFile = candidateData.getAsJsonObject("file")
+                ?: throw ValidationException("Aptoide no devolvió información del APK")
+            val hardware = candidateFile.getAsJsonObject("hardware")
+            val minSdk = hardware?.get("sdk")?.takeIf { !it.isJsonNull }?.asInt
+            if (minSdk != null && minSdk > sdkInt) {
+                lastUnavailable = "La variante de Aptoide requiere Android SDK $minSdk"
+                continue
+            }
+            val cpus = hardware?.get("cpus")
+                ?.takeIf { it.isJsonArray }
+                ?.asJsonArray
+                ?.mapNotNull { it.takeIf { cpu -> cpu.isJsonPrimitive }?.asString?.lowercase(Locale.ROOT) }
+                .orEmpty()
+            if (validAbis.isNotEmpty() && cpus.isNotEmpty() &&
+                cpus.none { it in validAbis || it == "all" || it == "universal" }
+            ) {
+                lastUnavailable = "La variante de Aptoide es para otra arquitectura"
+                continue
+            }
+
+            if (packageName == "com.android.chrome") {
+                val version = candidateFile.get("vername")
+                    ?.takeIf { !it.isJsonNull }
+                    ?.asString
+                val major = version?.substringBefore(".")?.toIntOrNull()
+                if (major == null || major < 138) {
+                    lastUnavailable = "Chrome ${version ?: "desconocido"} es anterior a la versión mínima 138"
+                    continue
+                }
+            }
+
+            candidateResponse = bytes
+            break
         }
-        val encodedQuery = Base64.getUrlEncoder()
-            .withoutPadding()
-            .encodeToString(
-                deviceQuery.toByteArray(Charsets.UTF_8)
-            )
 
-        // Consulta HTTPS.
-        val response = downloader.fetch(
-            url = "$API_URL/package_name=$packageName/q=$encodedQuery/aab=1",
-            maxBytes = MAX_RESPONSE_BYTES
-        )
+        val response = candidateResponse
+            ?: throw ValidationException(lastUnavailable)
 
         // Interpretar respuesta JSON.
         val root = JsonParser.parseString(
