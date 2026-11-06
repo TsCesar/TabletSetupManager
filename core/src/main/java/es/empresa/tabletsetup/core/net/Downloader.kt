@@ -339,7 +339,7 @@ class Downloader(
         }
         // Normalizar la lista una sola vez antes de verificar la URL inicial y sus redirecciones.
         val normalizedAllowedHosts = allowedHosts?.map { it.lowercase(Locale.ROOT) }?.toSet()
-        repeat(MAX_REDIRECTS + 1) {
+        repeat(MAX_REDIRECTS + 1) { redirectIndex ->
             if (!url.protocol.equals("https", ignoreCase = true)) {
                 throw DownloadException(FailureKind.INSECURE, "Solo se permiten conexiones HTTPS (${url.protocol} rechazado)")
             }
@@ -350,10 +350,20 @@ class Downloader(
                     throw DownloadException(FailureKind.INSECURE, "URL de descarga no válida")
                 }
                 val host = currentUri.host?.lowercase(Locale.ROOT)
-                if (host == null || host !in normalizedAllowedHosts ||
-                    currentUri.userInfo != null || currentUri.port != -1
-                ) {
-                    throw DownloadException(FailureKind.INSECURE, "La descarga redirige a un servidor no autorizado")
+                val rejectionReason = when {
+                    host == null -> "host ausente"
+                    host !in normalizedAllowedHosts -> "host=$host"
+                    currentUri.userInfo != null -> "URL con credenciales"
+                    currentUri.port != -1 -> "puerto=${currentUri.port}"
+                    else -> null
+                }
+                if (rejectionReason != null) {
+                    val step = if (redirectIndex == 0) "URL inicial" else "redireccion $redirectIndex"
+                    // No incluir el enlace completo: puede contener un token de descarga.
+                    throw DownloadException(
+                        FailureKind.INSECURE,
+                        "Destino HTTPS no autorizado ($step): $rejectionReason"
+                    )
                 }
             }
             val connection = try {
