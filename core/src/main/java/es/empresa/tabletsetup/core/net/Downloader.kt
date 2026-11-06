@@ -10,6 +10,7 @@ import java.net.HttpURLConnection
 import java.net.NoRouteToHostException
 import java.net.SocketTimeoutException
 import java.net.URI
+import java.util.Locale
 import java.net.UnknownHostException
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLException
@@ -119,6 +120,7 @@ class Downloader(
         conditionalLastModified: String? = null,
         onProgress: (bytes: Long, total: Long?) -> Unit = { _, _ -> },
         isCancelled: () -> Boolean = { false },
+        allowedHosts: Set<String>? = null,
     ): DownloadOutcome {
         destination.parentFile?.mkdirs()
         val partial = File(destination.parentFile, destination.name + ".part")
@@ -141,7 +143,12 @@ class Downloader(
                         conditionalEtag?.let { headers["If-None-Match"] = it }
                         conditionalLastModified?.let { headers["If-Modified-Since"] = it }
                     }
-                    val connection = connect(url, "GET", headers)
+                    val connection = connect(
+                        url,
+                        "GET",
+                        headers,
+                        allowedHosts = allowedHosts
+                    )
                     try {
                         val code = responseCode(connection)
                         if (code == HttpURLConnection.HTTP_NOT_MODIFIED && existing == 0L &&
@@ -323,15 +330,31 @@ class Downloader(
         headers: Map<String, String>,
         connectTimeout: Int = connectTimeoutMs,
         readTimeout: Int = readTimeoutMs,
+        allowedHosts: Set<String>? = null,
     ): HttpURLConnection {
         var url = try {
             URI(initialUrl).toURL()
         } catch (e: Exception) {
             throw DownloadException(FailureKind.INSECURE, "URL no válida")
         }
+        // Normalizar la lista una sola vez antes de verificar la URL inicial y sus redirecciones.
+        val normalizedAllowedHosts = allowedHosts?.map { it.lowercase(Locale.ROOT) }?.toSet()
         repeat(MAX_REDIRECTS + 1) {
             if (!url.protocol.equals("https", ignoreCase = true)) {
                 throw DownloadException(FailureKind.INSECURE, "Solo se permiten conexiones HTTPS (${url.protocol} rechazado)")
+            }
+            if (normalizedAllowedHosts != null) {
+                val currentUri = try {
+                    url.toURI()
+                } catch (e: Exception) {
+                    throw DownloadException(FailureKind.INSECURE, "URL de descarga no válida")
+                }
+                val host = currentUri.host?.lowercase(Locale.ROOT)
+                if (host == null || host !in normalizedAllowedHosts ||
+                    currentUri.userInfo != null || currentUri.port != -1
+                ) {
+                    throw DownloadException(FailureKind.INSECURE, "La descarga redirige a un servidor no autorizado")
+                }
             }
             val connection = try {
                 url.openConnection() as HttpURLConnection

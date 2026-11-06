@@ -1,0 +1,421 @@
+package es.empresa.tabletsetup.core.sources
+
+import com.google.gson.JsonParser
+import es.empresa.tabletsetup.core.model.ValidationException
+import es.empresa.tabletsetup.core.net.Downloader
+import java.net.URI
+import java.util.Base64
+import java.util.Locale
+
+/**
+ * Archivo APK adicional de un Android App Bundle.
+ *
+ * ABI: arquitectura del procesador.
+ * DENSITY: densidad de pantalla.
+ * LOCALE: idioma.
+ */
+data class AptoideSplitInfo(
+    val name: String,
+    val type: String,
+    val downloadUrl: String,
+    val sizeBytes: Long?,
+)
+
+/**
+ * Información de una aplicación obtenida desde Aptoide.
+ * Incluye el APK base y los metadatos de sus splits.
+ */
+data class AptoideApkInfo(
+    val packageName: String,
+    val versionCode: Long,
+    val versionName: String?,
+    val downloadUrl: String,
+    val minSdk: Int?,
+    val requiredSplitTypes: Set<String> = emptySet(),
+    val splits: List<AptoideSplitInfo> = emptyList(),
+)
+
+/**
+ * Consulta versiones de aplicaciones en Aptoide
+ * filtrando por Android, arquitectura y densidad del dispositivo.
+ */
+class AptoideSource(
+    private val downloader: Downloader
+) {
+    companion object {
+        private const val API_URL =
+            "https://ws2.aptoide.com/api/7/app/getMeta"
+        private const val MAX_RESPONSE_BYTES =
+            2L * 1024 * 1024
+        private val ALLOWED_PACKAGES = setOf(
+            "com.android.chrome",
+            "com.google.android.apps.maps",
+            "com.google.android.gm"
+        )
+        private val PROVIDER_TOKEN_PATTERN =
+            Regex("[A-Za-z0-9_-]+={0,2}")
+    }
+
+    /**
+     * Obtiene los metadatos de la aplicación
+     * para una versión de Android y, opcionalmente, ABI y densidad.
+     *
+     * sdkInt = 28 -> Android 9
+     * sdkInt = 29 -> Android 10
+     * sdkInt = 30 -> Android 11
+     */
+    fun lookup(
+        packageName: String,
+        sdkInt: Int,
+        supportedAbis: List<String> = emptyList(),
+        densityDpi: Int = 0
+    ): AptoideApkInfo {
+        // Solo aplicaciones autorizadas.
+        if (packageName !in ALLOWED_PACKAGES) {
+            throw ValidationException(
+                "Aplicación no autorizada para Aptoide"
+            )
+        }
+        // Tablet Setup Manager admite Android 9+.
+        if (sdkInt < 28) {
+            throw ValidationException(
+                "Versión de Android no admitida por Tablet Setup Manager"
+            )
+        }
+        // Filtro de compatibilidad de Aptoide: Android, CPU y densidad.
+        val validAbis = supportedAbis
+            .map { it.trim().lowercase(Locale.ROOT) }
+            .filter {
+                it in setOf(
+                    "arm64-v8a",
+                    "armeabi-v7a",
+                    "armeabi",
+                    "x86",
+                    "x86_64"
+                )
+            }
+            .distinct()
+
+        val deviceQuery = buildString {
+            append("maxSdk=$sdkInt")
+
+            if (validAbis.isNotEmpty()) {
+                append("&myCPU=")
+                append(validAbis.joinToString(","))
+            }
+
+            if (densityDpi in 1..1000) {
+                append("&myDensity=$densityDpi")
+            }
+        }
+        val encodedQuery = Base64.getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(
+                deviceQuery.toByteArray(Charsets.UTF_8)
+            )
+
+        // Consulta HTTPS.
+        val response = downloader.fetch(
+            url = "$API_URL/package_name=$packageName/q=$encodedQuery/aab=1",
+            maxBytes = MAX_RESPONSE_BYTES
+        )
+
+        // Interpretar respuesta JSON.
+        val root = JsonParser.parseString(
+            String(response, Charsets.UTF_8)
+        ).asJsonObject
+
+        // Verificar estado de la API.
+        val status = root.getAsJsonObject("info")
+            ?.get("status")
+            ?.takeIf { !it.isJsonNull }
+            ?.asString
+        if (status != "OK") {
+            throw ValidationException(
+                "Aptoide no devolvió una respuesta válida"
+            )
+        }
+
+        // Obtener metadatos.
+        val data = root.getAsJsonObject("data")
+            ?: throw ValidationException(
+                "Aptoide no devolvió datos de la aplicación"
+            )
+
+        // Verificar paquete.
+        val actualPackage = data.get("package")
+            ?.takeIf { !it.isJsonNull }
+            ?.asString
+        if (actualPackage != packageName) {
+            throw ValidationException(
+                "El paquete devuelto por Aptoide no coincide"
+            )
+        }
+
+        // Información del APK.
+        val file = data.getAsJsonObject("file")
+            ?: throw ValidationException(
+                "Aptoide no devolvió información del APK"
+            )
+        val url = file.get("path")
+            ?.takeIf { !it.isJsonNull }
+            ?.asString
+            ?.takeIf { it.isNotBlank() }
+            ?: throw ValidationException(
+                "Aptoide no devolvió una URL de descarga"
+            )
+        // Interpretar URL.
+        val uri = try {
+            URI(url)
+        } catch (e: Exception) {
+            throw ValidationException(
+                "La URL del APK no es válida"
+            )
+        }
+        val path = uri.path.orEmpty()
+        val host = uri.host.orEmpty()
+        // APK directa en Aptoide.
+        val isDirectApk =
+            host.equals(
+                "pool.apk.aptoide.com",
+                ignoreCase = true
+            ) &&
+            path.endsWith(".apk", ignoreCase = true)
+        // Enlace generado por el proveedor.
+        val providerToken = path.removePrefix("/download/")
+        val isProviderLink =
+            host.equals(
+                "url-provider.aptoide.com",
+                ignoreCase = true
+            ) &&
+            path.startsWith("/download/") &&
+            providerToken.isNotEmpty() &&
+            providerToken.length <= 8192 &&
+            PROVIDER_TOKEN_PATTERN.matches(providerToken)
+        // Comprobar formato de URL y servidor inicial.
+        if (
+            !uri.scheme.equals("https", ignoreCase = true) ||
+            uri.userInfo != null ||
+            uri.port != -1 ||
+            uri.rawQuery != null ||
+            uri.rawFragment != null ||
+            (!isDirectApk && !isProviderLink)
+        ) {
+            throw ValidationException(
+                "La URL no pertenece a un servidor APK autorizado de Aptoide"
+            )
+        }
+        // Código de versión.
+        val versionCode = file.get("vercode")
+            ?.takeIf { !it.isJsonNull }
+            ?.asLong
+            ?: throw ValidationException(
+                "Aptoide no devolvió el código de versión"
+            )
+        if (versionCode <= 0L) {
+            throw ValidationException(
+                "Código de versión no válido"
+            )
+        }
+        // Nombre de versión.
+        val versionName = file.get("vername")
+            ?.takeIf { !it.isJsonNull }
+            ?.asString
+        // Android mínimo requerido.
+        val minSdk = file.getAsJsonObject("hardware")
+            ?.get("sdk")
+            ?.takeIf { !it.isJsonNull }
+            ?.asInt
+        // Comprobar compatibilidad básica.
+        if (minSdk != null && minSdk > sdkInt) {
+            throw ValidationException(
+                "La versión disponible requiere Android SDK $minSdk; " +
+                    "el dispositivo utiliza SDK $sdkInt"
+            )
+        }
+
+        // Obtener los metadatos de Android App Bundle.
+        val aabElement = data.get("aab")
+        val aab = when {
+            aabElement == null || aabElement.isJsonNull -> null
+            aabElement.isJsonObject -> aabElement.asJsonObject
+            else -> throw ValidationException(
+                "Los metadatos AAB no son válidos"
+            )
+        }
+
+        // Tipos de splits que requiere la aplicación.
+        val requiredElement = aab?.get("required_split_types")
+        if (
+            requiredElement != null &&
+            !requiredElement.isJsonNull &&
+            !requiredElement.isJsonArray
+        ) {
+            throw ValidationException(
+                "La lista de splits obligatorios no es válida"
+            )
+        }
+        val requiredSplitTypes = requiredElement
+            ?.takeIf { it.isJsonArray }
+            ?.asJsonArray
+            ?.map { it.asString.uppercase(Locale.ROOT) }
+            ?.toSet()
+            .orEmpty()
+
+        // Lista de archivos APK adicionales.
+        val splitsElement = aab?.get("splits")
+        if (
+            splitsElement != null &&
+            !splitsElement.isJsonNull &&
+            !splitsElement.isJsonArray
+        ) {
+            throw ValidationException(
+                "La lista de APK divididas no es válida"
+            )
+        }
+        val splitArray = splitsElement
+            ?.takeIf { it.isJsonArray }
+            ?.asJsonArray
+        if (splitArray != null && splitArray.size() > 50) {
+            throw ValidationException(
+                "Aptoide devolvió demasiados archivos APK"
+            )
+        }
+        val splits = splitArray?.map { element ->
+            if (!element.isJsonObject) {
+                throw ValidationException(
+                    "Metadatos de APK dividida no válidos"
+                )
+            }
+            val split = element.asJsonObject
+            val name = split.get("name")
+                ?.asString
+                ?.takeIf {
+                    it.isNotBlank() &&
+                    it.length <= 100 &&
+                    it.matches(Regex("[A-Za-z0-9._-]+"))
+                }
+                ?: throw ValidationException(
+                    "Nombre de APK dividida no válido"
+                )
+            val type = split.get("type")
+                ?.asString
+                ?.uppercase(Locale.ROOT)
+                ?: throw ValidationException(
+                    "Tipo de APK dividida no disponible"
+                )
+            if (type !in setOf("ABI", "DENSITY", "LOCALE")) {
+                throw ValidationException(
+                    "Tipo de APK dividida no reconocido: $type"
+                )
+            }
+            val splitUrl = split.get("path")
+                ?.takeIf { !it.isJsonNull }
+                ?.asString
+                ?.takeIf { it.isNotBlank() }
+                ?: throw ValidationException(
+                    "URL de APK dividida no disponible"
+                )
+            val splitUri = try {
+                URI(splitUrl)
+            } catch (e: Exception) {
+                throw ValidationException(
+                    "URL de APK dividida no válida"
+                )
+            }
+            val splitHost = splitUri.host.orEmpty()
+            val splitPath = splitUri.path.orEmpty()
+            val isDirectSplit =
+                splitHost.equals(
+                    "pool.apk.aptoide.com",
+                    ignoreCase = true
+                ) &&
+                splitPath.endsWith(".apk", ignoreCase = true)
+            val splitToken = splitPath.removePrefix("/download/")
+            val isProviderSplit =
+                splitHost.equals(
+                    "url-provider.aptoide.com",
+                    ignoreCase = true
+                ) &&
+                splitPath.startsWith("/download/") &&
+                splitToken.isNotEmpty() &&
+                splitToken.length <= 8192 &&
+                PROVIDER_TOKEN_PATTERN.matches(splitToken)
+            if (
+                !splitUri.scheme.equals("https", ignoreCase = true) ||
+                splitUri.userInfo != null ||
+                splitUri.port != -1 ||
+                splitUri.rawQuery != null ||
+                splitUri.rawFragment != null ||
+                (!isDirectSplit && !isProviderSplit)
+            ) {
+                throw ValidationException(
+                    "La APK dividida no tiene una URL autorizada"
+                )
+            }
+            val sizeBytes = split.get("filesize")
+                ?.takeIf { !it.isJsonNull }
+                ?.asLong
+            if (sizeBytes != null && sizeBytes <= 0L) {
+                throw ValidationException(
+                    "Tamaño de APK dividida no válido"
+                )
+            }
+            AptoideSplitInfo(
+                name = name,
+                type = type,
+                downloadUrl = splitUrl,
+                sizeBytes = sizeBytes
+            )
+        }.orEmpty()
+
+        // Comprobar que no existen APK divididas
+        // con el mismo nombre.
+        val splitNames = splits.map { it.name }
+        if (splitNames.distinct().size != splitNames.size) {
+            throw ValidationException(
+                "Aptoide devolvió nombres de APK duplicados"
+            )
+        }
+
+        // Tipos de splits admitidos por el instalador.
+        val supportedSplitTypes = setOf(
+            "ABI",
+            "DENSITY",
+            "LOCALE"
+        )
+
+        // Rechazar requisitos que aún no sabemos procesar.
+        val unsupportedTypes =
+            requiredSplitTypes - supportedSplitTypes
+        if (unsupportedTypes.isNotEmpty()) {
+            throw ValidationException(
+                "Tipos de APK divididas no admitidos: " +
+                    unsupportedTypes.joinToString(", ")
+            )
+        }
+
+        // Comprobar que Aptoide proporciona los tipos obligatorios.
+        val availableSplitTypes = splits
+            .map { it.type }
+            .toSet()
+        val missingSplitTypes =
+            requiredSplitTypes - availableSplitTypes
+        if (missingSplitTypes.isNotEmpty()) {
+            throw ValidationException(
+                "Faltan APK divididas obligatorias: " +
+                    missingSplitTypes.joinToString(", ")
+            )
+        }
+
+        return AptoideApkInfo(
+            packageName = actualPackage,
+            versionCode = versionCode,
+            versionName = versionName,
+            downloadUrl = url,
+            minSdk = minSdk,
+            requiredSplitTypes = requiredSplitTypes,
+            splits = splits
+        )
+    }
+}

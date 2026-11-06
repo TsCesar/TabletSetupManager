@@ -10,6 +10,7 @@ enum class SourceKind(val label: String) {
     FDROID("F-Droid (índice firmado)"),
     OFFICIAL_DIRECT("Descarga oficial del desarrollador"),
     OFFICIAL_PAGE("Descarga desde página oficial"),
+    APTOIDE("Aptoide (repositorio de terceros)"),
     ENTERPRISE_CATALOG("Catálogo empresarial firmado"),
     EMBEDDED("Incluida en Tablet Setup Installer"),
     LOCAL_FILE("Archivo local importado"),
@@ -38,6 +39,16 @@ sealed interface BuiltInSource {
         val reference: String,
     ) : BuiltInSource
 
+    
+    /**
+    *Fuente automática mediante el catálogo de Aptoide.
+    * La aplicación se identifica por su packageName.
+    */
+    data class Aptoide(
+        val reference: String,
+    ) : BuiltInSource
+
+
     /** Sin fuente pública automatizable: catálogo empresarial o importación manual. */
     data object EnterpriseOnly : BuiltInSource
 
@@ -63,14 +74,23 @@ data class ManagedApp(
     val avatarColor: Long = 0xFF3F51B5,
 )
 
-/** Datos del dispositivo relevantes para la compatibilidad. */
+
+/**
+ * Características del dispositivo Android.
+ *
+ * Incluye los datos necesarios para seleccionar
+ * las APK compatibles con cada tablet.
+ */
 data class DeviceProfile(
     val sdkInt: Int,
     val release: String,
     val supportedAbis: List<String>,
     val manufacturer: String = "",
     val model: String = "",
+    val densityDpi: Int = 0,
+    val preferredLocales: List<String> = emptyList(),
 )
+
 
 /** Fichero APK publicado por una fuente. */
 data class ApkAsset(

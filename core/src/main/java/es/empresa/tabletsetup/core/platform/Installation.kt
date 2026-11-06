@@ -394,9 +394,22 @@ class AppInstaller(
                 destination = file,
                 expectedSha256 = asset.sha256,
                 onProgress = { bytes, assetTotal ->
-                    onPhase(TaskPhase.Downloading(completed + bytes, total ?: assetTotal?.plus(completed)))
+                    onPhase(
+                        TaskPhase.Downloading(
+                            completed + bytes,
+                            total ?: assetTotal?.plus(completed)
+                        )
+                    )
                 },
                 isCancelled = isCancelled,
+                allowedHosts = if (release.origin == SourceKind.APTOIDE) {
+                    setOf(
+                        "url-provider.aptoide.com",
+                        "pool.apk.aptoide.com"
+                    )
+                } else {
+                    null
+                },
             )
             completed += outcome.bytes
             fingerprint = ResourceFingerprint(outcome.bytes, outcome.etag, outcome.lastModified).encode()

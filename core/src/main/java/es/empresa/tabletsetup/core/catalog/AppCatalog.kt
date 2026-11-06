@@ -69,7 +69,9 @@ object AppCatalog {
             packageName = CHROME,
             label = "Google Chrome",
             description = "Navegador web",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://en.aptoide.com/",
+            ),
             typicallyPreinstalled = true,
             initials = "Ch", avatarColor = 0xFF1E8E3E,
         ),
@@ -77,7 +79,9 @@ object AppCatalog {
             packageName = MAPS,
             label = "Google Maps",
             description = "Mapas y navegación",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://en.aptoide.com/",
+            ),
             typicallyPreinstalled = true,
             initials = "Ma", avatarColor = 0xFF188038,
         ),
@@ -104,7 +108,9 @@ object AppCatalog {
             packageName = GMAIL,
             label = "Gmail",
             description = "Correo electrónico (solo instalación; no se configuran cuentas)",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://en.aptoide.com/",
+            ),
             typicallyPreinstalled = true,
             initials = "Gm", avatarColor = 0xFFC5221F,
         ),
