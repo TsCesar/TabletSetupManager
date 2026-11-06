@@ -105,6 +105,23 @@ class Downloader(
     companion object {
         const val MAX_REDIRECTS = 5
         const val DEFAULT_MAX_APK_BYTES = 600L * 1024 * 1024
+
+        /**
+         * Comprueba nombres de host completos. La regla "*.dominio.com" admite
+         * solo subdominios reales, no el dominio raíz ni imitaciones.
+         */
+        internal fun hostMatchesAllowList(host: String, allowedHosts: Set<String>): Boolean {
+            val normalizedHost = host.lowercase(Locale.ROOT)
+            return allowedHosts.any { entry ->
+                val rule = entry.lowercase(Locale.ROOT)
+                if (rule.startsWith("*.") && rule.length > 2) {
+                    val suffix = rule.substring(1)
+                    normalizedHost.length > suffix.length && normalizedHost.endsWith(suffix)
+                } else {
+                    normalizedHost == rule
+                }
+            }
+        }
     }
 
     /**
@@ -352,7 +369,7 @@ class Downloader(
                 val host = currentUri.host?.lowercase(Locale.ROOT)
                 val rejectionReason = when {
                     host == null -> "host ausente"
-                    host !in normalizedAllowedHosts -> "host=$host"
+                    !hostMatchesAllowList(host, normalizedAllowedHosts) -> "host=$host"
                     currentUri.userInfo != null -> "URL con credenciales"
                     currentUri.port != -1 -> "puerto=${currentUri.port}"
                     else -> null
