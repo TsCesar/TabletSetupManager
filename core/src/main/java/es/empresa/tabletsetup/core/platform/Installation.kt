@@ -406,7 +406,8 @@ class AppInstaller(
                     setOf(
                         "url-provider.aptoide.com",
                         "pool.apk.aptoide.com",
-                        "play.googleapis.com"
+                        "play.googleapis.com",
+                        "*.gvt1.com"
                     )
                 } else {
                     null
