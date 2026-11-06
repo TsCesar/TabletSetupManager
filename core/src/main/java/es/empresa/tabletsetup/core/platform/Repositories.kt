@@ -1208,7 +1208,15 @@ class ReleaseResolver(
 
 
 
-                        "com.google.android.apps.maps",
+                        "com.google.android.apps.maps" -> setOf(
+
+                            // Certificado Google Android (3891), verificado para Google Maps.
+                            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83",
+
+                            // Certificado alternativo de Google ya admitido para variantes de Maps.
+                            "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053"
+
+                        )
 
                         "com.google.android.gm" -> setOf(
 
