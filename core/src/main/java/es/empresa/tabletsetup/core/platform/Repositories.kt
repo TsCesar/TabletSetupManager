@@ -930,7 +930,7 @@ class ReleaseResolver(
 
 
 
-                    // Chrome, Google Maps y Gmail mediante Aptoide
+                    // Chrome, Google Maps, Gmail y Waze mediante Aptoide
 
                     app.builtInSource is BuiltInSource.Aptoide -> {
 
@@ -1225,6 +1225,11 @@ class ReleaseResolver(
                         )
 
 
+
+                        // Waze: certificado público de APKMirror de la versión 5.26.0.0.
+                        "com.waze" -> setOf(
+                            "03637f6c5d8f604e6fdb79a6ffbfa578de4e318f8da22fc6106665247f8807d7"
+                        )
 
                         else -> emptySet()
 

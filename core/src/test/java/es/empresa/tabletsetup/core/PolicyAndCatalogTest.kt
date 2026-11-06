@@ -104,6 +104,7 @@ class PolicyAndCatalogTest {
         assertEquals(expected, AppCatalog.packageNames)
         assertTrue(AppCatalog.find(AppCatalog.QS_UNIVERSAL_ADDON)!!.optional)
         assertEquals(29, AppCatalog.find(AppCatalog.WAZE)!!.minDeviceSdk)
+        assertTrue(AppCatalog.find(AppCatalog.WAZE)!!.builtInSource is BuiltInSource.Aptoide)
         assertEquals(BuiltInSource.FDroid, AppCatalog.find(AppCatalog.MUPDF)!!.builtInSource)
         val qs = AppCatalog.find(AppCatalog.QUICKSUPPORT)!!.builtInSource as BuiltInSource.OfficialDirect
         assertTrue(qs.url.startsWith("https://"))

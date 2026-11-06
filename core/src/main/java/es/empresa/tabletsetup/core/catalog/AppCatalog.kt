@@ -12,8 +12,9 @@ import es.empresa.tabletsetup.core.policy.ExcludedApps
  *  - MuPDF: repositorio oficial F-Droid (índice firmado).
  *  - TeamViewer QuickSupport y Universal Add-On: APK oficiales publicadas por TeamViewer
  *    en su base de conocimiento.
- *  - Chrome, Maps, Gmail, Waze, WhatsApp: no hay una URL oficial de APK verificada y
- *    mantenible; se usan el catálogo empresarial firmado o la importación manual.
+ *  - Chrome, Maps, Gmail y Waze: descarga desde Aptoide con certificado del
+ *    desarrollador fijado y validación de APK/splits antes de instalar.
+ *  - WhatsApp: descarga APK oficial desde la página del desarrollador.
  */
 object AppCatalog {
     const val MUPDF = "com.artifex.mupdf.viewer.app"
@@ -89,7 +90,9 @@ object AppCatalog {
             packageName = WAZE,
             label = "Waze",
             description = "Navegación GPS (no compatible con Android 9)",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://waze-gps-maps-traffic-alerts-sat-nav.es.aptoide.com/app",
+            ),
             minDeviceSdk = 29,
             initials = "Wz", avatarColor = 0xFF33CCFF,
         ),
