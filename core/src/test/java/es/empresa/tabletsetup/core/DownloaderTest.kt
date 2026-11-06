@@ -230,4 +230,23 @@ class DownloaderTest {
         assertArrayEquals(payload, downloader.fetch("$base/ok.apk", maxBytes = 1_000_000))
         expectFailure(FailureKind.TOO_LARGE) { downloader.fetch("$base/ok.apk", maxBytes = 10) }
     }
+
+    @Test
+    fun `subdominios CDN autorizados sin aceptar imitadores`() {
+        val allowed = setOf(
+            "url-provider.aptoide.com",
+            "pool.apk.aptoide.com",
+            "play.googleapis.com",
+            "*.gvt1.com"
+        )
+        assertTrue(Downloader.hostMatchesAllowList("url-provider.aptoide.com", allowed))
+        assertTrue(Downloader.hostMatchesAllowList("play.googleapis.com", allowed))
+        assertTrue(Downloader.hostMatchesAllowList("rr2---sn-p5qs7nsk.gvt1.com", allowed))
+        assertTrue(Downloader.hostMatchesAllowList("RR4---SN-p5qs7n6y.GVT1.COM", allowed))
+        assertFalse(Downloader.hostMatchesAllowList("gvt1.com", allowed))
+        assertFalse(Downloader.hostMatchesAllowList("evilgvt1.com", allowed))
+        assertFalse(Downloader.hostMatchesAllowList("gvt1.com.ejemplo.org", allowed))
+        assertFalse(Downloader.hostMatchesAllowList("play.googleapis.com.ejemplo.org", allowed))
+    }
+
 }
