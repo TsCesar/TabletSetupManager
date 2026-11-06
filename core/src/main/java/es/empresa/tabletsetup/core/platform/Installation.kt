@@ -405,7 +405,8 @@ class AppInstaller(
                 allowedHosts = if (release.origin == SourceKind.APTOIDE) {
                     setOf(
                         "url-provider.aptoide.com",
-                        "pool.apk.aptoide.com"
+                        "pool.apk.aptoide.com",
+                        "play.googleapis.com"
                     )
                 } else {
                     null
