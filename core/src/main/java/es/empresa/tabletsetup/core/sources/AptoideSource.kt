@@ -58,6 +58,24 @@ class AptoideSource(
         private val PROVIDER_TOKEN_PATTERN =
             Regex("[A-Za-z0-9_-]+={0,2}")
 
+        // Límite de consultas a versiones antiguas por perfil de dispositivo.
+        private const val MAX_VERSION_ATTEMPTS = 6
+
+        /**
+         * Chrome 138 es la última versión para Android 9. El código 7204xxxx
+         * corresponde a esa serie, documentada en sus variantes de APKMirror.
+         * Es una preferencia de búsqueda, no una aceptación sin verificar.
+         */
+        internal fun initialMaxVersionCode(packageName: String, sdkInt: Int): Long? =
+            if (packageName == "com.android.chrome" && sdkInt == 28) 720_499_999L else null
+
+        internal fun normalizeAbi(abi: String): String =
+            when (val text = abi.trim().lowercase(Locale.ROOT)) {
+                "x86-64" -> "x86_64"
+                "arm-v7a" -> "armeabi-v7a"
+                else -> text
+            }
+
         /**
          * Estrategia progresiva para metadatos de Aptoide.
          * Se prioriza la variante específica; solo si esta no existe o no
@@ -143,7 +161,7 @@ class AptoideSource(
         var candidateResponse: ByteArray? = null
         var lastUnavailable = "Aptoide no ofrece una variante compatible para este dispositivo"
 
-        for (deviceQuery in queries) {
+        variantQueries@ for (deviceQuery in queries) {
             val qPart = if (deviceQuery.isEmpty()) {
                 ""
             } else {
@@ -153,97 +171,114 @@ class AptoideSource(
                 "/q=$encodedQuery"
             }
 
-            val bytes = try {
-                downloader.fetch(
-                    url = "$API_URL/package_name=$packageName$qPart/aab=1",
-                    maxBytes = MAX_RESPONSE_BYTES
-                )
-            } catch (e: DownloadException) {
-                if (e.httpCode == 404) {
-                    lastUnavailable = "Aptoide: no se encontró una variante (HTTP 404)"
-                    continue
-                }
-                throw e
-            }
-
-            // Comprobar metadatos antes de elegir la variante y descargarla.
-            // La validación criptográfica y del manifiesto se realiza al instalar.
-            val candidate = JsonParser.parseString(
-                String(bytes, Charsets.UTF_8)
-            ).asJsonObject
-            val status = candidate.getAsJsonObject("info")
-                ?.get("status")
-                ?.takeIf { !it.isJsonNull }
-                ?.asString
-            if (status != "OK") {
-                throw ValidationException("Aptoide no devolvió una respuesta válida")
-            }
-
-            val candidateData = candidate.getAsJsonObject("data")
-                ?: throw ValidationException("Aptoide no devolvió datos de la aplicación")
-            if (candidateData.get("package")?.asString != packageName) {
-                throw ValidationException("El paquete devuelto por Aptoide no coincide")
-            }
-            val candidateFile = candidateData.getAsJsonObject("file")
-                ?: throw ValidationException("Aptoide no devolvió información del APK")
-            val hardware = candidateFile.getAsJsonObject("hardware")
-            val minSdk = hardware?.get("sdk")?.takeIf { !it.isJsonNull }?.asInt
-            if (minSdk != null && minSdk > sdkInt) {
-                lastUnavailable = "La variante de Aptoide requiere Android SDK $minSdk"
-                continue
-            }
-            val cpus = hardware?.get("cpus")
-                ?.takeIf { it.isJsonArray }
-                ?.asJsonArray
-                ?.mapNotNull { it.takeIf { cpu -> cpu.isJsonPrimitive }?.asString?.lowercase(Locale.ROOT) }
-                .orEmpty()
-            if (validAbis.isNotEmpty() && cpus.isNotEmpty() &&
-                cpus.none { it in validAbis || it == "all" || it == "universal" }
-            ) {
-                lastUnavailable = "La variante de Aptoide es para otra arquitectura"
-                continue
-            }
-
-            // La consulta general puede devolver AAB exclusivamente ARM
-            // incluso cuando la tablet admite solo x86/x86_64.
-            // Si el proveedor publica splits ABI incompatibles, probar el
-            // siguiente conjunto de filtros en vez de aceptar esa variante.
-            val aab = candidateData.get("aab")
-                ?.takeIf { it.isJsonObject }
-                ?.asJsonObject
-            val abiSplitNames = aab?.get("splits")
-                ?.takeIf { it.isJsonArray }
-                ?.asJsonArray
-                ?.mapNotNull { entry ->
-                    if (!entry.isJsonObject) return@mapNotNull null
-                    val split = entry.asJsonObject
-                    if (!split.get("type")?.asString.equals("ABI", ignoreCase = true)) {
-                        return@mapNotNull null
+            var maxVersionCode = initialMaxVersionCode(packageName, sdkInt)
+            for (attempt in 0 until MAX_VERSION_ATTEMPTS) {
+                val maxCodePart = maxVersionCode?.let { "/max_vercode=$it" }.orEmpty()
+                val bytes = try {
+                    downloader.fetch(
+                        url = "$API_URL/package_name=$packageName$qPart$maxCodePart/aab=1",
+                        maxBytes = MAX_RESPONSE_BYTES
+                    )
+                } catch (e: DownloadException) {
+                    if (e.httpCode == 404) {
+                        lastUnavailable = "Aptoide: no se encontró una variante (HTTP 404)"
+                        break
                     }
-                    split.get("name")
-                        ?.takeIf { !it.isJsonNull }
-                        ?.asString
+                    throw e
                 }
-                .orEmpty()
-            if (!supportsAbiSplits(abiSplitNames, validAbis)) {
-                lastUnavailable = "Aptoide no ofrece APK divididas compatibles con " +
-                    validAbis.joinToString(", ")
-                continue
-            }
 
-            if (packageName == "com.android.chrome") {
-                val version = candidateFile.get("vername")
+                // Comprobar metadatos antes de elegir la variante y descargarla.
+                // La validación criptográfica y del manifiesto se realiza al instalar.
+                val candidate = JsonParser.parseString(
+                    String(bytes, Charsets.UTF_8)
+                ).asJsonObject
+                val status = candidate.getAsJsonObject("info")
+                    ?.get("status")
                     ?.takeIf { !it.isJsonNull }
                     ?.asString
-                val major = version?.substringBefore(".")?.toIntOrNull()
-                if (major == null || major < 138) {
-                    lastUnavailable = "Chrome ${version ?: "desconocido"} es anterior a la versión mínima 138"
+                if (status != "OK") {
+                    throw ValidationException("Aptoide no devolvió una respuesta válida")
+                }
+
+                val candidateData = candidate.getAsJsonObject("data")
+                    ?: throw ValidationException("Aptoide no devolvió datos de la aplicación")
+                if (candidateData.get("package")?.asString != packageName) {
+                    throw ValidationException("El paquete devuelto por Aptoide no coincide")
+                }
+                val candidateFile = candidateData.getAsJsonObject("file")
+                    ?: throw ValidationException("Aptoide no devolvió información del APK")
+                val versionCode = candidateFile.get("vercode")
+                    ?.takeIf { !it.isJsonNull }
+                    ?.asLong
+                    ?: throw ValidationException("Aptoide no devolvió un código de versión")
+                if (versionCode <= 0L || (maxVersionCode != null && versionCode > maxVersionCode)) {
+                    lastUnavailable = "Aptoide devolvió un código de versión fuera del límite solicitado"
+                    break
+                }
+                maxVersionCode = (versionCode - 1L).takeIf { it in 1L..Int.MAX_VALUE.toLong() }
+                val hardware = candidateFile.getAsJsonObject("hardware")
+                val minSdk = hardware?.get("sdk")?.takeIf { !it.isJsonNull }?.asInt
+                if (minSdk != null && minSdk > sdkInt) {
+                    lastUnavailable = "La variante de Aptoide requiere Android SDK $minSdk"
+                    if (maxVersionCode == null) break
                     continue
                 }
-            }
+                val cpus = hardware?.get("cpus")
+                    ?.takeIf { it.isJsonArray }
+                    ?.asJsonArray
+                    ?.mapNotNull { it.takeIf { cpu -> cpu.isJsonPrimitive }?.asString?.let(::normalizeAbi) }
+                    .orEmpty()
+                if (validAbis.isNotEmpty() && cpus.isNotEmpty() &&
+                    cpus.none { it in validAbis || it == "all" || it == "universal" }
+                ) {
+                    lastUnavailable = "La variante de Aptoide es para otra arquitectura"
+                    if (maxVersionCode == null) break
+                    continue
+                }
 
-            candidateResponse = bytes
-            break
+                // La consulta general puede devolver AAB exclusivamente ARM
+                // incluso cuando la tablet admite solo x86/x86_64.
+                // Si el proveedor publica splits ABI incompatibles, probar el
+                // siguiente conjunto de filtros en vez de aceptar esa variante.
+                val aab = candidateData.get("aab")
+                    ?.takeIf { it.isJsonObject }
+                    ?.asJsonObject
+                val abiSplitNames = aab?.get("splits")
+                    ?.takeIf { it.isJsonArray }
+                    ?.asJsonArray
+                    ?.mapNotNull { entry ->
+                        if (!entry.isJsonObject) return@mapNotNull null
+                        val split = entry.asJsonObject
+                        if (!split.get("type")?.asString.equals("ABI", ignoreCase = true)) {
+                            return@mapNotNull null
+                        }
+                        split.get("name")
+                            ?.takeIf { !it.isJsonNull }
+                            ?.asString
+                    }
+                    .orEmpty()
+                if (!supportsAbiSplits(abiSplitNames, validAbis)) {
+                    lastUnavailable = "Aptoide no ofrece APK divididas compatibles con " +
+                        validAbis.joinToString(", ")
+                    if (maxVersionCode == null) break
+                    continue
+                }
+
+                if (packageName == "com.android.chrome") {
+                    val version = candidateFile.get("vername")
+                        ?.takeIf { !it.isJsonNull }
+                        ?.asString
+                    val major = version?.substringBefore(".")?.toIntOrNull()
+                    if (major == null || major < 138) {
+                        lastUnavailable = "Chrome ${version ?: "desconocido"} es anterior a la versión mínima 138"
+                        if (maxVersionCode == null) break
+                        continue
+                    }
+                }
+
+                candidateResponse = bytes
+                break@variantQueries
+            }
         }
 
         val response = candidateResponse

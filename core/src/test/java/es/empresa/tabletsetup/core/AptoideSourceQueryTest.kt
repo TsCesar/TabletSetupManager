@@ -50,4 +50,19 @@ class AptoideSourceQueryTest {
         assertEquals(true, AptoideSource.supportsAbiSplits(emptyList(), listOf("x86_64")))
     }
 
+    @Test
+    fun versionesChromeAndroid9SeRestringenASerie138() {
+        assertEquals(720_499_999L, AptoideSource.initialMaxVersionCode("com.android.chrome", 28))
+        assertEquals(null, AptoideSource.initialMaxVersionCode("com.android.chrome", 34))
+        assertEquals(null, AptoideSource.initialMaxVersionCode("com.google.android.gm", 28))
+    }
+
+    @Test
+    fun normalizaNombresDeArquitecturaDeAptoide() {
+        assertEquals("x86_64", AptoideSource.normalizeAbi("x86-64"))
+        assertEquals("x86_64", AptoideSource.normalizeAbi("X86_64"))
+        assertEquals("armeabi-v7a", AptoideSource.normalizeAbi("arm-v7a"))
+        assertEquals("arm64-v8a", AptoideSource.normalizeAbi("arm64-v8a"))
+    }
+
 }
