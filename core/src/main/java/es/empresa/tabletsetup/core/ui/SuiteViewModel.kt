@@ -11,6 +11,7 @@ import es.empresa.tabletsetup.core.catalog.AppCatalog
 import es.empresa.tabletsetup.core.catalog.CatalogSignature
 import es.empresa.tabletsetup.core.catalog.EnterpriseCatalogParser
 import es.empresa.tabletsetup.core.engine.BatchPlanner
+import es.empresa.tabletsetup.core.engine.BrowserFallbackPlanner
 import es.empresa.tabletsetup.core.engine.SequentialRunner
 import es.empresa.tabletsetup.core.engine.TaskOutcome
 import es.empresa.tabletsetup.core.engine.TaskPhase
@@ -69,8 +70,11 @@ data class SuiteUiState(
     val statuses: List<AppStatus> get() = rows.map { it.status }
     val failedIds: List<String>
         get() = rows.filter { r -> r.outcome?.let { !it.success && !it.skipped } == true }.map { it.packageName }
-    val plannedAll: List<String> get() = BatchPlanner.plan(statuses, mode)
-    val plannedSelected: List<String> get() = if (selected.isEmpty()) emptyList() else BatchPlanner.plan(statuses, mode, selected)
+    val plannedAll: List<String>
+        get() = BrowserFallbackPlanner.plan(statuses, mode, BatchPlanner.plan(statuses, mode))
+    val plannedSelected: List<String>
+        get() = if (selected.isEmpty()) emptyList() else
+            BrowserFallbackPlanner.plan(statuses, mode, BatchPlanner.plan(statuses, mode, selected), selected)
     fun row(packageName: String): AppRowState? = rows.firstOrNull { it.packageName == packageName }
 }
 
@@ -228,6 +232,9 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
     }
 
     private suspend fun runOne(packageName: String): TaskOutcome {
+        if (packageName == AppCatalog.FIREFOX && engine.packages.isInstalled(AppCatalog.CHROME)) {
+            return TaskOutcome(false, "Chrome ya está instalado; Firefox no es necesario", skipped = true)
+        }
         val row = _state.value.row(packageName) ?: return TaskOutcome(false, "Aplicación desconocida")
         val release = row.status.release ?: return TaskOutcome(false, row.status.message, skipped = true)
         if (row.status.state == AppState.OMITIDA) return TaskOutcome(false, row.status.message, skipped = true)

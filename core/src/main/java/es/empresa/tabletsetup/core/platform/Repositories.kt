@@ -63,6 +63,7 @@ import es.empresa.tabletsetup.core.policy.CompatibilityPolicy
 import es.empresa.tabletsetup.core.sources.AptoideApkInfo
 
 import es.empresa.tabletsetup.core.sources.AptoideSource
+import es.empresa.tabletsetup.core.sources.FirefoxArchiveSource
 
 import es.empresa.tabletsetup.core.sources.AptoideSplitSelector
 
@@ -514,6 +515,14 @@ class DirectSourceRepository(context: Context, private val downloader: Downloade
 
     private val aptoideSource = AptoideSource(downloader)
 
+    private val firefoxArchiveSource = FirefoxArchiveSource(downloader)
+
+    fun resolveFirefoxArchive(supportedAbis: List<String>): Result<String> = try {
+        Result.success(firefoxArchiveSource.resolveDownloadUrl(supportedAbis))
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     /**
 
     * Consulta la página oficial y obtiene su enlace APK.
@@ -929,6 +938,19 @@ class ReleaseResolver(
                     }
 
 
+
+                    // Firefox se descarga directamente del archivo oficial de Mozilla.
+                    app.builtInSource == BuiltInSource.MozillaArchive -> {
+                        val result = directRepository.resolveFirefoxArchive(device.supportedAbis)
+                        probes[app.packageName] = result.fold(
+                            onSuccess = { url ->
+                                val probeResult = directRepository.probe(url)
+                                if (probeResult.isSuccess) resolvedUrls[app.packageName] = url
+                                probeResult
+                            },
+                            onFailure = { Result.failure(it) }
+                        )
+                    }
 
                     // Chrome, Google Maps, Gmail y Waze mediante Aptoide
 
@@ -1390,6 +1412,22 @@ class ReleaseResolver(
             }
 
 
+
+            BuiltInSource.MozillaArchive -> {
+                val url = snapshot.resolvedUrls[app.packageName]
+                if (url != null) {
+                    // Firmas publicadas por Mozilla (produccion) y APKMirror.
+                    val mozillaSigners = setOf(
+                        "5004779088e7f988d5bc5cc5f8798febf4f8cd084a1b2a46efd4c8ee4aeaf211",
+                        "a78b62a5165b4494b2fead9e76a280d22d937fee6251aece599446b2ea319b04"
+                    )
+                    return directResolution(app, url, "Mozilla", snapshot, pins + mozillaSigners)
+                }
+                val failure = snapshot.probes[app.packageName]?.exceptionOrNull()
+                if (failure != null && bestCatalog == null && directEntry == null) {
+                    return Resolution.Failed("Mozilla: " + (failure.message ?: "archivo no disponible"))
+                }
+            }
 
             BuiltInSource.EnterpriseOnly -> Unit
 

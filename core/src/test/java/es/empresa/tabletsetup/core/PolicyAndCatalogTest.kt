@@ -100,9 +100,12 @@ class PolicyAndCatalogTest {
         val expected = setOf(
             AppCatalog.MUPDF, AppCatalog.QUICKSUPPORT, AppCatalog.QS_UNIVERSAL_ADDON, AppCatalog.CHROME,
             AppCatalog.MAPS, AppCatalog.WAZE, AppCatalog.WHATSAPP, AppCatalog.GMAIL, AppCatalog.UPDATER,
+            AppCatalog.FIREFOX,
         )
         assertEquals(expected, AppCatalog.packageNames)
         assertTrue(AppCatalog.find(AppCatalog.QS_UNIVERSAL_ADDON)!!.optional)
+        assertTrue(AppCatalog.find(AppCatalog.FIREFOX)!!.optional)
+        assertEquals(BuiltInSource.MozillaArchive, AppCatalog.find(AppCatalog.FIREFOX)!!.builtInSource)
         assertEquals(29, AppCatalog.find(AppCatalog.WAZE)!!.minDeviceSdk)
         assertTrue(AppCatalog.find(AppCatalog.WAZE)!!.builtInSource is BuiltInSource.Aptoide)
         assertEquals(BuiltInSource.FDroid, AppCatalog.find(AppCatalog.MUPDF)!!.builtInSource)

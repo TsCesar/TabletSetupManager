@@ -93,6 +93,25 @@ object StatusCalculator {
     }
 }
 
+/**
+ * Planifica Firefox como respaldo al instalar Chrome. Se coloca antes del
+ * Updater y se omite al ejecutar si Chrome termina instalado.
+ */
+object BrowserFallbackPlanner {
+    fun plan(statuses: List<AppStatus>, mode: Mode, ids: List<String>, selected: Set<String>? = null): List<String> {
+        if (mode != Mode.INSTALLER || (selected != null && AppCatalog.CHROME !in selected)) return ids
+        val chrome = statuses.firstOrNull { it.app.packageName == AppCatalog.CHROME } ?: return ids
+        val firefox = statuses.firstOrNull { it.app.packageName == AppCatalog.FIREFOX } ?: return ids
+        if (chrome.installed != null || firefox.installed != null || firefox.state != AppState.NO_INSTALADA) return ids
+        val needsFallback = AppCatalog.CHROME in ids ||
+            chrome.state in setOf(AppState.ERROR, AppState.FUENTE_PENDIENTE, AppState.NO_COMPATIBLE)
+        if (!needsFallback || AppCatalog.FIREFOX in ids) return ids
+        val normal = ids.filterNot { it == AppCatalog.UPDATER }
+        val updater = ids.filter { it == AppCatalog.UPDATER }
+        return normal + AppCatalog.FIREFOX + updater
+    }
+}
+
 /** Selección de aplicaciones para los procesos por lotes. Kotlin puro. */
 object BatchPlanner {
     /**
@@ -110,7 +129,9 @@ object BatchPlanner {
                     (status.state == AppState.ACTUALIZACION || status.state == AppState.POR_VERIFICAR)
             }
         }.filter { status ->
-            if (selected != null) status.app.packageName in selected else !status.app.optional
+            if (selected != null) status.app.packageName in selected else
+                (!status.app.optional || (mode == Mode.UPDATER &&
+                    status.app.packageName == AppCatalog.FIREFOX && status.installed != null))
         }
         // El Updater se instala/actualiza al final para no interrumpir el lote.
         return eligible.sortedBy { if (it.app.packageName == AppCatalog.UPDATER) 1 else 0 }.map { it.app.packageName }

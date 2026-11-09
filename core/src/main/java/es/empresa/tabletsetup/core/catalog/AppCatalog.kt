@@ -22,6 +22,7 @@ object AppCatalog {
     const val QS_UNIVERSAL_ADDON = "com.teamviewer.quicksupport.addon.universal"
     const val QS_ADDON_PREFIX = "com.teamviewer.quicksupport.addon."
     const val CHROME = "com.android.chrome"
+    const val FIREFOX = "org.mozilla.firefox"
     const val MAPS = "com.google.android.apps.maps"
     const val WAZE = "com.waze"
     const val WHATSAPP = "com.whatsapp"
@@ -75,6 +76,14 @@ object AppCatalog {
             ),
             typicallyPreinstalled = true,
             initials = "Ch", avatarColor = 0xFF1E8E3E,
+        ),
+        ManagedApp(
+            packageName = FIREFOX,
+            label = "Mozilla Firefox",
+            description = "Navegador alternativo si Chrome no se instala",
+            builtInSource = BuiltInSource.MozillaArchive,
+            optional = true,
+            initials = "Fx", avatarColor = 0xFFFF7139,
         ),
         ManagedApp(
             packageName = MAPS,

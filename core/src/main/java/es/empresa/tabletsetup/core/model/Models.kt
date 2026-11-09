@@ -48,6 +48,8 @@ sealed interface BuiltInSource {
         val reference: String,
     ) : BuiltInSource
 
+    /** APK oficial Mozilla Firefox desde su archivo por arquitectura. */
+    data object MozillaArchive : BuiltInSource
 
     /** Sin fuente pública automatizable: catálogo empresarial o importación manual. */
     data object EnterpriseOnly : BuiltInSource
