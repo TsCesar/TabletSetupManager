@@ -103,6 +103,27 @@ class AptoideSource(
         }
 
         /**
+         * Aptoide aab=1 incluye App Bundles, y aab=0 consulta solo APK
+         * tradicionales. Buscar primero AAB para respetar versiones actuales;
+         * si no existe ninguna compatible, buscar una APK monolítica.
+         * La selección real y la firma se validan tras descargar.
+         */
+        internal fun downloadQueryCandidates(
+            packageName: String,
+            sdkInt: Int,
+            validAbis: List<String>,
+            densityDpi: Int
+        ): List<Pair<String, Boolean>> {
+            val filters = deviceQueryCandidates(sdkInt, validAbis, densityDpi)
+            val withBundles = filters.map { it to true }
+            val useStandaloneFallback = packageName in setOf(
+                "com.waze", "com.android.chrome", "com.google.android.gm"
+            )
+            return withBundles +
+                (if (useStandaloneFallback) filters.map { it to false } else emptyList())
+        }
+
+        /**
          * Comprueba las ABI declaradas en las APK divididas ANTES de seleccionar
          * una variante de Aptoide. Sin splits ABI, se deja decidir al validador.
          */
@@ -166,11 +187,11 @@ class AptoideSource(
             }
             .distinct()
 
-        val queries = deviceQueryCandidates(sdkInt, validAbis, densityDpi)
+        val queries = downloadQueryCandidates(packageName, sdkInt, validAbis, densityDpi)
         var candidateResponse: ByteArray? = null
         var lastUnavailable = "Aptoide no ofrece una variante compatible para este dispositivo"
 
-        variantQueries@ for (deviceQuery in queries) {
+        variantQueries@ for ((deviceQuery, withBundles) in queries) {
             val qPart = if (deviceQuery.isEmpty()) {
                 ""
             } else {
@@ -181,11 +202,13 @@ class AptoideSource(
             }
 
             var maxVersionCode = initialMaxVersionCode(packageName, sdkInt)
-            for (attempt in 0 until MAX_VERSION_ATTEMPTS) {
+            // Evitar un número excesivo de llamadas al probar APK normales.
+            val maxAttempts = if (withBundles) MAX_VERSION_ATTEMPTS else 4
+            for (attempt in 0 until maxAttempts) {
                 val maxCodePart = maxVersionCode?.let { "/max_vercode=$it" }.orEmpty()
                 val bytes = try {
                     downloader.fetch(
-                        url = "$API_URL/package_name=$packageName$qPart$maxCodePart/aab=1",
+                        url = "$API_URL/package_name=$packageName$qPart$maxCodePart/aab=${if (withBundles) 1 else 0}",
                         maxBytes = MAX_RESPONSE_BYTES
                     )
                 } catch (e: DownloadException) {

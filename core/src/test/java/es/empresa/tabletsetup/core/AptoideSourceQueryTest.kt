@@ -66,4 +66,39 @@ class AptoideSourceQueryTest {
         assertEquals("arm64-v8a", AptoideSource.normalizeAbi("arm64-v8a"))
     }
 
+    @Test
+    fun fuentesWazeIncluyenApkNormalesDespuesDeAppBundles() {
+        val all = AptoideSource.downloadQueryCandidates(
+            "com.waze", 29, listOf("arm64-v8a", "armeabi-v7a"), 420
+        )
+        assertEquals(8, all.size)
+        assertEquals(true, all.first().second)
+        assertEquals(false, all.last().second)
+        assertEquals(
+            "maxSdk=29&myCPU=arm64-v8a,armeabi-v7a&myDensity=420",
+            all.first().first
+        )
+        assertEquals(all.first().first, all[4].first)
+    }
+
+    @Test
+    fun gmailYChromeBuscanApkMonoliticasComoUltimoRecurso() {
+        for (pkg in listOf("com.android.chrome", "com.google.android.gm")) {
+            val list = AptoideSource.downloadQueryCandidates(
+                pkg, 28, listOf("x86_64", "x86"), 320
+            )
+            assertEquals(8, list.size)
+            assertEquals(4, list.count { !it.second })
+        }
+    }
+
+    @Test
+    fun mapasConservaLaConsultaNormalSinCosteExtra() {
+        val list = AptoideSource.downloadQueryCandidates(
+            "com.google.android.apps.maps", 34, listOf("x86_64"), 320
+        )
+        assertEquals(4, list.size)
+        assertEquals(true, list.all { it.second })
+    }
+
 }
