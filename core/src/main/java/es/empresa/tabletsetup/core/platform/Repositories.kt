@@ -1242,6 +1242,12 @@ class ReleaseResolver(
 
                         "com.google.android.gm" -> setOf(
 
+                            // Certificado de Gmail publicado en APKMirror para
+                            // versiones Release, incluidas las compatibles con Android 9.
+                            // Coincide con el SHA-256 observado y rechazado en el emulador.
+                            "f0fd6c5b410f25cb25c3b53346c8972fae30f8ee7411df910480ad6b2d60db83",
+
+                            // Conservar la huella alternativa ya permitida para Gmail.
                             "7ce83c1b71f3d572fed04c8d40c5cb10ff75e6d87d9df6fbd53f0468c2905053"
 
                         )
