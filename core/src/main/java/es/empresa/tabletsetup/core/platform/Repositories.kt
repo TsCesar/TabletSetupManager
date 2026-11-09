@@ -64,6 +64,7 @@ import es.empresa.tabletsetup.core.sources.AptoideApkInfo
 
 import es.empresa.tabletsetup.core.sources.AptoideSource
 import es.empresa.tabletsetup.core.sources.FirefoxArchiveSource
+import es.empresa.tabletsetup.core.sources.WazeVerifiedApkm
 
 import es.empresa.tabletsetup.core.sources.AptoideSplitSelector
 
@@ -952,8 +953,12 @@ class ReleaseResolver(
                         )
                     }
 
-                    // Chrome, Google Maps, Gmail y Waze mediante Aptoide
+                    // Waze ARM64 utiliza un APKM original comprobado; evitar
+                    // consultar Aptoide si ya tenemos la versión fijada.
+                    app.packageName == AppCatalog.WAZE &&
+                        WazeVerifiedApkm.releaseFor(device) != null -> Unit
 
+                    // Chrome, Google Maps, Gmail y otros mediante Aptoide.
                     app.builtInSource is BuiltInSource.Aptoide -> {
 
                         aptoideResults[app.packageName] =
@@ -1041,6 +1046,21 @@ class ReleaseResolver(
         if (bestCatalog != null && bestCatalog.override) return Resolution.Available(bestCatalog.release)
 
         if (directEntry != null && directEntry.override) return directResolution(app, directEntry.url, "Empresa", snapshot, pins + directEntry.signers)
+
+        // Instalación automática de Waze con APKM original comprobado. La
+        // firma y el SHA se comprueban de nuevo durante la instalación.
+        // Los emuladores x86 y Android 9 siguen usando la política habitual.
+        if (app.packageName == AppCatalog.WAZE) {
+            WazeVerifiedApkm.releaseFor(device)?.let { verified ->
+                if (bestCatalog != null &&
+                    (bestCatalog.release.versionCode ?: 0L) > (verified.versionCode ?: 0L)) {
+                    return Resolution.Available(bestCatalog.release)
+                }
+                return Resolution.Available(
+                    if (pins.isEmpty()) verified else verified.copy(expectedSigners = pins)
+                )
+            }
+        }
 
         when (val source = app.builtInSource) {
 

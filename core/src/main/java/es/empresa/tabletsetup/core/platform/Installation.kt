@@ -402,15 +402,17 @@ class AppInstaller(
                     )
                 },
                 isCancelled = isCancelled,
-                allowedHosts = if (release.origin == SourceKind.APTOIDE) {
-                    setOf(
+                allowedHosts = when (release.origin) {
+                    SourceKind.APTOIDE -> setOf(
                         "url-provider.aptoide.com",
                         "pool.apk.aptoide.com",
                         "play.googleapis.com",
                         "*.gvt1.com"
                     )
-                } else {
-                    null
+                    SourceKind.VERIFIED_BUNDLE -> setOf(
+                        "github.com", "release-assets.githubusercontent.com"
+                    )
+                    else -> null
                 },
             )
             completed += outcome.bytes

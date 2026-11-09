@@ -11,6 +11,7 @@ enum class SourceKind(val label: String) {
     OFFICIAL_DIRECT("Descarga oficial del desarrollador"),
     OFFICIAL_PAGE("Descarga desde página oficial"),
     APTOIDE("Aptoide (repositorio de terceros)"),
+    VERIFIED_BUNDLE("Paquete APKM original con integridad y certificado fijados"),
     ENTERPRISE_CATALOG("Catálogo empresarial firmado"),
     EMBEDDED("Incluida en Tablet Setup Installer"),
     LOCAL_FILE("Archivo local importado"),
