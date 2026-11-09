@@ -12,6 +12,9 @@ import java.util.Locale
 class FirefoxArchiveSource(private val downloader: Downloader) {
     companion object {
         const val RELEASES = "https://archive.mozilla.org/pub/fenix/releases/"
+        // SHA-256 del certificado de Firefox estable (org.mozilla.firefox).
+        // Confirmado con la APK 159.0.1 y su ficha de firma publicada.
+        const val RELEASE_SIGNER_SHA256 = "a78b62a5165b4494b2fead9e76a280d22d937fee6251aece599446b2ea319b04"
         private const val MAX_INDEX = 2L * 1024 * 1024
         // El índice de Mozilla utiliza enlaces con rutas completas; no asumir href="159.0/".
         // Solo se extraen nombres de directorio de versión estable. Los enlaces de

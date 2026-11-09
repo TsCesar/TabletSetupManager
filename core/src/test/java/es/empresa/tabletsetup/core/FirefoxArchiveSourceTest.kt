@@ -39,4 +39,11 @@ Dir | 158.0.2/ |"""
         assertEquals(emptyList<String>(), FirefoxArchiveSource.stableVersions(html))
     }
 
+    @Test fun firmaOficialFirefoxEstable() {
+        assertEquals(
+            "a78b62a5165b4494b2fead9e76a280d22d937fee6251aece599446b2ea319b04",
+            FirefoxArchiveSource.RELEASE_SIGNER_SHA256
+        )
+    }
+
 }

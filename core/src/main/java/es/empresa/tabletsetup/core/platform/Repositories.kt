@@ -1416,11 +1416,9 @@ class ReleaseResolver(
             BuiltInSource.MozillaArchive -> {
                 val url = snapshot.resolvedUrls[app.packageName]
                 if (url != null) {
-                    // Pin del certificado de producción publicado oficialmente por Mozilla.
-                    // Evitar añadir firmas de otras cadenas de distribución por defecto.
-                    val mozillaSigners = setOf(
-                        "5004779088e7f988d5bc5cc5f8798febf4f8cd084a1b2a46efd4c8ee4aeaf211"
-                    )
+                    // Certificado de Firefox estable org.mozilla.firefox.
+                    // No confundir con la firma de otros canales de Fenix.
+                    val mozillaSigners = setOf(FirefoxArchiveSource.RELEASE_SIGNER_SHA256)
                     return directResolution(app, url, "Mozilla", snapshot, pins + mozillaSigners)
                 }
                 val failure = snapshot.probes[app.packageName]?.exceptionOrNull()
