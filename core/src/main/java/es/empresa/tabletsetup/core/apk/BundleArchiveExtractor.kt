@@ -16,6 +16,9 @@ object BundleArchiveExtractor {
     fun expand(selected: List<File>, dir: File, device: DeviceProfile): List<File> {
         if (selected.isEmpty()) throw ValidationException("No se ha seleccionado ningún archivo")
         if (selected.size > 40) throw ValidationException("Demasiados archivos seleccionados")
+        if (!dir.isDirectory && !dir.mkdirs()) {
+            throw ValidationException("No se pudo crear la carpeta temporal para extraer las APK")
+        }
         val result = mutableListOf<File>()
         var extractedBytes = 0L
 
