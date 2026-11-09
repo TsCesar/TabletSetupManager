@@ -59,7 +59,7 @@ class AptoideSource(
             Regex("[A-Za-z0-9_-]+={0,2}")
 
         // Límite de consultas a versiones antiguas por perfil de dispositivo.
-        private const val MAX_VERSION_ATTEMPTS = 6
+        private const val MAX_VERSION_ATTEMPTS = 10
 
         /**
          * Chrome 138 es la última versión para Android 9. El código 7204xxxx
@@ -70,11 +70,11 @@ class AptoideSource(
             when {
                 // Última serie compatible de Chrome para Android 9.
                 packageName == "com.android.chrome" && sdkInt == 28 -> 720_499_999L
-                // APKMirror publica una variante Gmail para Android 9 con
-                // versionCode 66019814 (septiembre 2026). Aptoide ofrece en
-                // cambio ramas más nuevas que piden SDK 29. Empezar por un
-                // código documentado; SDK/ABI/firma se comprueban igualmente.
-                packageName == "com.google.android.gm" && sdkInt == 28 -> 66_019_814L
+                // 66019790 = Gmail 2026.09.07.977329765.Release, APK completa
+                // compatible con SDK 24+ y CPU x86/ARM según APKMirror.
+                // 66019814 es otra variante .twa; no usarla como referencia.
+                // El proveedor Aptoide podría no alojar esta APK concreta.
+                packageName == "com.google.android.gm" && sdkInt == 28 -> 66_019_790L
                 else -> null
             }
 
@@ -271,6 +271,17 @@ class AptoideSource(
                         validAbis.joinToString(", ")
                     if (maxVersionCode == null) break
                     continue
+                }
+
+                // Gmail Web/TWA no sustituye a Gmail nativo.
+                if (packageName == "com.google.android.gm") {
+                    val gmailVersion = candidateFile.get("vername")
+                        ?.takeIf { !it.isJsonNull }?.asString.orEmpty()
+                    if (gmailVersion.contains(".twa", ignoreCase = true)) {
+                        lastUnavailable = "Aptoide devolvió Gmail TWA, no la aplicación de correo nativa"
+                        if (maxVersionCode == null) break
+                        continue
+                    }
                 }
 
                 if (packageName == "com.android.chrome") {
