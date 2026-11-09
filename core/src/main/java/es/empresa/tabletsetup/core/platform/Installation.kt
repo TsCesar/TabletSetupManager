@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import es.empresa.tabletsetup.core.apk.ApkFileInfo
 import es.empresa.tabletsetup.core.apk.ApkInspector
+import es.empresa.tabletsetup.core.apk.BundleSplitSelector
 import es.empresa.tabletsetup.core.apk.ApkSetValidator
 import es.empresa.tabletsetup.core.apk.ValidatedApkSet
 import es.empresa.tabletsetup.core.apk.ValidationContext
@@ -256,7 +257,7 @@ class AppInstaller(
             val dir = File(workRoot, "${app.packageName}-${System.nanoTime()}").apply { mkdirs() }
             try {
                 onPhase(TaskPhase.Resolving)
-                val obtained = obtain(app, release, dir, onPhase, isCancelled)
+                val obtained = obtain(app, release, dir, device, onPhase, isCancelled)
                 onPhase(TaskPhase.Verifying)
                 val infos = obtained.files.map { ApkInspector.inspect(it, device.sdkInt) }
                 if (release.origin == SourceKind.OFFICIAL_DIRECT) rememberDirect(app, infos, obtained.fingerprint)
@@ -294,7 +295,7 @@ class AppInstaller(
     fun verifyDirect(app: ManagedApp, release: AppRelease, device: DeviceProfile): AppRelease? = try {
         val dir = File(workRoot, "verificar-${app.packageName}").apply { mkdirs() }
         try {
-            val obtained = obtain(app, release, dir, { }, { false })
+            val obtained = obtain(app, release, dir, device, { }, { false })
             val info = ApkInspector.inspect(obtained.files.single(), device.sdkInt)
             if (info.manifest.packageName != app.packageName) throw ValidationException("La descarga oficial no corresponde a ${app.packageName}")
             if (release.expectedSigners.isNotEmpty() && info.signerLineage.intersect(release.expectedSigners).isEmpty()) {
@@ -318,7 +319,7 @@ class AppInstaller(
         null
     }
 
-    /** Importación manual de APK (una o varias) o de paquetes .apks/.xapk/.zip con APK divididas. */
+    /** Importación manual de APK y contenedores APKM/APKS/XAPK/ZIP con splits. */
     suspend fun installLocal(
         selected: List<File>,
         device: DeviceProfile,
@@ -332,7 +333,7 @@ class AppInstaller(
             val dir = File(workRoot, "importar-${System.nanoTime()}").apply { mkdirs() }
             try {
                 onPhase(TaskPhase.Verifying)
-                val apks = expandBundles(selected, dir)
+                val apks = expandBundles(selected, dir, device)
                 val infos = apks.map { ApkInspector.inspect(it, device.sdkInt) }
                 val packageNames = infos.map { it.manifest.packageName }.toSet()
                 if (packageNames.size != 1) {
@@ -367,7 +368,7 @@ class AppInstaller(
 
     private data class Obtained(val files: List<File>, val expectedHashes: Map<String, String>, val fingerprint: String?)
 
-    private fun obtain(app: ManagedApp, release: AppRelease, dir: File, onPhase: (TaskPhase) -> Unit, isCancelled: () -> Boolean): Obtained {
+    private fun obtain(app: ManagedApp, release: AppRelease, dir: File, device: DeviceProfile, onPhase: (TaskPhase) -> Unit, isCancelled: () -> Boolean): Obtained {
         if (release.origin == SourceKind.EMBEDDED) {
             val file = File(dir, EmbeddedUpdater.ASSET_NAME)
             embedded.extract().copyTo(file, overwrite = true)
@@ -417,7 +418,11 @@ class AppInstaller(
             fingerprint = ResourceFingerprint(outcome.bytes, outcome.etag, outcome.lastModified).encode()
             file
         }
-        return Obtained(files, release.assets.mapNotNull { a -> a.sha256?.let { a.fileName to it } }.toMap(), fingerprint)
+        // Los catálogos firmados también pueden publicar archivos .apkm/.apks/.xapk.
+        // Se verifica el hash del archivo original al descargar y las firmas
+        // de TODAS las APK internas antes de pedir autorización a Android.
+        val apks = expandBundles(files, dir, device)
+        return Obtained(apks, release.assets.mapNotNull { a -> a.sha256?.let { a.fileName to it } }.toMap(), fingerprint)
     }
 
     private fun rememberDirect(app: ManagedApp, infos: List<ApkFileInfo>, fingerprint: String?) {
@@ -472,32 +477,85 @@ class AppInstaller(
         TaskOutcome(false, "Error inesperado (${e.javaClass.simpleName}): ${e.message.orEmpty().take(120)}")
     }
 
-    /** Extrae las APK de paquetes .apks/.xapk/.zip; las .apk se usan tal cual. */
-    private fun expandBundles(selected: List<File>, dir: File): List<File> {
+    /**
+     * Importa APK normales y contenedores con splits.
+     * Nunca ejecuta ni instala el ZIP directamente: extrae las piezas necesarias
+     * con límites de cantidad/tamaño y el validador comprueba las APK después.
+     */
+    private fun expandBundles(selected: List<File>, dir: File, device: DeviceProfile): List<File> {
         if (selected.isEmpty()) throw ValidationException("No se ha seleccionado ningún archivo")
+        if (selected.size > 40) throw ValidationException("Demasiados archivos seleccionados")
         val result = mutableListOf<File>()
-        selected.forEach { file ->
-            val name = file.name.lowercase()
+        var extractedBytes = 0L
+
+        selected.forEachIndexed { archiveIndex, file ->
+            if (!file.isFile || file.length() == 0L) {
+                throw ValidationException("Archivo vacío o inexistente: " + file.name)
+            }
+            val name = file.name.lowercase(java.util.Locale.ROOT)
             when {
-                name.endsWith(".apkm") -> throw ValidationException("Formato .apkm no admitido: extrae sus APK y selecciónalas")
                 name.endsWith(".apk") -> result += file
-                name.endsWith(".apks") || name.endsWith(".xapk") || name.endsWith(".zip") -> {
-                    ZipFile(file).use { zip ->
-                        zip.entries().asSequence()
-                            .filter { !it.isDirectory && it.name.lowercase().endsWith(".apk") }
-                            .forEachIndexed { i, entry ->
-                                if (i >= 40) throw ValidationException("El paquete contiene demasiadas APK")
-                                if (entry.size > Downloader.DEFAULT_MAX_APK_BYTES) throw ValidationException("APK demasiado grande dentro del paquete")
-                                val out = File(dir, "bundle_${i}_" + entry.name.substringAfterLast('/').replace(Regex("[^A-Za-z0-9_.-]"), "_"))
-                                zip.getInputStream(entry).use { input -> out.outputStream().use { input.copyTo(it) } }
-                                result += out
+                name.endsWith(".apkm") || name.endsWith(".apks") ||
+                    name.endsWith(".xapk") || name.endsWith(".zip") -> {
+                    try {
+                        ZipFile(file).use { zip ->
+                            val entries = zip.entries().asSequence().toList()
+                            if (entries.size > 512) throw ValidationException("Demasiadas entradas en el paquete")
+                            entries.forEach { entry ->
+                                val entryName = entry.name
+                                if (entryName.startsWith("/") || entryName.contains('\\') ||
+                                    entryName.split('/').any { it == ".." } ||
+                                    entryName.any { it.code < 32 }) {
+                                    throw ValidationException("El contenedor contiene rutas peligrosas")
+                                }
+                                if (!entry.isDirectory && entryName.lowercase(java.util.Locale.ROOT).endsWith(".obb")) {
+                                    throw ValidationException("El archivo incluye datos OBB que aún no se pueden instalar")
+                                }
                             }
+                            val entriesApk = entries.filter {
+                                !it.isDirectory && it.name.lowercase(java.util.Locale.ROOT).endsWith(".apk")
+                            }
+                            val selectedNames = BundleSplitSelector.select(entriesApk.map { it.name }, device).toSet()
+                            entriesApk.filter { it.name in selectedNames }.forEachIndexed { index, entry ->
+                                if (result.size >= 40) throw ValidationException("El paquete requiere más de 40 APK")
+                                if (entry.size > Downloader.DEFAULT_MAX_APK_BYTES) {
+                                    throw ValidationException("Una APK del contenedor es demasiado grande")
+                                }
+                                // Nombre de destino controlado: no se reutilizan rutas del ZIP.
+                                val output = File(dir, "archive_" + archiveIndex + "_" + index + ".apk")
+                                var partBytes = 0L
+                                zip.getInputStream(entry).use { input ->
+                                    output.outputStream().use { out ->
+                                        val buffer = ByteArray(128 * 1024)
+                                        while (true) {
+                                            val amount = input.read(buffer)
+                                            if (amount < 0) break
+                                            partBytes += amount
+                                            extractedBytes += amount
+                                            if (partBytes > Downloader.DEFAULT_MAX_APK_BYTES ||
+                                                extractedBytes > 800L * 1024 * 1024) {
+                                                throw ValidationException("El contenedor supera el tamaño máximo permitido")
+                                            }
+                                            out.write(buffer, 0, amount)
+                                        }
+                                    }
+                                }
+                                if (partBytes == 0L) throw ValidationException("El contenedor tiene una APK vacía")
+                                result += output
+                            }
+                        }
+                    } catch (e: ValidationException) {
+                        throw e
+                    } catch (e: java.util.zip.ZipException) {
+                        throw ValidationException("El contenedor APKM/APKS/XAPK está corrupto")
                     }
                 }
-                else -> throw ValidationException("Archivo no admitido: ${file.name} (usa .apk, .apks, .xapk o .zip)")
+                else -> throw ValidationException(
+                    "Archivo no admitido: " + file.name + " (usa APK, APKM, APKS, XAPK o ZIP)"
+                )
             }
         }
-        if (result.isEmpty()) throw ValidationException("No se encontraron APK en los archivos seleccionados")
+        if (result.isEmpty()) throw ValidationException("No se encontraron APK en el paquete")
         return result
     }
 }

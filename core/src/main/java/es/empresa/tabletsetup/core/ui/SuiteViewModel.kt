@@ -260,7 +260,7 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
         st.copy(rows = st.rows.map { if (it.packageName == packageName) change(it) else it })
     }
 
-    /** Importación manual (Installer): APK sueltas, APK divididas o paquetes .apks/.xapk/.zip. */
+    /** Importación manual de APK sueltas, APKM, APKS, XAPK y ZIP. */
     fun importFiles(uris: List<Uri>) {
         if (uris.isEmpty() || _state.value.running || _state.value.importing) return
         if (!engine.packages.canRequestInstalls()) {
