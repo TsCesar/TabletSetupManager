@@ -67,7 +67,16 @@ class AptoideSource(
          * Es una preferencia de búsqueda, no una aceptación sin verificar.
          */
         internal fun initialMaxVersionCode(packageName: String, sdkInt: Int): Long? =
-            if (packageName == "com.android.chrome" && sdkInt == 28) 720_499_999L else null
+            when {
+                // Última serie compatible de Chrome para Android 9.
+                packageName == "com.android.chrome" && sdkInt == 28 -> 720_499_999L
+                // APKMirror publica una variante Gmail para Android 9 con
+                // versionCode 66019814 (septiembre 2026). Aptoide ofrece en
+                // cambio ramas más nuevas que piden SDK 29. Empezar por un
+                // código documentado; SDK/ABI/firma se comprueban igualmente.
+                packageName == "com.google.android.gm" && sdkInt == 28 -> 66_019_814L
+                else -> null
+            }
 
         internal fun normalizeAbi(abi: String): String =
             when (val text = abi.trim().lowercase(Locale.ROOT)) {

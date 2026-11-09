@@ -54,7 +54,8 @@ class AptoideSourceQueryTest {
     fun versionesChromeAndroid9SeRestringenASerie138() {
         assertEquals(720_499_999L, AptoideSource.initialMaxVersionCode("com.android.chrome", 28))
         assertEquals(null, AptoideSource.initialMaxVersionCode("com.android.chrome", 34))
-        assertEquals(null, AptoideSource.initialMaxVersionCode("com.google.android.gm", 28))
+        assertEquals(66_019_814L, AptoideSource.initialMaxVersionCode("com.google.android.gm", 28))
+        assertEquals(null, AptoideSource.initialMaxVersionCode("com.google.android.gm", 34))
     }
 
     @Test
