@@ -25,4 +25,18 @@ class FirefoxArchiveSourceTest {
             FirefoxArchiveSource.apkUrl("149.0.2", "x86_64")
         )
     }
+    @Test fun aceptaEnlacesAbsolutosYRutasDelIndiceMozilla() {
+        val html = """<a href="/pub/fenix/releases/159.0/">159.0/</a>
+<a href="https://archive.mozilla.org/pub/fenix/releases/159.0.1/">159.0.1/</a>
+<a href="/pub/fenix/releases/160.0b3/">beta</a>
+Dir | 158.0.2/ |"""
+        assertEquals(listOf("159.0.1", "159.0", "158.0.2"),
+            FirefoxArchiveSource.stableVersions(html))
+    }
+
+    @Test fun noInterpretaBetaOFormatosArbitrariosComoVersionEstable() {
+        val html = """150.0b4/ 150.0.0-beta.1/ invalid/ path/"""
+        assertEquals(emptyList<String>(), FirefoxArchiveSource.stableVersions(html))
+    }
+
 }

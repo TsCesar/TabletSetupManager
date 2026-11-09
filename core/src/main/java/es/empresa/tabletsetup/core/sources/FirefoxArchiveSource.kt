@@ -13,7 +13,10 @@ class FirefoxArchiveSource(private val downloader: Downloader) {
     companion object {
         const val RELEASES = "https://archive.mozilla.org/pub/fenix/releases/"
         private const val MAX_INDEX = 2L * 1024 * 1024
-        private val STABLE_LINK = Regex("""href=["']([0-9]{2,3}\.[0-9]{1,2}(?:\.[0-9]{1,2})?)/["']""")
+        // El índice de Mozilla utiliza enlaces con rutas completas; no asumir href="159.0/".
+        // Solo se extraen nombres de directorio de versión estable. Los enlaces de
+        // descarga se construyen exclusivamente sobre RELEASES (dominio oficial).
+        private val STABLE_LINK = Regex("""(?<![A-Za-z0-9])([0-9]{2,3}\.[0-9]{1,2}(?:\.[0-9]{1,2})?)/""")
 
         internal fun supportedAbi(abis: List<String>): String? =
             abis.firstOrNull { it in setOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86") }

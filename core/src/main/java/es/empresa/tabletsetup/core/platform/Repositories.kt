@@ -1416,10 +1416,10 @@ class ReleaseResolver(
             BuiltInSource.MozillaArchive -> {
                 val url = snapshot.resolvedUrls[app.packageName]
                 if (url != null) {
-                    // Firmas publicadas por Mozilla (produccion) y APKMirror.
+                    // Pin del certificado de producción publicado oficialmente por Mozilla.
+                    // Evitar añadir firmas de otras cadenas de distribución por defecto.
                     val mozillaSigners = setOf(
-                        "5004779088e7f988d5bc5cc5f8798febf4f8cd084a1b2a46efd4c8ee4aeaf211",
-                        "a78b62a5165b4494b2fead9e76a280d22d937fee6251aece599446b2ea319b04"
+                        "5004779088e7f988d5bc5cc5f8798febf4f8cd084a1b2a46efd4c8ee4aeaf211"
                     )
                     return directResolution(app, url, "Mozilla", snapshot, pins + mozillaSigners)
                 }
