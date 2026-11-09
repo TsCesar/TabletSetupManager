@@ -52,7 +52,8 @@ class AptoideSource(
             "com.android.chrome",
             "com.google.android.apps.maps",
             "com.google.android.gm",
-            "com.waze"
+            "com.waze",
+            "com.adobe.reader"
         )
         private val PROVIDER_TOKEN_PATTERN =
             Regex("[A-Za-z0-9_-]+={0,2}")

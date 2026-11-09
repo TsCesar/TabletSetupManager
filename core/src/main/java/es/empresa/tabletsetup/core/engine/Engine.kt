@@ -112,6 +112,27 @@ object BrowserFallbackPlanner {
     }
 }
 
+/**
+ * Añade Adobe Acrobat Reader como respaldo del lector PDF.
+ * Se pone antes del Updater. La instalación lo omite si MuPDF ya se instaló.
+ */
+object PdfFallbackPlanner {
+    fun plan(statuses: List<AppStatus>, mode: Mode, ids: List<String>, selected: Set<String>? = null): List<String> {
+        if (mode != Mode.INSTALLER || (selected != null && AppCatalog.MUPDF !in selected)) return ids
+        val mupdf = statuses.firstOrNull { it.app.packageName == AppCatalog.MUPDF } ?: return ids
+        val adobe = statuses.firstOrNull { it.app.packageName == AppCatalog.ADOBE_READER } ?: return ids
+        if (mupdf.installed != null || adobe.installed != null || adobe.state != AppState.NO_INSTALADA) return ids
+
+        val needsFallback = AppCatalog.MUPDF in ids ||
+            mupdf.state in setOf(AppState.ERROR, AppState.FUENTE_PENDIENTE, AppState.NO_COMPATIBLE)
+        if (!needsFallback || AppCatalog.ADOBE_READER in ids) return ids
+
+        val normal = ids.filterNot { it == AppCatalog.UPDATER }
+        val updater = ids.filter { it == AppCatalog.UPDATER }
+        return normal + AppCatalog.ADOBE_READER + updater
+    }
+}
+
 /** Selección de aplicaciones para los procesos por lotes. Kotlin puro. */
 object BatchPlanner {
     /**
@@ -131,7 +152,8 @@ object BatchPlanner {
         }.filter { status ->
             if (selected != null) status.app.packageName in selected else
                 (!status.app.optional || (mode == Mode.UPDATER &&
-                    status.app.packageName == AppCatalog.FIREFOX && status.installed != null))
+                    status.app.packageName in setOf(AppCatalog.FIREFOX, AppCatalog.ADOBE_READER) &&
+                    status.installed != null))
         }
         // El Updater se instala/actualiza al final para no interrumpir el lote.
         return eligible.sortedBy { if (it.app.packageName == AppCatalog.UPDATER) 1 else 0 }.map { it.app.packageName }

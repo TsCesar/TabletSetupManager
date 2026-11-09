@@ -12,6 +12,7 @@ import es.empresa.tabletsetup.core.catalog.CatalogSignature
 import es.empresa.tabletsetup.core.catalog.EnterpriseCatalogParser
 import es.empresa.tabletsetup.core.engine.BatchPlanner
 import es.empresa.tabletsetup.core.engine.BrowserFallbackPlanner
+import es.empresa.tabletsetup.core.engine.PdfFallbackPlanner
 import es.empresa.tabletsetup.core.engine.SequentialRunner
 import es.empresa.tabletsetup.core.engine.TaskOutcome
 import es.empresa.tabletsetup.core.engine.TaskPhase
@@ -70,11 +71,14 @@ data class SuiteUiState(
     val statuses: List<AppStatus> get() = rows.map { it.status }
     val failedIds: List<String>
         get() = rows.filter { r -> r.outcome?.let { !it.success && !it.skipped } == true }.map { it.packageName }
-    val plannedAll: List<String>
-        get() = BrowserFallbackPlanner.plan(statuses, mode, BatchPlanner.plan(statuses, mode))
+    fun planWithFallbacks(selectedIds: Set<String>? = null): List<String> {
+        val primary = BatchPlanner.plan(statuses, mode, selectedIds)
+        val browser = BrowserFallbackPlanner.plan(statuses, mode, primary, selectedIds)
+        return PdfFallbackPlanner.plan(statuses, mode, browser, selectedIds)
+    }
+    val plannedAll: List<String> get() = planWithFallbacks()
     val plannedSelected: List<String>
-        get() = if (selected.isEmpty()) emptyList() else
-            BrowserFallbackPlanner.plan(statuses, mode, BatchPlanner.plan(statuses, mode, selected), selected)
+        get() = if (selected.isEmpty()) emptyList() else planWithFallbacks(selected)
     fun row(packageName: String): AppRowState? = rows.firstOrNull { it.packageName == packageName }
 }
 
@@ -177,7 +181,7 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
     }
 
     fun installOne(packageName: String) =
-        runBatch(BatchPlanner.plan(_state.value.statuses, mode, setOf(packageName)), emptyText = "Esta aplicación no se puede instalar ahora")
+        runBatch(_state.value.planWithFallbacks(setOf(packageName)), emptyText = "Esta aplicación no se puede instalar ahora")
 
     fun cancelBatch() {
         cancelRequested = true
@@ -234,6 +238,9 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
     private suspend fun runOne(packageName: String): TaskOutcome {
         if (packageName == AppCatalog.FIREFOX && engine.packages.isInstalled(AppCatalog.CHROME)) {
             return TaskOutcome(false, "Chrome ya está instalado; Firefox no es necesario", skipped = true)
+        }
+        if (packageName == AppCatalog.ADOBE_READER && engine.packages.isInstalled(AppCatalog.MUPDF)) {
+            return TaskOutcome(false, "MuPDF ya está instalado; Adobe Reader no es necesario", skipped = true)
         }
         val row = _state.value.row(packageName) ?: return TaskOutcome(false, "Aplicación desconocida")
         val release = row.status.release ?: return TaskOutcome(false, row.status.message, skipped = true)

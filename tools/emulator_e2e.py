@@ -310,7 +310,7 @@ def main():
         r.add("Installer: comprobación de versiones completada", text is not None)
         st = states(text or "")
         screenshot(out, "01-installer-inicio.png")
-        r.add("Installer: estados de las 10 aplicaciones", len(st) == 10, ", ".join(f"{k.split('.')[-1]}={v[0]}" for k, v in st.items()))
+        r.add("Installer: estados de las 11 aplicaciones", len(st) == 11, ", ".join(f"{k.split('.')[-1]}={v[0]}" for k, v in st.items()))
         r.add("FuelSoft no aparece", not any("fuelsoft" in k.lower() for k in st))
         waze = st.get(WAZE, ("?", ""))
         if a.api == 28:

@@ -18,6 +18,7 @@ import es.empresa.tabletsetup.core.policy.ExcludedApps
  */
 object AppCatalog {
     const val MUPDF = "com.artifex.mupdf.viewer.app"
+    const val ADOBE_READER = "com.adobe.reader"
     const val QUICKSUPPORT = "com.teamviewer.quicksupport.market"
     const val QS_UNIVERSAL_ADDON = "com.teamviewer.quicksupport.addon.universal"
     const val QS_ADDON_PREFIX = "com.teamviewer.quicksupport.addon."
@@ -43,6 +44,16 @@ object AppCatalog {
             description = "Visor de documentos PDF",
             builtInSource = BuiltInSource.FDroid,
             initials = "Mu", avatarColor = 0xFFB3261E,
+        ),
+        ManagedApp(
+            packageName = ADOBE_READER,
+            label = "Adobe Acrobat Reader",
+            description = "Visor PDF alternativo cuando MuPDF no pueda instalarse",
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://adobe-acrobat-reader.es.aptoide.com/app",
+            ),
+            optional = true,
+            initials = "Ad", avatarColor = 0xFFCC231E,
         ),
         ManagedApp(
             packageName = QUICKSUPPORT,

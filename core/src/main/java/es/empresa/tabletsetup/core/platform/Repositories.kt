@@ -1253,6 +1253,11 @@ class ReleaseResolver(
                             "03637f6c5d8f604e6fdb79a6ffbfa578de4e318f8da22fc6106665247f8807d7"
                         )
 
+                        // Adobe: huella SHA-256 del certificado oficial publicada en APKMirror.
+                        "com.adobe.reader" -> setOf(
+                            "b6dd0562256487fcd6c98cde137858ef50d9adb9f9cd2f1ca58c5357efdf0faf"
+                        )
+
                         else -> emptySet()
 
                     }
