@@ -73,6 +73,29 @@ class AptoideSource(
             val full = if (densityDpi in 1..1000) "$cpu&myDensity=$densityDpi" else cpu
             return listOf(full, cpu, sdk, "").distinct()
         }
+
+        /**
+         * Comprueba las ABI declaradas en las APK divididas ANTES de seleccionar
+         * una variante de Aptoide. Sin splits ABI, se deja decidir al validador.
+         */
+        internal fun supportsAbiSplits(
+            splitNames: List<String>,
+            validAbis: List<String>
+        ): Boolean {
+            if (splitNames.isEmpty() || validAbis.isEmpty()) return true
+            return splitNames.any { name ->
+                val value = name.substringAfterLast("config.").lowercase(Locale.ROOT)
+                val abi = when (value) {
+                    "arm64_v8a" -> "arm64-v8a"
+                    "armeabi_v7a" -> "armeabi-v7a"
+                    "armeabi" -> "armeabi"
+                    "x86" -> "x86"
+                    "x86_64" -> "x86_64"
+                    else -> null
+                }
+                abi != null && abi in validAbis
+            }
+        }
     }
 
     /**
@@ -177,6 +200,33 @@ class AptoideSource(
                 cpus.none { it in validAbis || it == "all" || it == "universal" }
             ) {
                 lastUnavailable = "La variante de Aptoide es para otra arquitectura"
+                continue
+            }
+
+            // La consulta general puede devolver AAB exclusivamente ARM
+            // incluso cuando la tablet admite solo x86/x86_64.
+            // Si el proveedor publica splits ABI incompatibles, probar el
+            // siguiente conjunto de filtros en vez de aceptar esa variante.
+            val aab = candidateData.get("aab")
+                ?.takeIf { it.isJsonObject }
+                ?.asJsonObject
+            val abiSplitNames = aab?.get("splits")
+                ?.takeIf { it.isJsonArray }
+                ?.asJsonArray
+                ?.mapNotNull { entry ->
+                    if (!entry.isJsonObject) return@mapNotNull null
+                    val split = entry.asJsonObject
+                    if (!split.get("type")?.asString.equals("ABI", ignoreCase = true)) {
+                        return@mapNotNull null
+                    }
+                    split.get("name")
+                        ?.takeIf { !it.isJsonNull }
+                        ?.asString
+                }
+                .orEmpty()
+            if (!supportsAbiSplits(abiSplitNames, validAbis)) {
+                lastUnavailable = "Aptoide no ofrece APK divididas compatibles con " +
+                    validAbis.joinToString(", ")
                 continue
             }
 
