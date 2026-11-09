@@ -48,7 +48,7 @@ object AppCatalog {
         ManagedApp(
             packageName = ADOBE_READER,
             label = "Adobe Acrobat Reader",
-            description = "Visor PDF alternativo cuando MuPDF no pueda instalarse",
+            description = "Visor PDF alternativo u opcional; se puede instalar junto a MuPDF",
             builtInSource = BuiltInSource.Aptoide(
                 reference = "https://adobe-acrobat-reader.es.aptoide.com/app",
             ),
@@ -91,7 +91,7 @@ object AppCatalog {
         ManagedApp(
             packageName = FIREFOX,
             label = "Mozilla Firefox",
-            description = "Navegador alternativo si Chrome no se instala",
+            description = "Navegador alternativo u opcional; se puede instalar junto a Chrome",
             builtInSource = BuiltInSource.MozillaArchive,
             optional = true,
             initials = "Fx", avatarColor = 0xFFFF7139,

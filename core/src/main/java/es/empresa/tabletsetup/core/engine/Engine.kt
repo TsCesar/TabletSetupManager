@@ -93,6 +93,29 @@ object StatusCalculator {
     }
 }
 
+
+/**
+ * La sustitución automática se omite cuando la app principal ya funciona.
+ * Una selección expresa en el Installer permite instalar ambas alternativas,
+ * sin alterar la política del Updater (que no instala aplicaciones nuevas).
+ */
+object FallbackInstallationPolicy {
+    fun skipReason(
+        packageName: String,
+        explicitlyRequested: Set<String>,
+        isInstalled: (String) -> Boolean,
+    ): String? {
+        if (packageName in explicitlyRequested) return null
+        return when {
+            packageName == AppCatalog.FIREFOX && isInstalled(AppCatalog.CHROME) ->
+                "Chrome ya está instalado; Firefox no es necesario como respaldo automático"
+            packageName == AppCatalog.ADOBE_READER && isInstalled(AppCatalog.MUPDF) ->
+                "MuPDF ya está instalado; Adobe Reader no es necesario como respaldo automático"
+            else -> null
+        }
+    }
+}
+
 /**
  * Planifica Firefox como respaldo al instalar Chrome. Se coloca antes del
  * Updater y se omite al ejecutar si Chrome termina instalado.

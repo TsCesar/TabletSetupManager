@@ -12,6 +12,7 @@ import es.empresa.tabletsetup.core.catalog.CatalogSignature
 import es.empresa.tabletsetup.core.catalog.EnterpriseCatalogParser
 import es.empresa.tabletsetup.core.engine.BatchPlanner
 import es.empresa.tabletsetup.core.engine.BrowserFallbackPlanner
+import es.empresa.tabletsetup.core.engine.FallbackInstallationPolicy
 import es.empresa.tabletsetup.core.engine.PdfFallbackPlanner
 import es.empresa.tabletsetup.core.engine.SequentialRunner
 import es.empresa.tabletsetup.core.engine.TaskOutcome
@@ -173,7 +174,11 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
 
     fun installAll() = runBatch(_state.value.plannedAll, emptyText = "No hay aplicaciones compatibles pendientes")
 
-    fun installSelected() = runBatch(_state.value.plannedSelected, emptyText = "Ninguna de las aplicaciones seleccionadas puede instalarse ahora")
+    fun installSelected() = runBatch(
+        _state.value.plannedSelected,
+        emptyText = "Ninguna de las aplicaciones seleccionadas puede instalarse ahora",
+        explicitlyRequested = _state.value.selected
+    )
 
     fun retryFailed() {
         val failed = _state.value.failedIds.toSet()
@@ -181,7 +186,11 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
     }
 
     fun installOne(packageName: String) =
-        runBatch(_state.value.planWithFallbacks(setOf(packageName)), emptyText = "Esta aplicación no se puede instalar ahora")
+        runBatch(
+            _state.value.planWithFallbacks(setOf(packageName)),
+            emptyText = "Esta aplicación no se puede instalar ahora",
+            explicitlyRequested = setOf(packageName)
+        )
 
     fun cancelBatch() {
         cancelRequested = true
@@ -191,7 +200,11 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
         }
     }
 
-    private fun runBatch(ids: List<String>, emptyText: String) {
+    private fun runBatch(
+        ids: List<String>,
+        emptyText: String,
+        explicitlyRequested: Set<String> = emptySet()
+    ) {
         val s = _state.value
         if (s.running || s.importing) return
         if (ids.isEmpty()) {
@@ -212,7 +225,7 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
             }
             val summary = SequentialRunner.run(
                 ids = ids,
-                task = { id -> runOne(id) },
+                task = { id -> runOne(id, explicitlyRequested) },
                 onResult = { id, outcome ->
                     Log.i(TAG, "resultado $id ok=${outcome.success} omitida=${outcome.skipped} | ${outcome.message}")
                     // Updater recién (re)instalado: hay que volver a activarlo antes de retirar el Installer.
@@ -235,13 +248,19 @@ class SuiteViewModel(application: Application, val mode: Mode) : AndroidViewMode
         }
     }
 
-    private suspend fun runOne(packageName: String): TaskOutcome {
-        if (packageName == AppCatalog.FIREFOX && engine.packages.isInstalled(AppCatalog.CHROME)) {
-            return TaskOutcome(false, "Chrome ya está instalado; Firefox no es necesario", skipped = true)
-        }
-        if (packageName == AppCatalog.ADOBE_READER && engine.packages.isInstalled(AppCatalog.MUPDF)) {
-            return TaskOutcome(false, "MuPDF ya está instalado; Adobe Reader no es necesario", skipped = true)
-        }
+    private suspend fun runOne(
+        packageName: String,
+        explicitlyRequested: Set<String>
+    ): TaskOutcome {
+        // Los respaldos añadidos automáticamente se omiten si el principal ya
+        // está instalado. La selección manual del técnico prevalece: se puede
+        // instalar Firefox junto a Chrome, o Adobe junto a MuPDF.
+        val skipReason = FallbackInstallationPolicy.skipReason(
+            packageName = packageName,
+            explicitlyRequested = explicitlyRequested,
+            isInstalled = engine.packages::isInstalled
+        )
+        if (skipReason != null) return TaskOutcome(false, skipReason, skipped = true)
         val row = _state.value.row(packageName) ?: return TaskOutcome(false, "Aplicación desconocida")
         val release = row.status.release ?: return TaskOutcome(false, row.status.message, skipped = true)
         if (row.status.state == AppState.OMITIDA) return TaskOutcome(false, row.status.message, skipped = true)
