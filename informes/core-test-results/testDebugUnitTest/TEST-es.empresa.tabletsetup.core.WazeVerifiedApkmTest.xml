@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.WazeVerifiedApkmTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-10T10:26:21.048Z" hostname="runnervm7aw5e" time="0.001">
+  <properties/>
+  <testcase name="noConfundeArm32ConArm64" classname="es.empresa.tabletsetup.core.WazeVerifiedApkmTest" time="0.0"/>
+  <testcase name="emuladorIntelNoAdmiteArchivoArm" classname="es.empresa.tabletsetup.core.WazeVerifiedApkmTest" time="0.0"/>
+  <testcase name="arm64DesdeAndroid10UsaElApkmOriginalVerificado" classname="es.empresa.tabletsetup.core.WazeVerifiedApkmTest" time="0.0"/>
+  <testcase name="android9SeOmiteAunqueSeaArm" classname="es.empresa.tabletsetup.core.WazeVerifiedApkmTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,134 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :installer:preBuild UP-TO-DATE
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :updater:preBuild UP-TO-DATE
+> Task :core:preBuild UP-TO-DATE
+> Task :installer:preDebugBuild UP-TO-DATE
+> Task :updater:preDebugBuild UP-TO-DATE
+> Task :core:preDebugBuild UP-TO-DATE
+> Task :updater:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :updater:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :installer:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :installer:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :installer:generateDebugResValues FROM-CACHE
+> Task :updater:generateDebugResValues FROM-CACHE
+> Task :core:generateDebugBuildConfig FROM-CACHE
+> Task :installer:generateDebugResources FROM-CACHE
+> Task :core:generateDebugResValues FROM-CACHE
+> Task :updater:generateDebugResources FROM-CACHE
+> Task :core:generateDebugResources FROM-CACHE
+> Task :updater:packageDebugResources FROM-CACHE
+> Task :installer:packageDebugResources FROM-CACHE
+> Task :core:packageDebugResources FROM-CACHE
+> Task :updater:parseDebugLocalResources FROM-CACHE
+> Task :installer:parseDebugLocalResources FROM-CACHE
+> Task :core:parseDebugLocalResources FROM-CACHE
+> Task :core:generateDebugRFile FROM-CACHE
+> Task :installer:mapDebugSourceSetPaths
+> Task :updater:mapDebugSourceSetPaths
+> Task :updater:mergeDebugResources FROM-CACHE
+> Task :updater:createDebugCompatibleScreenManifests
+> Task :updater:extractDeepLinksDebug FROM-CACHE
+> Task :updater:javaPreCompileDebug FROM-CACHE
+> Task :installer:mergeDebugResources FROM-CACHE
+> Task :installer:createDebugCompatibleScreenManifests
+> Task :installer:extractDeepLinksDebug FROM-CACHE
+> Task :installer:javaPreCompileDebug FROM-CACHE
+> Task :core:compileDebugKotlin FROM-CACHE
+> Task :core:javaPreCompileDebug FROM-CACHE
+> Task :updater:mergeDebugShaders
+> Task :installer:mergeDebugShaders
+> Task :updater:compileDebugShaders NO-SOURCE
+> Task :updater:generateDebugAssets UP-TO-DATE
+> Task :installer:compileDebugShaders NO-SOURCE
+> Task :installer:generateDebugAssets UP-TO-DATE
+> Task :updater:desugarDebugFileDependencies FROM-CACHE
+> Task :installer:desugarDebugFileDependencies FROM-CACHE
+> Task :updater:mergeDebugJniLibFolders
+> Task :updater:validateSigningDebug
+> Task :updater:writeDebugAppMetadata
+> Task :updater:checkDebugDuplicateClasses
+> Task :installer:mergeDebugJniLibFolders
+> Task :updater:writeDebugSigningConfigVersions
+> Task :installer:validateSigningDebug
+> Task :installer:checkDebugDuplicateClasses
+> Task :installer:writeDebugAppMetadata
+> Task :installer:mergeExtDexDebug FROM-CACHE
+> Task :installer:writeDebugSigningConfigVersions
+> Task :updater:mergeExtDexDebug FROM-CACHE
+> Task :core:compileDebugJavaWithJavac FROM-CACHE
+> Task :core:compileDebugLibraryResources FROM-CACHE
+> Task :core:writeDebugAarMetadata
+> Task :core:extractDeepLinksDebug FROM-CACHE
+> Task :core:processDebugManifest FROM-CACHE
+> Task :core:mergeDebugShaders
+> Task :core:bundleLibCompileToJarDebug
+> Task :core:compileDebugShaders NO-SOURCE
+> Task :core:generateDebugAssets UP-TO-DATE
+> Task :core:mergeDebugAssets
+> Task :updater:checkDebugAarMetadata
+> Task :installer:checkDebugAarMetadata
+> Task :installer:processDebugMainManifest FROM-CACHE
+> Task :updater:processDebugMainManifest FROM-CACHE
+> Task :core:bundleLibRuntimeToJarDebug
+> Task :updater:processDebugManifest FROM-CACHE
+> Task :installer:processDebugManifest FROM-CACHE
+> Task :installer:processDebugManifestForPackage FROM-CACHE
+> Task :updater:processDebugManifestForPackage FROM-CACHE
+> Task :core:processDebugJavaRes
+> Task :core:mergeDebugJniLibFolders
+> Task :core:mergeDebugNativeLibs NO-SOURCE
+> Task :core:copyDebugJniLibsProjectOnly
+> Task :core:bundleLibRuntimeToDirDebug
+> Task :installer:processDebugResources FROM-CACHE
+> Task :updater:processDebugResources FROM-CACHE
+> Task :installer:compileDebugKotlin FROM-CACHE
+> Task :installer:compileDebugJavaWithJavac NO-SOURCE
+> Task :updater:compileDebugKotlin FROM-CACHE
+> Task :installer:dexBuilderDebug FROM-CACHE
+> Task :updater:compileDebugJavaWithJavac NO-SOURCE
+> Task :updater:mergeDebugAssets
+> Task :installer:mergeDebugGlobalSynthetics FROM-CACHE
+> Task :updater:compressDebugAssets FROM-CACHE
+> Task :installer:processDebugJavaRes
+> Task :updater:dexBuilderDebug FROM-CACHE
+> Task :updater:mergeDebugGlobalSynthetics FROM-CACHE
+> Task :updater:processDebugJavaRes
+> Task :installer:mergeLibDexDebug FROM-CACHE
+> Task :installer:mergeProjectDexDebug FROM-CACHE
+> Task :updater:mergeLibDexDebug FROM-CACHE
+> Task :updater:mergeProjectDexDebug FROM-CACHE
+> Task :updater:mergeDebugNativeLibs
+> Task :installer:mergeDebugNativeLibs
+
+> Task :installer:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :updater:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :installer:mergeDebugJavaResource
+> Task :updater:mergeDebugJavaResource
+> Task :updater:packageDebug
+> Task :updater:createDebugApkListingFileRedirect
+> Task :updater:assembleDebug
+> Task :installer:embedUpdaterApkDebug
+> Task :installer:mergeDebugAssets
+> Task :installer:compressDebugAssets FROM-CACHE
+> Task :installer:packageDebug
+> Task :installer:createDebugApkListingFileRedirect
+> Task :installer:assembleDebug
+> Task :collectDebugApks
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/assemble-1794310601818.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TabletSetupManager/TabletSetupManager/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 20s
+93 actionable tasks: 43 executed, 50 from cache

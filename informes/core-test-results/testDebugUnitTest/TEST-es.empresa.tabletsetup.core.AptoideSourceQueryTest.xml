@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.AptoideSourceQueryTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-10T10:26:18.836Z" hostname="runnervm7aw5e" time="0.014">
+  <properties/>
+  <testcase name="versionesChromeAndroid9SeRestringenASerie138" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.007"/>
+  <testcase name="sin arquitectura ni densidad no repite variantes" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.001"/>
+  <testcase name="gmailYChromeBuscanApkMonoliticasComoUltimoRecurso" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.001"/>
+  <testcase name="normalizaNombresDeArquitecturaDeAptoide" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.0"/>
+  <testcase name="fuentesWazeIncluyenApkNormalesDespuesDeAppBundles" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.001"/>
+  <testcase name="descarta APK divididas ARM en tablet x86_64" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.001"/>
+  <testcase name="sin splits ABI se comprueba despues al inspeccionar la APK" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.0"/>
+  <testcase name="prueba filtros completos primero y reduce restricciones sin repetir consultas" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.0"/>
+  <testcase name="acepta una variante ABI que si es compatible" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.0"/>
+  <testcase name="mapasConservaLaConsultaNormalSinCosteExtra" classname="es.empresa.tabletsetup.core.AptoideSourceQueryTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

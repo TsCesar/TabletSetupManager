@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.DownloaderTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-10T10:26:18.915Z" hostname="runnervm7aw5e" time="1.919">
+  <properties/>
+  <testcase name="sin red devuelve error de conexion comprensible" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.123"/>
+  <testcase name="sondeo contra un servidor que no responde falla pronto y sin reintentos" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.656"/>
+  <testcase name="descarga HTTPS con SHA-256 correcto y progreso" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.188"/>
+  <testcase name="huella de recurso para URL oficiales sin version" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.043"/>
+  <testcase name="solo HTTPS tambien en redirecciones" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.203"/>
+  <testcase name="errores HTTP, reintentos y limite de tamano" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.163"/>
+  <testcase name="reanuda tras un corte de red con Range" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.111"/>
+  <testcase name="subdominios CDN autorizados sin aceptar imitadores" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.011"/>
+  <testcase name="SHA-256 distinto rechaza el archivo y no deja restos" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.102"/>
+  <testcase name="fetch en memoria con limite" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.135"/>
+  <testcase name="descarga condicional y sondeo de cabeceras" classname="es.empresa.tabletsetup.core.DownloaderTest" time="0.183"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.PolicyAndCatalogTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-10T10:26:21.045Z" hostname="runnervm7aw5e" time="0.002">
+  <properties/>
+  <testcase name="rango de SDK y ABI de la version publicada" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.0"/>
+  <testcase name="comparacion de versiones y bajadas" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.0"/>
+  <testcase name="FuelSoft excluido del catalogo y bloqueado siempre" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.0"/>
+  <testcase name="Waze bloqueado en Android 9 con el mensaje exigido" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.001"/>
+  <testcase name="targetSdk demasiado antiguo para Android 14 y 15" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.0"/>
+  <testcase name="catalogo contiene las aplicaciones originales" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.0"/>
+  <testcase name="Waze en Android 10 o superior queda sujeto a la version concreta" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.0"/>
+  <testcase name="otras apps se permiten en Android 9" classname="es.empresa.tabletsetup.core.PolicyAndCatalogTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

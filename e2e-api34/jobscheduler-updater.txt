@@ -1,0 +1,13 @@
+  JOB androidx.work.systemjobscheduler:u0a148/0: e5ad6a @androidx.work.systemjobscheduler@es.empresa.tabletsetup.updater/androidx.work.impl.background.systemjob.SystemJobService
+    u0a148 tag=*job*/@androidx.work.systemjobscheduler@es.empresa.tabletsetup.updater/androidx.work.impl.background.systemjob.SystemJobService#0
+    Source: uid=u0a148 user=0 pkg=es.empresa.tabletsetup.updater
+      Service: es.empresa.tabletsetup.updater/androidx.work.impl.background.systemjob.SystemJobService
+        es.empresa.tabletsetup.updater
+  #androidx.work.systemjobscheduler:u0a148/0 from u0a148 active: es.empresa.tabletsetup.updater [RUN_ANY_IN_BACKGROUND allowed] RUNNABLE
+  #androidx.work.systemjobscheduler:u0a148/0 from u0a148: es.empresa.tabletsetup.updater RUNNABLE
+  TopAppTimer{<0>es.empresa.tabletsetup.updater} started at 395195 (77123ms ago)
+    es.empresa.tabletsetup.updater.MainActivity
+    <0>es.empresa.tabletsetup.updater
+    <0>es.empresa.tabletsetup.updater: ShrinkableDebits { debit tally: 0, bucket: 6 }
+  0-ComponentInfo{es.empresa.tabletsetup.updater/androidx.work.impl.background.systemjob.SystemJobService}: es.empresa.tabletsetup.updater
+  10148: {es.empresa.tabletsetup.updater}

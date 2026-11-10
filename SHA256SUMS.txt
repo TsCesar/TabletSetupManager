@@ -1,0 +1,2 @@
+5ed8c43a5a073e509712b9e6fcfea1ab5f2e4f5a3aba24164c2524c240ed741c  TabletSetupInstaller-debug.apk
+9c7d5cf21c206987394d7e590105797f1245b9a36d76a8e42a0475080593506c  TabletUpdater-debug.apk

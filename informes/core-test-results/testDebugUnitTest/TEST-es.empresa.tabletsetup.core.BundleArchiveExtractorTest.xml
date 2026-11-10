@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.BundleArchiveExtractorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-10T10:26:18.859Z" hostname="runnervm7aw5e" time="0.046">
+  <properties/>
+  <testcase name="apkmExtraeDosApksFirmadasEIgnoraX86" classname="es.empresa.tabletsetup.core.BundleArchiveExtractorTest" time="0.041"/>
+  <testcase name="rechazaSplitDeArquitecturaIncompatible" classname="es.empresa.tabletsetup.core.BundleArchiveExtractorTest" time="0.003"/>
+  <testcase name="rechazaApkmConRutaPeligrosa" classname="es.empresa.tabletsetup.core.BundleArchiveExtractorTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

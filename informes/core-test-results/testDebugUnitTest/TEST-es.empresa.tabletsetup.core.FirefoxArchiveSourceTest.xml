@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.FirefoxArchiveSourceTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-10T10:26:21.025Z" hostname="runnervm7aw5e" time="0.014">
+  <properties/>
+  <testcase name="noInterpretaBetaOFormatosArbitrariosComoVersionEstable" classname="es.empresa.tabletsetup.core.FirefoxArchiveSourceTest" time="0.008"/>
+  <testcase name="urlOficialPorArquitectura" classname="es.empresa.tabletsetup.core.FirefoxArchiveSourceTest" time="0.004"/>
+  <testcase name="aceptaEnlacesAbsolutosYRutasDelIndiceMozilla" classname="es.empresa.tabletsetup.core.FirefoxArchiveSourceTest" time="0.001"/>
+  <testcase name="firmaOficialFirefoxEstable" classname="es.empresa.tabletsetup.core.FirefoxArchiveSourceTest" time="0.0"/>
+  <testcase name="seleccionDeArquitectura" classname="es.empresa.tabletsetup.core.FirefoxArchiveSourceTest" time="0.0"/>
+  <testcase name="soloVersionesEstablesOrdenadas" classname="es.empresa.tabletsetup.core.FirefoxArchiveSourceTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

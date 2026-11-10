@@ -1,0 +1,134 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :core:preBuild UP-TO-DATE
+> Task :updater:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :installer:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:preDebugBuild UP-TO-DATE
+> Task :updater:preBuild UP-TO-DATE
+> Task :installer:preBuild UP-TO-DATE
+> Task :installer:preDebugBuild UP-TO-DATE
+> Task :updater:preDebugBuild UP-TO-DATE
+> Task :updater:generateDebugResValues UP-TO-DATE
+> Task :core:mergeDebugJniLibFolders UP-TO-DATE
+> Task :installer:generateDebugResValues UP-TO-DATE
+> Task :core:mergeDebugNativeLibs NO-SOURCE
+> Task :installer:generateDebugResources UP-TO-DATE
+> Task :core:stripDebugDebugSymbols NO-SOURCE
+> Task :updater:generateDebugResources UP-TO-DATE
+> Task :updater:packageDebugResources UP-TO-DATE
+> Task :installer:packageDebugResources UP-TO-DATE
+> Task :installer:parseDebugLocalResources UP-TO-DATE
+> Task :installer:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :installer:extractDeepLinksDebug UP-TO-DATE
+> Task :updater:parseDebugLocalResources UP-TO-DATE
+> Task :installer:javaPreCompileDebug UP-TO-DATE
+> Task :installer:preDebugAndroidTestBuild SKIPPED
+> Task :updater:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :updater:extractDeepLinksDebug UP-TO-DATE
+> Task :updater:javaPreCompileDebug UP-TO-DATE
+> Task :updater:preDebugAndroidTestBuild SKIPPED
+> Task :installer:generateDebugAndroidTestResValues FROM-CACHE
+> Task :updater:generateDebugAndroidTestResValues FROM-CACHE
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :updater:extractProguardFiles
+> Task :updater:preDebugUnitTestBuild UP-TO-DATE
+> Task :installer:extractProguardFiles
+> Task :installer:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:generateDebugBuildConfig UP-TO-DATE
+> Task :core:copyDebugJniLibsProjectAndLocalJars
+> Task :core:generateDebugResValues UP-TO-DATE
+> Task :core:generateDebugResources UP-TO-DATE
+> Task :core:packageDebugResources UP-TO-DATE
+> Task :core:parseDebugLocalResources UP-TO-DATE
+> Task :core:generateDebugRFile UP-TO-DATE
+> Task :installer:mapDebugSourceSetPaths UP-TO-DATE
+> Task :updater:mapDebugSourceSetPaths UP-TO-DATE
+> Task :updater:mergeDebugResources UP-TO-DATE
+> Task :installer:mergeDebugResources UP-TO-DATE
+> Task :core:compileDebugKotlin UP-TO-DATE
+> Task :core:extractDebugAnnotations FROM-CACHE
+> Task :core:extractDeepLinksForAarDebug FROM-CACHE
+> Task :core:mergeDebugShaders UP-TO-DATE
+> Task :core:compileDebugShaders NO-SOURCE
+> Task :core:generateDebugAssets UP-TO-DATE
+> Task :core:mergeDebugAssets UP-TO-DATE
+> Task :core:javaPreCompileDebug UP-TO-DATE
+> Task :core:compileDebugJavaWithJavac UP-TO-DATE
+> Task :core:mergeDebugGeneratedProguardFiles
+> Task :core:mergeDebugConsumerProguardFiles
+> Task :core:prepareDebugArtProfile
+> Task :core:processDebugManifest UP-TO-DATE
+> Task :core:prepareLintJarForPublish
+> Task :core:processDebugJavaRes UP-TO-DATE
+> Task :core:writeDebugAarMetadata UP-TO-DATE
+> Task :core:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :installer:checkDebugAarMetadata UP-TO-DATE
+> Task :updater:checkDebugAarMetadata UP-TO-DATE
+> Task :core:createFullJarDebug
+> Task :core:preDebugAndroidTestBuild UP-TO-DATE
+> Task :core:mergeDebugJavaResource
+> Task :core:generateDebugAndroidTestResValues FROM-CACHE
+> Task :core:syncDebugLibJars FROM-CACHE
+> Task :core:bundleDebugLocalLintAar
+> Task :core:writeDebugLintModelMetadata
+> Task :core:extractProguardFiles
+> Task :core:generateDebugLintReportModel
+> Task :core:generateDebugAndroidTestLintModel
+> Task :core:preDebugUnitTestBuild UP-TO-DATE
+> Task :core:generateDebugUnitTestLintModel
+> Task :core:lintAnalyzeDebug FROM-CACHE
+> Task :core:lintAnalyzeDebugAndroidTest FROM-CACHE
+> Task :core:lintAnalyzeDebugUnitTest FROM-CACHE
+> Task :core:generateDebugLintModel
+> Task :core:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :core:compileDebugLibraryResources UP-TO-DATE
+> Task :core:extractDeepLinksDebug UP-TO-DATE
+> Task :updater:processDebugMainManifest UP-TO-DATE
+> Task :installer:processDebugMainManifest UP-TO-DATE
+> Task :updater:processDebugManifest UP-TO-DATE
+> Task :updater:processDebugManifestForPackage UP-TO-DATE
+> Task :installer:processDebugManifest UP-TO-DATE
+> Task :installer:processDebugManifestForPackage UP-TO-DATE
+> Task :installer:processDebugResources UP-TO-DATE
+> Task :updater:processDebugResources UP-TO-DATE
+> Task :installer:compileDebugKotlin UP-TO-DATE
+> Task :installer:compileDebugJavaWithJavac NO-SOURCE
+> Task :installer:bundleDebugClassesToCompileJar
+> Task :installer:generateDebugLintReportModel
+> Task :updater:compileDebugKotlin UP-TO-DATE
+> Task :updater:compileDebugJavaWithJavac NO-SOURCE
+> Task :updater:bundleDebugClassesToCompileJar UP-TO-DATE
+> Task :installer:generateDebugAndroidTestLintModel
+> Task :installer:generateDebugUnitTestLintModel
+> Task :updater:generateDebugAndroidTestLintModel
+> Task :installer:lintAnalyzeDebug FROM-CACHE
+> Task :installer:lintAnalyzeDebugAndroidTest FROM-CACHE
+> Task :updater:generateDebugLintReportModel
+> Task :installer:lintAnalyzeDebugUnitTest FROM-CACHE
+> Task :updater:generateDebugUnitTestLintModel
+> Task :updater:lintAnalyzeDebug FROM-CACHE
+> Task :updater:lintAnalyzeDebugAndroidTest FROM-CACHE
+> Task :updater:lintAnalyzeDebugUnitTest FROM-CACHE
+> Task :core:lintReportDebug
+> Task :core:lintDebug
+
+> Task :installer:lintReportDebug
+Wrote HTML report to file:///home/runner/work/TabletSetupManager/TabletSetupManager/installer/build/reports/lint-results-debug.html
+
+> Task :updater:lintReportDebug
+Wrote HTML report to file:///home/runner/work/TabletSetupManager/TabletSetupManager/updater/build/reports/lint-results-debug.html
+
+> Task :installer:lintDebug
+> Task :updater:lintDebug
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/lint-1794310638647.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/TabletSetupManager/TabletSetupManager/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 19s
+94 actionable tasks: 29 executed, 15 from cache, 50 up-to-date

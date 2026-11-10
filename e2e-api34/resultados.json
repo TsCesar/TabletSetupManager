@@ -1,0 +1,236 @@
+[
+  {
+    "prueba": "Emulador arrancado",
+    "ok": true,
+    "detalle": "API 34 · ABI x86_64",
+    "critica": true
+  },
+  {
+    "prueba": "Emulador con Internet antes de empezar (las descargas de F-Droid y TeamViewer son reales)",
+    "ok": true,
+    "detalle": "red 100 validada tras 0 s",
+    "critica": false
+  },
+  {
+    "prueba": "Instalar Tablet Setup Installer",
+    "ok": true,
+    "detalle": "Success",
+    "critica": true
+  },
+  {
+    "prueba": "Installer: comprobación de versiones completada",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Installer: estados de las 11 aplicaciones",
+    "ok": true,
+    "detalle": "app=NO_COMPATIBLE, reader=NO_INSTALADA, market=NO_INSTALADA, universal=NO_INSTALADA, chrome=ERROR, firefox=NO_INSTALADA, maps=NO_INSTALADA, waze=ERROR, whatsapp=NO_INSTALADA, gm=NO_INSTALADA, updater=NO_INSTALADA",
+    "critica": true
+  },
+  {
+    "prueba": "FuelSoft no aparece",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Android API 34: Waze no se omite (queda sujeto a su versión/fuente)",
+    "ok": true,
+    "detalle": "ERROR · Aptoide: La variante de Aptoide es para otra arquitectura",
+    "critica": true
+  },
+  {
+    "prueba": "MuPDF sin APK de F-Droid para la arquitectura del emulador: «No compatible», sin bloquear el lote",
+    "ok": true,
+    "detalle": "NO_COMPATIBLE · Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)",
+    "critica": false
+  },
+  {
+    "prueba": "QuickSupport disponible (descarga oficial TeamViewer)",
+    "ok": true,
+    "detalle": "NO_INSTALADA · Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)",
+    "critica": false
+  },
+  {
+    "prueba": "Tablet Updater disponible (embebido)",
+    "ok": true,
+    "detalle": "NO_INSTALADA · Disponible 0.3.0 (3) · Incluida en el Installer",
+    "critica": true
+  },
+  {
+    "prueba": "Lote «Instalar todas las compatibles» terminado",
+    "ok": true,
+    "detalle": "7 confirmación(es) de Android pulsadas",
+    "critica": true
+  },
+  {
+    "prueba": "Resultado del lote: com.teamviewer.quicksupport.market",
+    "ok": true,
+    "detalle": "Instalada correctamente · 15.83.285 (1583285)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: com.google.android.apps.maps",
+    "ok": true,
+    "detalle": "Instalada correctamente · 26.45.00.1011720968 (1068868465)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: com.whatsapp",
+    "ok": true,
+    "detalle": "Instalada correctamente · 2.26.44.76 (264407638)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: com.google.android.gm",
+    "ok": true,
+    "detalle": "Instalada correctamente · 2026.10.26.1012468012.Release (66141086)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: org.mozilla.firefox",
+    "ok": true,
+    "detalle": "Instalada correctamente · 159.0.1 (2016193998)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: com.adobe.reader",
+    "ok": true,
+    "detalle": "Instalada correctamente · 26.10.1.51189 (1932251189)",
+    "critica": false
+  },
+  {
+    "prueba": "Resultado del lote: es.empresa.tabletsetup.updater",
+    "ok": true,
+    "detalle": "Instalada correctamente · 0.3.0 (3)",
+    "critica": true
+  },
+  {
+    "prueba": "Cobertura: navegador Chrome o Firefox instalado",
+    "ok": true,
+    "detalle": "org.mozilla.firefox",
+    "critica": true
+  },
+  {
+    "prueba": "Cobertura: visor PDF MuPDF o Adobe instalado",
+    "ok": true,
+    "detalle": "com.adobe.reader",
+    "critica": true
+  },
+  {
+    "prueba": "Cobertura: Gmail instalado",
+    "ok": true,
+    "detalle": "Instalada",
+    "critica": false
+  },
+  {
+    "prueba": "Waze: instalación ARM no evaluable en este emulador",
+    "ok": false,
+    "detalle": "ABI del emulador: x86_64. Requiere prueba ARM real",
+    "critica": false
+  },
+  {
+    "prueba": "Tablet Updater instalado por el Installer (sesión PackageInstaller)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "MuPDF no compatible: no se intentó instalar",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "QuickSupport instalado",
+    "ok": true,
+    "detalle": "",
+    "critica": false
+  },
+  {
+    "prueba": "Installer: no permite desinstalarse antes de activar el Updater",
+    "ok": true,
+    "detalle": "botón deshabilitado",
+    "critica": true
+  },
+  {
+    "prueba": "Installer → «Activar y configurar Updater» (actividad protegida por permiso de firma) registra la comprobación periódica",
+    "ok": true,
+    "detalle": "tarea del Updater en JobScheduler sin haber abierto el Updater",
+    "critica": true
+  },
+  {
+    "prueba": "Activación: el Updater pide el permiso de notificaciones (Android 13+) y queda concedido",
+    "ok": true,
+    "detalle": "«Permitir» pulsado en el diálogo del sistema",
+    "critica": false
+  },
+  {
+    "prueba": "Installer: permite desinstalarse con el Updater activado",
+    "ok": true,
+    "detalle": "botón habilitado",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: comprobación manual completada",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: no ofrece instalar apps no instaladas",
+    "ok": true,
+    "detalle": "universal",
+    "critica": true
+  },
+  {
+    "prueba": "Updater: tarea periódica registrada en JobScheduler (WorkManager)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Sin Internet: se detecta y se informa sin bloquear la app",
+    "ok": true,
+    "detalle": "red por defecto 100 → none · QuickSupport: ERROR · Sin conexión a Internet: no se puede consultar la descarga oficial",
+    "critica": true
+  },
+  {
+    "prueba": "Red restablecida después de la prueba sin Internet",
+    "ok": true,
+    "detalle": "red por defecto: 103",
+    "critica": false
+  },
+  {
+    "prueba": "Installer retirado desde su botón final (con confirmación de Android)",
+    "ok": true,
+    "detalle": "desinstalado",
+    "critica": false
+  },
+  {
+    "prueba": "Updater funciona con el Installer desinstalado",
+    "ok": true,
+    "detalle": "desinstalación: Success · comprobación: terminada (online=true)",
+    "critica": true
+  },
+  {
+    "prueba": "Installer desinstalado",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Tarea periódica sigue registrada sin el Installer",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  },
+  {
+    "prueba": "Sin cierres inesperados (logcat crash)",
+    "ok": true,
+    "detalle": "",
+    "critica": true
+  }
+]

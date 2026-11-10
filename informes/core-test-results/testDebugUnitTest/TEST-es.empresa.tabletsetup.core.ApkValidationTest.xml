@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="es.empresa.tabletsetup.core.ApkValidationTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-10T10:26:17.868Z" hostname="runnervm7aw5e" time="0.966">
+  <properties/>
+  <testcase name="arquitectura y targetSdk" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.452"/>
+  <testcase name="rechaza archivos corruptos, sin manifiesto, sin firma o alterados" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.094"/>
+  <testcase name="FuelSoft rechazada aunque se importe manualmente" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.14"/>
+  <testcase name="paquete, version publicada, hash y certificado fijado" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.054"/>
+  <testcase name="firma y version respecto a la app instalada" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.026"/>
+  <testcase name="Waze bloqueado en Android 9 tambien con APK local" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.095"/>
+  <testcase name="rechaza splits incoherentes" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.071"/>
+  <testcase name="lee el manifiesto binario" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.001"/>
+  <testcase name="inspecciona APK firmada con apksig" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.015"/>
+  <testcase name="acepta conjunto base mas split del mismo paquete, version y firma" classname="es.empresa.tabletsetup.core.ApkValidationTest" time="0.017"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

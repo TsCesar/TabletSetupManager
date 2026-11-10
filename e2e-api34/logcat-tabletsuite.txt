@@ -1,0 +1,106 @@
+===== Installer: comprobación e instalación por lotes =====
+--------- beginning of main
+I/TabletSuite( 2298): comprobacion terminada modo=INSTALLER online=true apps=11
+I/TabletSuite( 2298): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+I/TabletSuite( 2298): estado com.adobe.reader NO_INSTALADA | Disponible 26.10.1.51189 (1932251189) · Aptoide (fuente de terceros)
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.market NO_INSTALADA | Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.addon.universal NO_INSTALADA | Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.android.chrome ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado org.mozilla.firefox NO_INSTALADA | Disponible en Mozilla (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.google.android.apps.maps NO_INSTALADA | Disponible 26.45.00.1011720968 (1068868465) · Aptoide (fuente de terceros)
+I/TabletSuite( 2298): estado com.waze ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado com.whatsapp NO_INSTALADA | Disponible en WhatsApp (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.google.android.gm NO_INSTALADA | Disponible 2026.10.26.1012468012.Release (66141086) · Aptoide (fuente de terceros)
+I/TabletSuite( 2298): estado es.empresa.tabletsetup.updater NO_INSTALADA | Disponible 0.3.0 (3) · Incluida en el Installer
+I/TabletSuite( 2298): comprobacion terminada modo=INSTALLER online=true apps=11
+I/TabletSuite( 2298): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+I/TabletSuite( 2298): estado com.adobe.reader NO_INSTALADA | Disponible 26.10.1.51189 (1932251189) · Aptoide (fuente de terceros)
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.market NO_INSTALADA | Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.addon.universal NO_INSTALADA | Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.android.chrome ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado org.mozilla.firefox NO_INSTALADA | Disponible en Mozilla (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.google.android.apps.maps NO_INSTALADA | Disponible 26.45.00.1011720968 (1068868465) · Aptoide (fuente de terceros)
+I/TabletSuite( 2298): estado com.waze ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado com.whatsapp NO_INSTALADA | Disponible en WhatsApp (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.google.android.gm NO_INSTALADA | Disponible 2026.10.26.1012468012.Release (66141086) · Aptoide (fuente de terceros)
+I/TabletSuite( 2298): estado es.empresa.tabletsetup.updater NO_INSTALADA | Disponible 0.3.0 (3) · Incluida en el Installer
+I/TabletSuite( 2298): resultado com.teamviewer.quicksupport.market ok=true omitida=false | Instalada correctamente · 15.83.285 (1583285)
+I/TabletSuite( 2298): resultado com.google.android.apps.maps ok=true omitida=false | Instalada correctamente · 26.45.00.1011720968 (1068868465)
+I/TabletSuite( 2298): resultado com.whatsapp ok=true omitida=false | Instalada correctamente · 2.26.44.76 (264407638)
+I/TabletSuite( 2298): resultado com.google.android.gm ok=true omitida=false | Instalada correctamente · 2026.10.26.1012468012.Release (66141086)
+I/TabletSuite( 2298): resultado org.mozilla.firefox ok=true omitida=false | Instalada correctamente · 159.0.1 (2016193998)
+I/TabletSuite( 2298): resultado com.adobe.reader ok=true omitida=false | Instalada correctamente · 26.10.1.51189 (1932251189)
+I/TabletSuite( 2298): resultado es.empresa.tabletsetup.updater ok=true omitida=false | Instalada correctamente · 0.3.0 (3)
+I/TabletSuite( 2298): lote terminado correctas=7 fallos=0 omitidas=0
+I/TabletSuite( 2298): comprobacion terminada modo=INSTALLER online=true apps=11
+I/TabletSuite( 2298): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+I/TabletSuite( 2298): estado com.adobe.reader AL_DIA | Instalada 26.10.1.51189 (1932251189) · al día
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.market AL_DIA | Instalada 15.83.285 (1583285) · al día
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.addon.universal NO_INSTALADA | Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.android.chrome ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado org.mozilla.firefox AL_DIA | Instalada 159.0.1 (2016193998) · al día
+I/TabletSuite( 2298): estado com.google.android.apps.maps AL_DIA | Instalada 26.45.00.1011720968 (1068868465) · al día
+I/TabletSuite( 2298): estado com.waze ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado com.whatsapp AL_DIA | Instalada 2.26.44.76 (264407638) · al día
+I/TabletSuite( 2298): estado com.google.android.gm AL_DIA | Instalada 2026.10.26.1012468012.Release (66141086) · al día
+I/TabletSuite( 2298): estado es.empresa.tabletsetup.updater AL_DIA | Instalada 0.3.0 (3) · al día
+
+===== Updater: comprobación con red =====
+--------- beginning of main
+I/TabletSuite( 5773): comprobacion terminada modo=UPDATER online=true apps=11
+I/TabletSuite( 5773): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+I/TabletSuite( 5773): estado com.adobe.reader AL_DIA | Instalada 26.10.1.51189 (1932251189) · al día
+I/TabletSuite( 5773): estado com.teamviewer.quicksupport.market AL_DIA | Instalada 15.83.285 (1583285) · al día
+I/TabletSuite( 5773): estado com.teamviewer.quicksupport.addon.universal NO_INSTALADA | No instalada · el Updater solo actualiza aplicaciones ya instaladas
+I/TabletSuite( 5773): estado com.android.chrome ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 5773): estado org.mozilla.firefox AL_DIA | Instalada 159.0.1 (2016193998) · al día
+I/TabletSuite( 5773): estado com.google.android.apps.maps AL_DIA | Instalada 26.45.00.1011720968 (1068868465) · al día
+I/TabletSuite( 5773): estado com.waze ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 5773): estado com.whatsapp AL_DIA | Instalada 2.26.44.76 (264407638) · al día
+I/TabletSuite( 5773): estado com.google.android.gm AL_DIA | Instalada 2026.10.26.1012468012.Release (66141086) · al día
+I/TabletSuite( 5773): estado es.empresa.tabletsetup.updater INSTALADA_SIN_FUENTE | Instalada 0.3.0 (3) · Sus nuevas versiones llegan por el catálogo empresarial o con un Installer más reciente
+
+===== Updater: sin Internet =====
+--------- beginning of main
+I/TabletSuite( 6308): comprobacion terminada modo=UPDATER online=false apps=11
+I/TabletSuite( 6308): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+I/TabletSuite( 6308): estado com.adobe.reader INSTALADA_SIN_FUENTE | Instalada 26.10.1.51189 (1932251189) · Fuente no disponible
+I/TabletSuite( 6308): estado com.teamviewer.quicksupport.market ERROR | Sin conexión a Internet: no se puede consultar la descarga oficial
+I/TabletSuite( 6308): estado com.teamviewer.quicksupport.addon.universal ERROR | Sin conexión a Internet: no se puede consultar la descarga oficial
+I/TabletSuite( 6308): estado com.android.chrome FUENTE_PENDIENTE | Fuente no disponible
+I/TabletSuite( 6308): estado org.mozilla.firefox INSTALADA_SIN_FUENTE | Instalada 159.0.1 (2016193998) · Fuente no disponible
+I/TabletSuite( 6308): estado com.google.android.apps.maps INSTALADA_SIN_FUENTE | Instalada 26.45.00.1011720968 (1068868465) · Fuente no disponible
+I/TabletSuite( 6308): estado com.waze FUENTE_PENDIENTE | Fuente no disponible
+I/TabletSuite( 6308): estado com.whatsapp INSTALADA_SIN_FUENTE | Instalada 2.26.44.76 (264407638) · Fuente no disponible
+I/TabletSuite( 6308): estado com.google.android.gm INSTALADA_SIN_FUENTE | Instalada 2026.10.26.1012468012.Release (66141086) · Fuente no disponible
+I/TabletSuite( 6308): estado es.empresa.tabletsetup.updater INSTALADA_SIN_FUENTE | Instalada 0.3.0 (3) · Sus nuevas versiones llegan por el catálogo empresarial o con un Installer más reciente
+
+===== Installer: desinstalación =====
+--------- beginning of main
+I/TabletSuite( 2298): comprobacion terminada modo=INSTALLER online=true apps=11
+I/TabletSuite( 2298): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+I/TabletSuite( 2298): estado com.adobe.reader AL_DIA | Instalada 26.10.1.51189 (1932251189) · al día
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.market AL_DIA | Instalada 15.83.285 (1583285) · al día
+I/TabletSuite( 2298): estado com.teamviewer.quicksupport.addon.universal NO_INSTALADA | Disponible en TeamViewer (descarga oficial) (versión se comprueba al descargar)
+I/TabletSuite( 2298): estado com.android.chrome ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado org.mozilla.firefox AL_DIA | Instalada 159.0.1 (2016193998) · al día
+I/TabletSuite( 2298): estado com.google.android.apps.maps AL_DIA | Instalada 26.45.00.1011720968 (1068868465) · al día
+I/TabletSuite( 2298): estado com.waze ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 2298): estado com.whatsapp AL_DIA | Instalada 2.26.44.76 (264407638) · al día
+I/TabletSuite( 2298): estado com.google.android.gm AL_DIA | Instalada 2026.10.26.1012468012.Release (66141086) · al día
+I/TabletSuite( 2298): estado es.empresa.tabletsetup.updater AL_DIA | Instalada 0.3.0 (3) · al día
+
+===== Final =====
+--------- beginning of main
+I/TabletSuite( 7296): comprobacion terminada modo=UPDATER online=true apps=11
+I/TabletSuite( 7296): estado com.artifex.mupdf.viewer.app NO_COMPATIBLE | Ninguna versión publicada en F-Droid es compatible con esta tablet (arquitecturas en F-Droid: arm64-v8a, armeabi-v7a, x86; tablet: x86_64)
+I/TabletSuite( 7296): estado com.adobe.reader AL_DIA | Instalada 26.10.1.51189 (1932251189) · al día
+I/TabletSuite( 7296): estado com.teamviewer.quicksupport.market AL_DIA | Instalada 15.83.285 (1583285) · al día
+I/TabletSuite( 7296): estado com.teamviewer.quicksupport.addon.universal NO_INSTALADA | No instalada · el Updater solo actualiza aplicaciones ya instaladas
+I/TabletSuite( 7296): estado com.android.chrome ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 7296): estado org.mozilla.firefox AL_DIA | Instalada 159.0.1 (2016193998) · al día
+I/TabletSuite( 7296): estado com.google.android.apps.maps AL_DIA | Instalada 26.45.00.1011720968 (1068868465) · al día
+I/TabletSuite( 7296): estado com.waze ERROR | Aptoide: La variante de Aptoide es para otra arquitectura
+I/TabletSuite( 7296): estado com.whatsapp AL_DIA | Instalada 2.26.44.76 (264407638) · al día
+I/TabletSuite( 7296): estado com.google.android.gm AL_DIA | Instalada 2026.10.26.1012468012.Release (66141086) · al día
+I/TabletSuite( 7296): estado es.empresa.tabletsetup.updater INSTALADA_SIN_FUENTE | Instalada 0.3.0 (3) · Sus nuevas versiones llegan por el catálogo empresarial o con un Installer más reciente
