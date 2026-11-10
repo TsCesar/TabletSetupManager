@@ -1,0 +1,19 @@
+.gradle/
+.idea/
+.kotlin/
+build/
+*/build/
+local.properties
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+dist/
+# Claves de firma de producción: nunca en el repositorio
+*.jks
+release*.keystore
+release*.p12
+catalog-signing-key*.pem
+__pycache__/
+*.pyc

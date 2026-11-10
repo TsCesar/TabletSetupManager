@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tablet Updater</string>
+    <string name="permission_configure_label">Configurar Tablet Updater</string>
+    <string name="permission_configure_description">Permite a Tablet Setup Installer configurar y activar Tablet Updater.</string>
+</resources>

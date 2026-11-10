@@ -1,0 +1,253 @@
+# Compila, prueba y verifica Tablet Setup Installer y Tablet Updater en la nube, sin Android Studio.
+#
+# Resultado de cada ejecución:
+#   - Artefacto «TabletSetupManager-APK» (APK, informes, capturas de emulador) en la pestaña Actions.
+#   - Rama «apk-dist» con la última compilación de main (mismo contenido).
+#
+# Catálogo empresarial por defecto (opcional): variables del repositorio TSM_CATALOG_URL y
+# TSM_CATALOG_PUBLIC_KEY (Settings → Secrets and variables → Actions → Variables).
+# Firma release (opcional): secretos TSM_RELEASE_KEYSTORE_BASE64, TSM_RELEASE_KEYSTORE_PASSWORD,
+# TSM_RELEASE_KEY_ALIAS y TSM_RELEASE_KEY_PASSWORD. Sin ellos solo se generan APK debug.
+name: Compilar APK
+
+on:
+  push:
+    branches: [main]
+    # Los cambios solo de documentación no recompilan (ni sustituyen la rama apk-dist).
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: compilar-apk-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Compilar, probar y verificar
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      apk_ok: ${{ steps.assemble.outcome == 'success' }}
+    env:
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
+      CATALOG_ARGS: -Ptsm.catalog.url=${{ vars.TSM_CATALOG_URL }} -Ptsm.catalog.publicKey=${{ vars.TSM_CATALOG_PUBLIC_KEY }}
+      HAS_RELEASE_KEY: ${{ secrets.TSM_RELEASE_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Android SDK (línea de comandos)
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platforms;android-35 build-tools;35.0.0"
+
+      - name: Gradle (wrapper validado + caché)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Versiones de herramientas
+        run: |
+          ./gradlew --version
+          ls "$ANDROID_HOME/build-tools"
+
+      - name: Compilar APK debug
+        id: assemble
+        continue-on-error: true
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace $CATALOG_ARGS collectDebugApks 2>&1 | tee dist/logs/01-compilar-debug.log
+
+      - name: Verificar APK (aapt2 + apksigner + contenido)
+        id: verify
+        if: steps.assemble.outcome == 'success'
+        continue-on-error: true
+        run: |
+          export PATH="$ANDROID_HOME/build-tools/35.0.0:$PATH"
+          set -o pipefail
+          python3 tools/verify_apks.py --installer dist/TabletSetupInstaller-debug.apk \
+            --updater dist/TabletUpdater-debug.apk --report dist/VERIFICACION_APK.md 2>&1 | tee dist/logs/02-verificacion.log
+          aapt2 dump badging dist/TabletSetupInstaller-debug.apk > dist/badging-installer.txt
+          aapt2 dump badging dist/TabletUpdater-debug.apk > dist/badging-updater.txt
+          apksigner verify --print-certs -v dist/TabletSetupInstaller-debug.apk > dist/firma-installer.txt
+          apksigner verify --print-certs -v dist/TabletUpdater-debug.apk > dist/firma-updater.txt
+
+      - name: Pruebas unitarias (núcleo JVM + Robolectric)
+        id: tests
+        continue-on-error: true
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace --continue :core:testDebugUnitTest :updater:testDebugUnitTest 2>&1 | tee dist/logs/03-pruebas.log
+
+      - name: Lint (manifiestos, recursos y API)
+        id: lint
+        continue-on-error: true
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace lintDebug 2>&1 | tee dist/logs/04-lint.log
+
+      - name: Compilación release minificada (R8) sin firmar
+        id: release_check
+        if: env.HAS_RELEASE_KEY != 'true'
+        continue-on-error: true
+        run: |
+          mkdir -p dist/logs
+          set -o pipefail
+          ./gradlew --stacktrace $CATALOG_ARGS assembleRelease 2>&1 | tee dist/logs/05-release-r8.log
+
+      - name: Compilación release firmada
+        id: release_signed
+        if: env.HAS_RELEASE_KEY == 'true'
+        continue-on-error: true
+        env:
+          TSM_RELEASE_KEYSTORE_BASE64: ${{ secrets.TSM_RELEASE_KEYSTORE_BASE64 }}
+          TSM_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.TSM_RELEASE_KEYSTORE_PASSWORD }}
+          TSM_RELEASE_KEY_ALIAS: ${{ secrets.TSM_RELEASE_KEY_ALIAS }}
+          TSM_RELEASE_KEY_PASSWORD: ${{ secrets.TSM_RELEASE_KEY_PASSWORD }}
+        run: |
+          echo "$TSM_RELEASE_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          export TSM_RELEASE_KEYSTORE="$RUNNER_TEMP/release.keystore"
+          ./gradlew --stacktrace $CATALOG_ARGS collectReleaseApks
+          rm -f "$RUNNER_TEMP/release.keystore"
+
+      - name: Reunir informes
+        if: always()
+        run: |
+          mkdir -p dist/informes
+          for m in core updater installer; do
+            [ -d "$m/build/test-results" ] && cp -r "$m/build/test-results" "dist/informes/$m-test-results" || true
+            [ -d "$m/build/reports/tests" ] && cp -r "$m/build/reports/tests" "dist/informes/$m-tests-html" || true
+            for f in "$m"/build/reports/lint-results-*.{html,xml,txt}; do [ -f "$f" ] && cp "$f" "dist/informes/$m-$(basename "$f")"; done
+          done
+          (cd dist && ls *.apk >/dev/null 2>&1 && sha256sum *.apk > SHA256SUMS.txt || true)
+          {
+            echo "commit=${GITHUB_SHA}"
+            echo "run=${GITHUB_RUN_ID}"
+            echo "assemble=${{ steps.assemble.outcome }}"
+            echo "verify=${{ steps.verify.outcome }}"
+            echo "tests=${{ steps.tests.outcome }}"
+            echo "lint=${{ steps.lint.outcome }}"
+            echo "release_unsigned=${{ steps.release_check.outcome }}"
+            echo "release_signed=${{ steps.release_signed.outcome }}"
+          } > dist/RESULTADOS.txt
+          cat dist/RESULTADOS.txt
+
+      - name: Subir resultados de compilación
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+          if-no-files-found: warn
+
+      - name: Resultado de la compilación
+        if: always()
+        run: |
+          failed=0
+          for s in "${{ steps.assemble.outcome }}" "${{ steps.verify.outcome }}" "${{ steps.tests.outcome }}" "${{ steps.lint.outcome }}"; do
+            [ "$s" = "success" ] || failed=1
+          done
+          for s in "${{ steps.release_check.outcome }}" "${{ steps.release_signed.outcome }}"; do
+            [ "$s" = "failure" ] && failed=1
+          done
+          exit $failed
+
+  emulator:
+    name: Emulador Android API ${{ matrix.api-level }}
+    needs: build
+    if: always() && needs.build.outputs.apk_ok == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [28, 34]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: dist
+
+      - name: Habilitar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Prueba de extremo a extremo en emulador
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          target: default
+          profile: pixel_c
+          disable-animations: true
+          emulator-boot-timeout: 900
+          script: python3 tools/emulator_e2e.py --api ${{ matrix.api-level }} --installer dist/TabletSetupInstaller-debug.apk --out e2e-api${{ matrix.api-level }}
+
+      - name: Subir resultados del emulador
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-api${{ matrix.api-level }}
+          path: e2e-api${{ matrix.api-level }}/
+          if-no-files-found: warn
+
+  publish:
+    name: Publicar APK e informes
+    needs: [build, emulator]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: collected
+
+      - name: Componer resultados
+        run: |
+          mkdir -p pub
+          [ -d collected/build-output ] && cp -r collected/build-output/. pub/
+          for d in collected/e2e-api*; do [ -d "$d" ] && cp -r "$d" "pub/$(basename "$d")"; done
+          {
+            echo "build_job=${{ needs.build.result }}"
+            echo "emulator_jobs=${{ needs.emulator.result }}"
+          } >> pub/RESULTADOS.txt
+          cat pub/RESULTADOS.txt
+          find pub -maxdepth 2 | sort | head -80
+
+      - name: Subir artefacto final
+        uses: actions/upload-artifact@v4
+        with:
+          name: TabletSetupManager-APK
+          path: pub/
+
+      - name: Publicar en la rama apk-dist
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd pub
+          git init -q -b apk-dist
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "APK y verificaciones de ${GITHUB_SHA::7} (ejecución ${GITHUB_RUN_NUMBER})"
+          git push -q --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" apk-dist
+
+      - name: Resultado final
+        run: |
+          [ "${{ needs.build.result }}" = "success" ] && [ "${{ needs.emulator.result }}" = "success" ]
