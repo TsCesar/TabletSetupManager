@@ -93,6 +93,69 @@ object StatusCalculator {
     }
 }
 
+
+/**
+ * La sustitución automática se omite cuando la app principal ya funciona.
+ * Una selección expresa en el Installer permite instalar ambas alternativas,
+ * sin alterar la política del Updater (que no instala aplicaciones nuevas).
+ */
+object FallbackInstallationPolicy {
+    fun skipReason(
+        packageName: String,
+        explicitlyRequested: Set<String>,
+        isInstalled: (String) -> Boolean,
+    ): String? {
+        if (packageName in explicitlyRequested) return null
+        return when {
+            packageName == AppCatalog.FIREFOX && isInstalled(AppCatalog.CHROME) ->
+                "Chrome ya está instalado; Firefox no es necesario como respaldo automático"
+            packageName == AppCatalog.ADOBE_READER && isInstalled(AppCatalog.MUPDF) ->
+                "MuPDF ya está instalado; Adobe Reader no es necesario como respaldo automático"
+            else -> null
+        }
+    }
+}
+
+/**
+ * Planifica Firefox como respaldo al instalar Chrome. Se coloca antes del
+ * Updater y se omite al ejecutar si Chrome termina instalado.
+ */
+object BrowserFallbackPlanner {
+    fun plan(statuses: List<AppStatus>, mode: Mode, ids: List<String>, selected: Set<String>? = null): List<String> {
+        if (mode != Mode.INSTALLER || (selected != null && AppCatalog.CHROME !in selected)) return ids
+        val chrome = statuses.firstOrNull { it.app.packageName == AppCatalog.CHROME } ?: return ids
+        val firefox = statuses.firstOrNull { it.app.packageName == AppCatalog.FIREFOX } ?: return ids
+        if (chrome.installed != null || firefox.installed != null || firefox.state != AppState.NO_INSTALADA) return ids
+        val needsFallback = AppCatalog.CHROME in ids ||
+            chrome.state in setOf(AppState.ERROR, AppState.FUENTE_PENDIENTE, AppState.NO_COMPATIBLE)
+        if (!needsFallback || AppCatalog.FIREFOX in ids) return ids
+        val normal = ids.filterNot { it == AppCatalog.UPDATER }
+        val updater = ids.filter { it == AppCatalog.UPDATER }
+        return normal + AppCatalog.FIREFOX + updater
+    }
+}
+
+/**
+ * Añade Adobe Acrobat Reader como respaldo del lector PDF.
+ * Se pone antes del Updater. La instalación lo omite si MuPDF ya se instaló.
+ */
+object PdfFallbackPlanner {
+    fun plan(statuses: List<AppStatus>, mode: Mode, ids: List<String>, selected: Set<String>? = null): List<String> {
+        if (mode != Mode.INSTALLER || (selected != null && AppCatalog.MUPDF !in selected)) return ids
+        val mupdf = statuses.firstOrNull { it.app.packageName == AppCatalog.MUPDF } ?: return ids
+        val adobe = statuses.firstOrNull { it.app.packageName == AppCatalog.ADOBE_READER } ?: return ids
+        if (mupdf.installed != null || adobe.installed != null || adobe.state != AppState.NO_INSTALADA) return ids
+
+        val needsFallback = AppCatalog.MUPDF in ids ||
+            mupdf.state in setOf(AppState.ERROR, AppState.FUENTE_PENDIENTE, AppState.NO_COMPATIBLE)
+        if (!needsFallback || AppCatalog.ADOBE_READER in ids) return ids
+
+        val normal = ids.filterNot { it == AppCatalog.UPDATER }
+        val updater = ids.filter { it == AppCatalog.UPDATER }
+        return normal + AppCatalog.ADOBE_READER + updater
+    }
+}
+
 /** Selección de aplicaciones para los procesos por lotes. Kotlin puro. */
 object BatchPlanner {
     /**
@@ -110,7 +173,10 @@ object BatchPlanner {
                     (status.state == AppState.ACTUALIZACION || status.state == AppState.POR_VERIFICAR)
             }
         }.filter { status ->
-            if (selected != null) status.app.packageName in selected else !status.app.optional
+            if (selected != null) status.app.packageName in selected else
+                (!status.app.optional || (mode == Mode.UPDATER &&
+                    status.app.packageName in setOf(AppCatalog.FIREFOX, AppCatalog.ADOBE_READER) &&
+                    status.installed != null))
         }
         // El Updater se instala/actualiza al final para no interrumpir el lote.
         return eligible.sortedBy { if (it.app.packageName == AppCatalog.UPDATER) 1 else 0 }.map { it.app.packageName }

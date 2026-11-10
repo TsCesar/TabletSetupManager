@@ -12,15 +12,18 @@ import es.empresa.tabletsetup.core.policy.ExcludedApps
  *  - MuPDF: repositorio oficial F-Droid (índice firmado).
  *  - TeamViewer QuickSupport y Universal Add-On: APK oficiales publicadas por TeamViewer
  *    en su base de conocimiento.
- *  - Chrome, Maps, Gmail, Waze, WhatsApp: no hay una URL oficial de APK verificada y
- *    mantenible; se usan el catálogo empresarial firmado o la importación manual.
+ *  - Chrome, Maps, Gmail y Waze: descarga desde Aptoide con certificado del
+ *    desarrollador fijado y validación de APK/splits antes de instalar.
+ *  - WhatsApp: descarga APK oficial desde la página del desarrollador.
  */
 object AppCatalog {
     const val MUPDF = "com.artifex.mupdf.viewer.app"
+    const val ADOBE_READER = "com.adobe.reader"
     const val QUICKSUPPORT = "com.teamviewer.quicksupport.market"
     const val QS_UNIVERSAL_ADDON = "com.teamviewer.quicksupport.addon.universal"
     const val QS_ADDON_PREFIX = "com.teamviewer.quicksupport.addon."
     const val CHROME = "com.android.chrome"
+    const val FIREFOX = "org.mozilla.firefox"
     const val MAPS = "com.google.android.apps.maps"
     const val WAZE = "com.waze"
     const val WHATSAPP = "com.whatsapp"
@@ -41,6 +44,16 @@ object AppCatalog {
             description = "Visor de documentos PDF",
             builtInSource = BuiltInSource.FDroid,
             initials = "Mu", avatarColor = 0xFFB3261E,
+        ),
+        ManagedApp(
+            packageName = ADOBE_READER,
+            label = "Adobe Acrobat Reader",
+            description = "Visor PDF alternativo u opcional; se puede instalar junto a MuPDF",
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://adobe-acrobat-reader.es.aptoide.com/app",
+            ),
+            optional = true,
+            initials = "Ad", avatarColor = 0xFFCC231E,
         ),
         ManagedApp(
             packageName = QUICKSUPPORT,
@@ -69,15 +82,27 @@ object AppCatalog {
             packageName = CHROME,
             label = "Google Chrome",
             description = "Navegador web",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://en.aptoide.com/",
+            ),
             typicallyPreinstalled = true,
             initials = "Ch", avatarColor = 0xFF1E8E3E,
+        ),
+        ManagedApp(
+            packageName = FIREFOX,
+            label = "Mozilla Firefox",
+            description = "Navegador alternativo u opcional; se puede instalar junto a Chrome",
+            builtInSource = BuiltInSource.MozillaArchive,
+            optional = true,
+            initials = "Fx", avatarColor = 0xFFFF7139,
         ),
         ManagedApp(
             packageName = MAPS,
             label = "Google Maps",
             description = "Mapas y navegación",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://en.aptoide.com/",
+            ),
             typicallyPreinstalled = true,
             initials = "Ma", avatarColor = 0xFF188038,
         ),
@@ -85,7 +110,9 @@ object AppCatalog {
             packageName = WAZE,
             label = "Waze",
             description = "Navegación GPS (no compatible con Android 9)",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://waze-gps-maps-traffic-alerts-sat-nav.es.aptoide.com/app",
+            ),
             minDeviceSdk = 29,
             initials = "Wz", avatarColor = 0xFF33CCFF,
         ),
@@ -93,14 +120,20 @@ object AppCatalog {
             packageName = WHATSAPP,
             label = "WhatsApp",
             description = "Mensajería (solo instalación; no se configuran cuentas)",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.OfficialPage(
+                pageUrl = "https://www.whatsapp.com/download/android",
+                publisher = "WhatsApp",
+                reference = "https://www.whatsapp.com/download/android",
+            ),
             initials = "Wa", avatarColor = 0xFF25A244,
         ),
         ManagedApp(
             packageName = GMAIL,
             label = "Gmail",
             description = "Correo electrónico (solo instalación; no se configuran cuentas)",
-            builtInSource = BuiltInSource.EnterpriseOnly,
+            builtInSource = BuiltInSource.Aptoide(
+                reference = "https://en.aptoide.com/",
+            ),
             typicallyPreinstalled = true,
             initials = "Gm", avatarColor = 0xFFC5221F,
         ),

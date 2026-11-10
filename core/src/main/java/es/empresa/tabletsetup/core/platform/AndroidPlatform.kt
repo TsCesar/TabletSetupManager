@@ -18,15 +18,30 @@ import es.empresa.tabletsetup.core.model.DeviceProfile
 import es.empresa.tabletsetup.core.model.InstalledInfo
 import es.empresa.tabletsetup.core.util.Hashing
 import java.io.File
+import android.content.res.Resources
+import android.os.LocaleList
+
 
 /** Información del dispositivo y de la red. */
-object DeviceInfo {
+object DeviceInfo { 
     fun current(): DeviceProfile = DeviceProfile(
         sdkInt = Build.VERSION.SDK_INT,
         release = Build.VERSION.RELEASE.orEmpty(),
         supportedAbis = Build.SUPPORTED_ABIS.toList(),
         manufacturer = Build.MANUFACTURER.orEmpty(),
         model = Build.MODEL.orEmpty(),
+
+        // Densidad real configurada en el sistema.
+        densityDpi = Resources.getSystem()
+            .displayMetrics
+            .densityDpi,
+
+        // Idiomas preferidos de Android, por orden.
+        preferredLocales = LocaleList.getDefault()
+            .toLanguageTags()
+            .split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
     )
 
     fun isOnline(context: Context): Boolean {

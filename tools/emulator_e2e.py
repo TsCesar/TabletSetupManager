@@ -25,6 +25,10 @@ from pathlib import Path
 INSTALLER = "es.empresa.tabletsetup.installer"
 UPDATER = "es.empresa.tabletsetup.updater"
 MUPDF = "com.artifex.mupdf.viewer.app"
+ADOBE = "com.adobe.reader"
+CHROME = "com.android.chrome"
+FIREFOX = "org.mozilla.firefox"
+GMAIL = "com.google.android.gm"
 QS = "com.teamviewer.quicksupport.market"
 WAZE = "com.waze"
 TAG = "TabletSuite"
@@ -310,7 +314,7 @@ def main():
         r.add("Installer: comprobación de versiones completada", text is not None)
         st = states(text or "")
         screenshot(out, "01-installer-inicio.png")
-        r.add("Installer: estados de las 9 aplicaciones", len(st) == 9, ", ".join(f"{k.split('.')[-1]}={v[0]}" for k, v in st.items()))
+        r.add("Installer: estados de las 11 aplicaciones", len(st) == 11, ", ".join(f"{k.split('.')[-1]}={v[0]}" for k, v in st.items()))
         r.add("FuelSoft no aparece", not any("fuelsoft" in k.lower() for k in st))
         waze = st.get(WAZE, ("?", ""))
         if a.api == 28:
@@ -353,6 +357,26 @@ def main():
         time.sleep(5)
         screenshot(out, "03-installer-tras-lote.png")
         packages = sh("pm list packages")
+        installed = {line.removeprefix("package:").strip() for line in packages.splitlines()
+                     if line.startswith("package:")}
+        # Cobertura operativa del lote: una prueba verde no basta si faltan
+        # el navegador o el lector de PDF. Se aceptan las alternativas reales.
+        browser = CHROME if CHROME in installed else FIREFOX if FIREFOX in installed else None
+        pdf_reader = MUPDF if MUPDF in installed else ADOBE if ADOBE in installed else None
+        r.add("Cobertura: navegador Chrome o Firefox instalado",
+              browser is not None, browser or "Falta Chrome y también Firefox")
+        r.add("Cobertura: visor PDF MuPDF o Adobe instalado",
+              pdf_reader is not None, pdf_reader or "Falta MuPDF y también Adobe Reader")
+        # Las aplicaciones sin paquete compatible se informan de forma visible.
+        # Waze se evalúa en hardware ARM real: estos emuladores solo ejecutan x86.
+        r.add("Cobertura: Gmail instalado",
+              GMAIL in installed, "Instalada" if GMAIL in installed else
+              "Pendiente: resolver la APK compatible con este Android",
+              critical=False)
+        if a.api >= 29 and "arm" not in abis.lower():
+            r.add("Waze: instalación ARM no evaluable en este emulador",
+                  False, f"ABI del emulador: {abis}. Requiere prueba ARM real",
+                  critical=False)
         r.add("Tablet Updater instalado por el Installer (sesión PackageInstaller)", f"package:{UPDATER}" in packages)
         if mupdf_expected:
             r.add("MuPDF instalado", f"package:{MUPDF}" in packages, critical=False)

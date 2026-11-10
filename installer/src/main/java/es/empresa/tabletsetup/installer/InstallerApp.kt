@@ -156,11 +156,11 @@ private fun InstallerMain(vm: SuiteViewModel, onQuickSupport: () -> Unit, onHist
                 OutlinedButton(
                     onClick = {
                         importLauncher.launch(
-                            arrayOf("application/vnd.android.package-archive", "application/zip", "application/x-zip-compressed", "application/octet-stream")
+                            arrayOf("*/*") // Permite elegir APKM/APKS/XAPK con MIME propios
                         )
                     },
                     enabled = !state.running && !state.importing,
-                ) { Text("Importar APK desde archivos") }
+                ) { Text("Importar APK / APKM / APKS / XAPK") }
             }
         },
         footer = {
