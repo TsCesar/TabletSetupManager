@@ -1,4 +1,26 @@
-# Cambios de la versión 0.3 respecto a la 0.2
+# Evolución de TabletSetupManager 0.3.0 — actualización 10/11/2026
+
+El historial de correcciones 0.2 → 0.3 se conserva al final de este documento. **La información anterior es histórica** y no refleja por sí sola la versión consolidada de main.
+
+## Mejoras incorporadas después de las primeras pruebas
+
+| Área | Versión final 0.3.0 |
+|---|---|
+| Distribución de APK | Se integró Aptoide para Chrome, Maps, Gmail, Adobe y ciertas variantes de Waze; resuelve APK base y splits según el dispositivo y valida su firma. |
+| WhatsApp | Resolución de la URL de APK desde la página oficial de Android. |
+| Firefox | Descarga de APK estable desde el archivo oficial de Mozilla. |
+| Chrome | Rechazo de versiones anteriores a la 138; Firefox queda como respaldo si la instalación no funciona. |
+| Gmail | Se ampliaron las huellas permitidas para las variantes firmadas por Google probadas. |
+| Waze APKM | Waze 5.26.5.0 ARM64 para Android 10+ desde un espejo externo, fijado por SHA-256 y validado mediante firma. Android 9 permanece bloqueado por política. |
+| Formatos | Importación APKM, APKS, XAPK y ZIP, además de APK y base/splits seleccionados conjuntamente. |
+| Elección del usuario | Firefox y Adobe se pueden instalar por selección individual aunque Chrome y MuPDF ya estén presentes, sin perder el respaldo automático. |
+| Validación | Action #35: **96 pruebas unitarias superadas** y jobs de emuladores Android 9 y Android 14 correctos. Action #36: correcta para el mismo árbol de código que la versión final de main. |
+
+Las pruebas en una tablet física se recogen como resultados **comunicados por el usuario** en docs/INFORME_DE_PRUEBAS.md; no se extienden sin evidencia a todos los modelos.
+
+---
+
+# Archivo histórico: cambios iniciales de 0.2 a 0.3
 
 Revisión completa del ZIP `TabletSetupManager_v02` (README, `docs/`, módulos `core`, `installer`, `updater`, catálogo y pruebas). Se ha reutilizado el diseño existente (dos apps + `core`, F-Droid firmado, catálogo empresarial, regla de Waze, exclusión de FuelSoft) y se han corregido los problemas siguientes.
 

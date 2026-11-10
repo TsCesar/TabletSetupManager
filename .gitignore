@@ -17,3 +17,14 @@ release*.p12
 catalog-signing-key*.pem
 __pycache__/
 *.pyc
+
+# Impedir nuevas claves privadas y ficheros de credenciales.
+# Los certificados de prueba ya versionados permanecen en Git.
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+.env
+.env.*
+!.env.example

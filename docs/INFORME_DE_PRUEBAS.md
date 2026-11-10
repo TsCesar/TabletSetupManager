@@ -1,11 +1,46 @@
-# Informe de pruebas — Tablet Setup Manager 0.3
+# Informe de pruebas — estado actual de TabletSetupManager 0.3.0
 
-Fecha: 05/11/2026. Este informe separa con claridad:
+Actualizado el **10/11/2026**. Este resumen prevalece sobre el informe histórico del 05/11/2026 que se conserva a continuación como evidencia de las primeras pruebas.
 
-* **A. Pruebas automatizadas ejecutadas** (resultado real, con su entorno).
-* **B. Pruebas que necesitan una tablet física** (pendientes; no se declaran superadas).
+## A. Última validación automatizada
 
-> Compilar no equivale a probar: cada apartado indica qué se ha ejecutado de verdad y dónde.
+| Comprobación | Resultado comprobado | Evidencia |
+|---|---|---|
+| Compilación y pruebas unitarias de Installer/Updater | **96 pruebas, 0 fallos ni errores** | GitHub Actions [#35](https://github.com/TsCesar/TabletSetupManager/actions/runs/42658001592), commit e1d1d8f |
+| Instalación y pruebas de integración en emulador Android 9 (API 28) | **Job correcto** | Action #35 |
+| Instalación y pruebas de integración en emulador Android 14 (API 34, x86_64) | **Job correcto** | Action #35 |
+| Compilación en la rama main antes de consolidar el historial en un commit raíz | **Action #36 correcta** | [Action #36](https://github.com/TsCesar/TabletSetupManager/actions/runs/42798881085), commit 40d60d0 |
+| Integridad del árbol de archivos de la versión final | **Igual al árbol probado de la Action #36** | Comparación de árboles Git, main e9285fd frente a 40d60d0 |
+
+**Importante:** en la Action #35 se incluyen pruebas nuevas de selección manual de Firefox/Adobe, extracción de APKM y selección de splits, firma de Gmail y compatibilidad del APKM fijado de Waze. Los emuladores x86_64 no pueden instalar el archivo Waze exclusivo ARM64; esa vía se validó después en una tablet física según el usuario.
+
+## B. Pruebas comunicadas en tablet física
+
+Estas comprobaciones **han sido reportadas por el usuario**, no verificadas de forma independiente con un logcat, registro de sesión ni modelo/arquitectura exacta del dispositivo:
+
+| Componente | Resultado comunicado |
+|---|---|
+| Tablet Setup Installer | Abre y detecta Android |
+| Waze 5.26.5.0 (APKM ARM64) | Descarga, instalación, apertura, cálculo de ruta y GPS correctos |
+| Chrome | Instalado, abre páginas |
+| MuPDF | Instalado, abre PDF |
+| Gmail, Maps, WhatsApp | Instaladas |
+| TeamViewer QuickSupport | Instalado, conexión remota real correcta |
+| Tablet Updater | Instalado, activado y configurado, permanece funcionando tras retirar Installer y reiniciar |
+
+**Pendientes de validación física más amplia**: instalación manual conjunta Firefox+Chrome y Adobe+MuPDF introducida en la Action #35, transcurso de un ciclo periódico de WorkManager y notificación/actualización nueva real, hardware Android 9/10+/ARM32/ARM64 de distintos fabricantes, cortes de red y reinstalaciones o migraciones de claves release.
+
+## C. Alcance de la evidencia
+
+- Una suite sin dependencias propias de Play Services no certifica que todas las aplicaciones Google o Waze funcionen plenamente en tablets no certificadas.
+- Las fuentes Aptoide/Mozilla/WhatsApp y el espejo de Waze pueden cambiar; el éxito de una versión no demuestra disponibilidad futura.
+- El APKM ARM64 de Waze tiene SHA-256 fijado en el código y las APK internas se validan, pero **se hospeda en un espejo externo**, no en el servidor oficial de Waze.
+- Las APK debug se firman con una clave pública de prueba; la producción requiere clave release privada y pruebas adicionales.
+- El resto del presente archivo recoge el estado **histórico del 05/11/2026** y conserva sus métricas originales de 47 pruebas del núcleo / 6 Robolectric, que ya no corresponden a la última Action.
+
+---
+
+# Anexo histórico: pruebas de TabletSetupManager 0.3 realizadas el 05/11/2026
 
 ## A.1 Núcleo en JVM, ejecutado en el entorno de desarrollo (sin Android SDK)
 
@@ -92,7 +127,7 @@ Capturas en `apk-dist/e2e-api28/` y `apk-dist/e2e-api34/`: Installer al iniciar 
 
 Qué detectaron las ejecuciones anteriores y se corrigió: puntos 20–27 de `docs/CAMBIOS_v0.3.md` (F-Droid sin APK para la arquitectura, permiso de notificaciones al activar, criterio de «Updater activado», mensaje del propio Updater y tres defectos del script de prueba).
 
-## B. Pruebas que requieren tablet física (pendientes)
+## B. Pruebas físicas inicialmente pendientes (registro histórico del 05/11/2026)
 
 Los emuladores son x86_64 y sin servicios de Google; no sustituyen a las tablets ARM reales de los clientes.
 
